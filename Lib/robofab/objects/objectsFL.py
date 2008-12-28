@@ -1,6 +1,11 @@
 """UFO implementation for the objects as used by FontLab 4.5 and higher"""
 
-from FL import *	
+import os
+from warnings import warn
+import datetime
+from StringIO import StringIO
+
+from FL import *
 
 from robofab.tools.toolsFL import GlyphIndexTable,\
 		AllFonts, NewGlyph
@@ -13,9 +18,8 @@ from robofab.objects.objectsBase import BaseFont, BaseGlyph, BaseContour, BaseSe
 from fontTools.misc import arrayTools
 from robofab.pens.flPen import FLPointPen
 from robofab import RoboFabError
-import os
 from robofab.plistlib import Data, Dict, readPlist, writePlist
-from StringIO import StringIO
+from robofab import ufoLib
 
 # local encoding
 if os.name in ["mac", "posix"]:
@@ -47,7 +51,7 @@ MAC_TT_DFONT = 'macttdfont'
 
 # doc for these functions taken from: http://dev.fontlab.net/flpydoc/
 #			internal name			(FontLab name,		extension)
-_flGenerateTypes ={	PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PFB)
+_flGenerateTypes ={ PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PFB)
 			PC_MM		:	(ftTYPE1_MM,		'mm'),		# PC MultipleMaster font (PFB)
 			PC_TYPE1_ASCII	:	(ftTYPE1ASCII,		'pfa'),		# PC Type 1 font (ASCII/PFA)
 			PC_MM_ASCII		:	(ftTYPE1ASCII_MM,		'mm'),		# PC MultipleMaster font (ASCII/PFA)
@@ -83,24 +87,24 @@ _flGenerateTypes ={	PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PF
 	blue_scale
 	blue_shift
 
-	blue_values_num(integer)             - number of defined blue values
-	blue_values[integer[integer]]        - two-dimentional array of BlueValues
-                                         master index is top-level index
+	blue_values_num(integer)			 - number of defined blue values
+	blue_values[integer[integer]]		 - two-dimentional array of BlueValues
+										 master index is top-level index
 
-	other_blues_num(integer)             - number of defined OtherBlues values
-	other_blues[integer[integer]]        - two-dimentional array of OtherBlues
-	                                       master index is top-level index
+	other_blues_num(integer)			 - number of defined OtherBlues values
+	other_blues[integer[integer]]		 - two-dimentional array of OtherBlues
+										   master index is top-level index
 
-	family_blues_num(integer)            - number of FamilyBlues records
-	family_blues[integer[integer]]       - two-dimentional array of FamilyBlues
-	                                       master index is top-level index
+	family_blues_num(integer)			 - number of FamilyBlues records
+	family_blues[integer[integer]]		 - two-dimentional array of FamilyBlues
+										   master index is top-level index
 
-	family_other_blues_num(integer)      - number of FamilyOtherBlues records
+	family_other_blues_num(integer)		 - number of FamilyOtherBlues records
 	family_other_blues[integer[integer]] - two-dimentional array of FamilyOtherBlues
-	                                       master index is top-level index
+										   master index is top-level index
 
-	force_bold[integer]                  - list of Force Bold values, one for 
-	                                       each master
+	force_bold[integer]					 - list of Force Bold values, one for 
+										   each master
 	stem_snap_h_num(integer)
 	stem_snap_h
 	stem_snap_v_num(integer)
@@ -108,7 +112,7 @@ _flGenerateTypes ={	PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PF
  """
 
 class PostScriptFontHintValues(BasePostScriptFontHintValues):
-	"""	Wrapper for font-level PostScript hinting information for FontLab.
+	""" Wrapper for font-level PostScript hinting information for FontLab.
 		Blues values, stem values. 
 	"""
 	def __init__(self, font=None, impliedMasterIndex=0):
@@ -224,7 +228,7 @@ class PostScriptFontHintValues(BasePostScriptFontHintValues):
 			
 
 class PostScriptGlyphHintValues(BasePostScriptGlyphHintValues):
-	"""	Wrapper for glyph-level PostScript hinting information for FontLab.
+	""" Wrapper for glyph-level PostScript hinting information for FontLab.
 		vStems, hStems.
 	"""
 	def __init__(self, glyph=None):
@@ -402,7 +406,7 @@ flFIXED = 12288
 
 _flToRFSegmentDict = {	flMOVE		:	MOVE,
 				flLINE		:	LINE,
-				flCURVE	:	CURVE,
+				flCURVE :	CURVE,
 				flOFFCURVE	:	OFFCURVE
 			}
 
@@ -448,7 +452,7 @@ def CurrentGlyph():
 			break
 	xx =  currentFont[glyphName]
 	#print "objectsFL.CurrentGlyph parent for %d"% id(xx), xx.getParent()
- 	return xx
+	return xx
 	
 def OpenFont(path=None, note=None):
 	"""Open a font from a path."""
@@ -468,8 +472,10 @@ def NewFont(familyName=None, styleName=None):
 	f = Font()
 	fl.Add(f)
 	rf = RFont(f)
-	rf.info.familyName = familyName
-	rf.info.styleName = styleName
+	if familyName is not None:
+		rf.info.familyName = familyName
+	if styleName is not None:
+		rf.info.styleName = styleName
 	return rf
 
 def AllFonts():
@@ -921,7 +927,7 @@ class RFont(BaseFont):
 		"""Remove a horizontal guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getHGuides():
-			if  (g.position, g.angle) == pos:
+			if	(g.position, g.angle) == pos:
 				del self._object.hguides[g.index]
 				break
 				
@@ -929,7 +935,7 @@ class RFont(BaseFont):
 		"""Remove a vertical guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getVGuides():
-			if  (g.position, g.angle) == pos:
+			if	(g.position, g.angle) == pos:
 				del self._object.vguides[g.index]
 				break
 
@@ -953,9 +959,9 @@ class RFont(BaseFont):
 		'pctype1'	:	PC Type 1 font (binary/PFB)
 		'pcmm'		:	PC MultipleMaster font (PFB)
 		'pctype1ascii'	:	PC Type 1 font (ASCII/PFA)
-		'pcmmascii'	:	PC MultipleMaster font (ASCII/PFA)
-		'unixascii'	:	UNIX ASCII font (ASCII/PFA)
-		'mactype1'	:	Mac Type 1 font (generates suitcase  and LWFN file)
+		'pcmmascii' :	PC MultipleMaster font (ASCII/PFA)
+		'unixascii' :	UNIX ASCII font (ASCII/PFA)
+		'mactype1'	:	Mac Type 1 font (generates suitcase	 and LWFN file)
 		'otfcff'		:	PS OpenType (CFF-based) font (OTF)
 		'otfttf'		:	PC TrueType/TT OpenType font (TTF)
 		'macttf'	:	Mac TrueType font (generates suitcase)
@@ -1493,7 +1499,7 @@ class RGlyph(BaseGlyph):
 		"""Remove a horizontal guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getHGuides():
-			if  (g.position, g.angle) == pos:
+			if	(g.position, g.angle) == pos:
 				del self._object.hguides[g.index]
 				break
 				
@@ -1501,7 +1507,7 @@ class RGlyph(BaseGlyph):
 		"""Remove a vertical guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getVGuides():
-			if  (g.position, g.angle) == pos:
+			if	(g.position, g.angle) == pos:
 				del self._object.vguides[g.index]
 				break
 
@@ -1775,7 +1781,7 @@ class RContour(BaseContour):
 		
 	def insertSegment(self, index, segmentType, points, smooth=False):
 		"""insert a seggment into the contour"""
-		# do a  qcurve insertion
+		# do a	qcurve insertion
 		if segmentType == QCURVE:
 			count = 0
 			for point in points[:-1]:
@@ -2132,7 +2138,7 @@ class RComponent(BaseComponent):
 
 	def __init__(self, flComponent, index):
 		BaseComponent.__init__(self)
-		self._object =  flComponent
+		self._object =	flComponent
 		self._index=index
 		
 	def _get_index(self):
@@ -2187,7 +2193,7 @@ class RAnchor(BaseAnchor):
 
 	def __init__(self, flAnchor, index):
 		BaseAnchor.__init__(self)
-		self._object =  flAnchor
+		self._object =	flAnchor
 		self._index = index
 	
 	def _get_y(self):
@@ -2574,398 +2580,262 @@ class RLib(BaseLib):
 		self._stashLib()
 		return i
 
-			
+
+def _infoMapDict(**kwargs):
+	default = dict(
+		nakedAttribute=None,
+		type=None,
+		requiresSetNum=False,
+		masterSpecific=False,
+		libLocation=None,
+		specialGetSet=False
+	)
+	default.update(kwargs)
+	return default
+
+def _flipDict(d):
+	f = {}
+	for k, v in d.items():
+		f[v] = k
+	return f
+
+_postscriptWindowsCharacterSet_fromFL = {
+	0   : 1,
+	1   : 2,
+	2   : 3,
+	77  : 4,
+	128 : 5,
+	129 : 6,
+	130 : 7,
+	134 : 8,
+	136 : 9,
+	161 : 10,
+	162 : 11,
+	163 : 12,
+	177 : 13,
+	178 : 14,
+	186 : 15,
+	200 : 16,
+	204 : 17,
+	222 : 18,
+	238 : 19,
+	255 : 20,
+}
+_postscriptWindowsCharacterSet_toFL = _flipDict(_postscriptWindowsCharacterSet_toFL)
+
 class RInfo(BaseInfo):
-	
+
 	"""RoboFab wrapper for FL Font Info"""
-	
+
 	_title = "FLInfo"
-	
+
+	_ufoToFLAttrMapping = {
+		"familyName"							: _infoMapDict(valueType=str, nakedAttribute="family_name"),
+		"styleName"								: _infoMapDict(valueType=str, nakedAttribute="style_name"),
+		"styleMapFamilyName"					: _infoMapDict(valueType=str, nakedAttribute="menu_name"),
+		"styleMapStyleName"						: _infoMapDict(valueType=str, nakedAttribute="font_style"),
+		"versionMajor"							: _infoMapDict(valueType=int, nakedAttribute="version_major"),
+		"versionMinor"							: _infoMapDict(valueType=int, nakedAttribute="version_minor"),
+		"copyright"								: _infoMapDict(valueType=str, nakedAttribute="copyright"),
+		"trademark"								: _infoMapDict(valueType=str, nakedAttribute="trademark"),
+		"unitsPerEm"							: _infoMapDict(valueType=int, nakedAttribute="upm"),
+		"descender"								: _infoMapDict(valueType=int, nakedAttribute="descender", masterSpecific=True),
+		"xHeight"								: _infoMapDict(valueType=int, nakedAttribute="x_height", masterSpecific=True),
+		"capHeight"								: _infoMapDict(valueType=int, nakedAttribute="cap_height", masterSpecific=True),
+		"ascender"								: _infoMapDict(valueType=int, nakedAttribute="ascender", masterSpecific=True),
+		"italicAngle"							: _infoMapDict(valueType=float, nakedAttribute="italic_angle"),
+		"note"									: _infoMapDict(valueType=str, nakedAttribute="note"),
+		"openTypeHeadCreated"					: _infoMapDict(valueType=str, nakedAttribute="ttinfo.head_creation", specialGetSet=True),
+		"openTypeHeadLowestRecPPEM"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.head_lowest_rec_ppem"),
+		"openTypeHeadFlags"						: _infoMapDict(valueType="intList", nakedAttribute="ttinfo.head_flags", specialGetSet=True),
+		"openTypeHheaAscender"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_ascender"),
+		"openTypeHheaDescender"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_descender"),
+		"openTypeHheaLineGap"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_line_gap"),
+		"openTypeHheaCaretSlopeRise"			: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeHheaCaretSlopeRun"				: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeHheaCaretOffset"				: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeNameDesigner"					: _infoMapDict(valueType=str, nakedAttribute="designer"),
+		"openTypeNameDesignerURL"				: _infoMapDict(valueType=str, nakedAttribute="designer_url"),
+		"openTypeNameManufacturer"				: _infoMapDict(valueType=str, nakedAttribute="source"),
+		"openTypeNameManufacturerURL"			: _infoMapDict(valueType=str, nakedAttribute="vendor_url"),
+		"openTypeNameLicense"					: _infoMapDict(valueType=str, nakedAttribute="license"),
+		"openTypeNameLicenseURL"				: _infoMapDict(valueType=str, nakedAttribute="license_url"),
+		"openTypeNameVersion"					: _infoMapDict(valueType=str, nakedAttribute="tt_version"),
+		"openTypeNameUniqueID"					: _infoMapDict(valueType=str, nakedAttribute="tt_u_id"),
+		"openTypeNameDescription"				: _infoMapDict(valueType=str, nakedAttribute="notice"),
+		"openTypeNamePreferredFamilyName"		: _infoMapDict(valueType=str, nakedAttribute="pref_family_name"),
+		"openTypeNamePreferredSubfamilyName"	: _infoMapDict(valueType=str, nakedAttribute="pref_style_name"),
+		"openTypeNameCompatibleFullName"		: _infoMapDict(valueType=str, nakedAttribute="mac_compatible"),
+		"openTypeNameSampleText"				: _infoMapDict(valueType=str, nakedAttribute=None),
+		"openTypeNameWWSFamilyName"				: _infoMapDict(valueType=str, nakedAttribute=None),
+		"openTypeNameWWSSubfamilyName"			: _infoMapDict(valueType=str, nakedAttribute=None),
+		"openTypeOS2WidthClass"					: _infoMapDict(valueType=int, nakedAttribute="width", specialGetSet=True),
+		"openTypeOS2WeightClass"				: _infoMapDict(valueType=int, nakedAttribute="weight_code"),
+		"openTypeOS2Selection"					: _infoMapDict(valueType="intList", nakedAttribute="ttinfo.os2_fs_selection", specialGetSet=True),
+		"openTypeOS2VendorID"					: _infoMapDict(valueType=str, nakedAttribute="vendor"),
+		"openTypeOS2Panose"						: _infoMapDict(valueType="intList", nakedAttribute="panose", masterSpecific=True),
+		"openTypeOS2UnicodeRanges"				: _infoMapDict(valueType="intList", nakedAttribute="unicoderanges"),
+		"openTypeOS2CodePageRanges"				: _infoMapDict(valueType="intList", nakedAttribute="codepages"),
+		"openTypeOS2TypoAscender"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_s_typo_ascender"),
+		"openTypeOS2TypoDescender"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_s_typo_descender"),
+		"openTypeOS2TypoLineGap"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_s_typo_line_gap"),
+		"openTypeOS2WinAscent"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_us_win_ascent"),
+		"openTypeOS2WinDescent"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_us_win_descent"),
+		"openTypeOS2Type"						: _infoMapDict(valueType="intList", nakedAttribute="ttinfo.os2_fs_type", specialGetSet=True),
+		"openTypeOS2SubscriptXSize"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_subscript_x_size"),
+		"openTypeOS2SubscriptYSize"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_subscript_y_size"),
+		"openTypeOS2SubscriptXOffset"			: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_subscript_x_offset"),
+		"openTypeOS2SubscriptYOffset"			: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_subscript_y_offset"),
+		"openTypeOS2SuperscriptXSize"			: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_superscript_x_size"),
+		"openTypeOS2SuperscriptYSize"			: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_superscript_y_size"),
+		"openTypeOS2SuperscriptXOffset"			: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_superscript_x_offset"),
+		"openTypeOS2SuperscriptYOffset"			: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_superscript_y_offset"),
+		"openTypeOS2StrikeoutSize"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_strikeout_size"),
+		"openTypeOS2StrikeoutPosition"			: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_strikeout_position"),
+		"openTypeVheaVertTypoAscender"			: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeVheaVertTypoDescender"			: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeVheaVertTypoLineGap"			: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeVheaCaretSlopeRise"			: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeVheaCaretSlopeRun"				: _infoMapDict(valueType=int, nakedAttribute=None),
+		"openTypeVheaCaretOffset"				: _infoMapDict(valueType=int, nakedAttribute=None),
+		"postscriptFontName"					: _infoMapDict(valueType=str, nakedAttribute="font_name"),
+		"postscriptFullName"					: _infoMapDict(valueType=str, nakedAttribute="full_name"),
+		"postscriptSlantAngle"					: _infoMapDict(valueType=float, nakedAttribute="slant_angle"),
+		"postscriptUniqueID"					: _infoMapDict(valueType=int, nakedAttribute="unique_id"),
+		"postscriptUnderlineThickness"			: _infoMapDict(valueType=int, nakedAttribute="underline_position"),
+		"postscriptUnderlinePosition"			: _infoMapDict(valueType=int, nakedAttribute="underline_thickness"),
+		"postscriptIsFixedPitch"				: _infoMapDict(valueType=bool, nakedAttribute="is_fixed_pitch"),
+		"postscriptBlueValues"					: _infoMapDict(valueType="intList", nakedAttribute="blue_values", masterSpecific=True, requiresSetNum=True),
+		"postscriptOtherBlues"					: _infoMapDict(valueType="intList", nakedAttribute="other_blues", masterSpecific=True, requiresSetNum=True),
+		"postscriptFamilyBlues"					: _infoMapDict(valueType="intList", nakedAttribute="family_blues", masterSpecific=True, requiresSetNum=True),
+		"postscriptFamilyOtherBlues"			: _infoMapDict(valueType="intList", nakedAttribute="family_other_blues", masterSpecific=True, requiresSetNum=True),
+		"postscriptStemSnapH"					: _infoMapDict(valueType="intList", nakedAttribute="stem_snap_h", masterSpecific=True, requiresSetNum=True),
+		"postscriptStemSnapV"					: _infoMapDict(valueType="intList", nakedAttribute="stem_snap_v", masterSpecific=True, requiresSetNum=True),
+		"postscriptBlueFuzz"					: _infoMapDict(valueType=int, nakedAttribute="blue_fuzz", masterSpecific=True),
+		"postscriptBlueShift"					: _infoMapDict(valueType=int, nakedAttribute="blue_shift", masterSpecific=True),
+		"postscriptBlueScale"					: _infoMapDict(valueType=float, nakedAttribute="blue_scale", masterSpecific=True),
+		"postscriptForceBold"					: _infoMapDict(valueType=bool, nakedAttribute="force_bold", masterSpecific=True),
+		"postscriptDefaultWidthX"				: _infoMapDict(valueType=int, nakedAttribute="default_width", masterSpecific=True),
+		"postscriptNominalWidthX"				: _infoMapDict(valueType=int, nakedAttribute=None),
+		"postscriptWeightName"					: _infoMapDict(valueType=str, nakedAttribute="weight"),
+		"postscriptDefaultCharacter"			: _infoMapDict(valueType=str, nakedAttribute="default_character"),
+		"postscriptWindowsCharacterSet"			: _infoMapDict(valueType=int, nakedAttribute="ms_charset", specialGetSet=True),
+		"macintoshFONDFamilyID"					: _infoMapDict(valueType=str, nakedAttribute="fond_id"),
+		"macintoshFONDName"						: _infoMapDict(valueType=int, nakedAttribute="apple_name"),
+	}
+
 	def __init__(self, font):
 		BaseInfo.__init__(self)
 		self._object = font
-	
-	def _get_familyName(self):
-		return self._object.family_name
 
-	def _set_familyName(self, value):
-		self._object.family_name = value
+	def _environmentSetAttr(self, attr, value):
+		# get the attribute data
+		data = self._ufoToFLAttrMapping[attr]
+		flAttr = data["nakedAttribute"]
+		valueType = data["valueType"]
+		masterSpecific = data["masterSpecific"]
+		requiresSetNum = data["requiresSetNum"]
+		specialGetSet = data["specialGetSet"]
+		# warn about setting attributes not supported by FL
+		if flAttr is None:
+			warn("The attribute %s is not supported by FontLab." % attr)
+			return
+		# skip special conversion for now
+		if specialGetSet:
+			warn("Converting %s to FontLab values is not yet supported." % attr)
+			return
+		# make sure that the value is the proper type for FL
+		if valueType == "intList":
+			value = [int(i) for i in value]
+		elif valueType == str:
+			if value is None:
+				value = ""
+			value = value.encode(LOCAL_ENCODING)
+		elif valueType == int and not isinstance(value, int):
+			value = int(round(value))
+		elif not isinstance(value, valueType):
+			value = valueType(value)
+		# set the value
+		obj = self._object
+		if len(flAttr.split(".")) > 1:
+			flAttrList = flAttr.split(".")
+			for i in flAttrList[:-1]:
+				obj = getattr(obj, i)
+			flAttr = flAttrList[-1]
+		## set the foo_num attribute if necessary
+		if requiresSetNum:
+			numAttr = flAttr + "_num"
+			setattr(obj, numAttr, len(value))
+		if masterSpecific:
+			obj = getattr(obj, flAttr)
+			obj[0] = value
+		else:
+			setattr(obj, flAttr, value)
 
-	familyName = property(_get_familyName, _set_familyName, doc="family_name")
-	
-	def _get_styleName(self):
-		return self._object.style_name
+	def _environmentGetAttr(self, attr):
+		# get the attribute data
+		data = self._ufoToFLAttrMapping[attr]
+		flAttr = data["nakedAttribute"]
+		valueType = data["valueType"]
+		masterSpecific = data["masterSpecific"]
+		specialConversion = data["specialConversion"]
+		# warn about setting attributes not supported by FL
+		if flAttr is None:
+			warn("The attribute %s is not supported by FontLab." % attr)
+			return
+		# skip special conversion for now
+		if specialGetSet:
+			warn("Converting %s to FontLab values is not yet supported." % attr)
+			return
+		# get the value
+		if len(flAttr.split(".")) > 1:
+			flAttrList = flAttr.split(".")
+			obj = self._object
+			for i in flAttrList:
+				obj = getattr(obj, i)
+			value = obj
+		else:
+			value = getattr(self._object, flAttr)
+		# grab the first master value if necessary
+		if masterSpecific:
+			value = value[0]
+		# convert if necessary
+		if valueType == "intList":
+			value = [int(i) for i in value]
+		elif valueType == str:
+			if value is None:
+				pass
+			else:
+				value = unicode(value, LOCAL_ENCODING)
+		elif not isinstance(value, valueType):
+			value = valueType(value)
+		return value
 
-	def _set_styleName(self, value):
-		self._object.style_name = value
+	def _get_openTypeHeadCreated(self):
+		value = self._object.head_creation
+		# XXX how should this be interpretted? [-981610036,0]
+		delta = value[0]
+		delta = datetime.timedelta(seconds=delta)
+		t = datetime.datetime(1904, 1, 1, 0, 0, 0) + delta
+		string = "%s-%s-%s %s:%s:%s" % (str(t.year).zfill(4), str(t.month).zfill(2), str(t.day).zfill(2), str(t.hour).zfill(2), str(t.minute).zfill(2), str(t.second).zfill(2))
+		return value[0]
 
-	styleName = property(_get_styleName, _set_styleName, doc="style_name")
-	
-	def _get_fullName(self):
-		return self._object.full_name
+	def _set_openTypeHeadCreated(self, value):
+		date, time = value.split(" ")
+		year, month, day = [int(i) for i in date.split("-")]
+		hour, minute, second = [int(i) for i in time.split(":")]
+		value = datetime.datetime(year, month, day, hour, minute, second)
+		delta = value - datetime.datetime(1904, 1, 1, 0, 0, 0)
+		seconds = delta.seconds
+		# XXX how should this be set?
 
-	def _set_fullName(self, value):
-		self._object.full_name = value
+	def _get_postscriptWindowsCharacterSet(self):
+		value = self._object.ms_charset
+		value = _postscriptWindowsCharacterSet_fromFL[value]
+		return value
 
-	fullName = property(_get_fullName, _set_fullName, doc="full_name")
-	
-	def _get_fontName(self):
-		return self._object.font_name
-
-	def _set_fontName(self, value):
-		self._object.font_name = value
-
-	fontName = property(_get_fontName, _set_fontName, doc="font_name")
-	
-	def _get_menuName(self):
-		return self._object.menu_name
-
-	def _set_menuName(self, value):
-		self._object.menu_name = value
-
-	menuName = property(_get_menuName, _set_menuName, doc="menu_name")
-
-	def _get_fondName(self):
-		return self._object.apple_name
-
-	def _set_fondName(self, value):
-		self._object.apple_name = value
-
-	fondName = property(_get_fondName, _set_fondName, doc="apple_name")
-	
-	def _get_otFamilyName(self):
-		return self._object.pref_family_name
-
-	def _set_otFamilyName(self, value):
-		self._object.pref_family_name = value
-
-	otFamilyName = property(_get_otFamilyName, _set_otFamilyName, doc="pref_family_name")
-
-	def _get_otStyleName(self):
-		return self._object.pref_style_name
-
-	def _set_otStyleName(self, value):
-		self._object.pref_style_name = value
-
-	otStyleName = property(_get_otStyleName, _set_otStyleName, doc="pref_style_name")
-	
-	def _get_otMacName(self):
-		return self._object.mac_compatible
-
-	def _set_otMacName(self, value):
-		self._object.mac_compatible = value
-
-	otMacName = property(_get_otMacName, _set_otMacName, doc="mac_compatible")
-	
-	def _get_weightValue(self):
-		return self._object.weight_code
-	
-	def _set_weightValue(self, value):
-		value = int(round(value))	# FL can't take float - 28/8/07 / evb
-		self._object.weight_code = value
-	
-	weightValue = property(_get_weightValue, _set_weightValue, doc="weight value")
-	
-	def _get_weightName(self):
-		return self._object.weight
-	
-	def _set_weightName(self, value):
-		self._object.weight = value
-	
-	weightName = property(_get_weightName, _set_weightName, doc="weight name")
-	
-	def _get_widthName(self):
-		return self._object.width
-	
-	def _set_widthName(self, value):
-		self._object.width = value
-	
-	widthName = property(_get_widthName, _set_widthName, doc="width name")
-
-	def _get_fontStyle(self):
-		return self._object.font_style
-
-	def _set_fontStyle(self, value):
-		self._object.font_style = value
-
-	fontStyle = property(_get_fontStyle, _set_fontStyle, doc="font_style")
-	
-	def _get_msCharSet(self):
-		return self._object.ms_charset
-
-	def _set_msCharSet(self, value):
+	def _set_postscriptWindowsCharacterSet(self, value):
+		value = _postscriptWindowsCharacterSet_toFL[value]
 		self._object.ms_charset = value
 
-	msCharSet = property(_get_msCharSet, _set_msCharSet, doc="ms_charset")
-	
-	def _get_fondID(self):
-		return self._object.fond_id
 
-	def _set_fondID(self, value):
-		self._object.fond_id = value
-
-	fondID = property(_get_fondID, _set_fondID, doc="fond_id")
-	
-	def _get_uniqueID(self):
-		return self._object.unique_id
-
-	def _set_uniqueID(self, value):
-		self._object.unique_id = value
-
-	uniqueID = property(_get_uniqueID, _set_uniqueID, doc="unique_id")
-	
-	def _get_versionMajor(self):
-		return self._object.version_major
-
-	def _set_versionMajor(self, value):
-		self._object.version_major = value
-
-	versionMajor = property(_get_versionMajor, _set_versionMajor, doc="version_major")
-	
-	def _get_versionMinor(self):
-		return self._object.version_minor
-
-	def _set_versionMinor(self, value):
-		self._object.version_minor = value
-
-	versionMinor = property(_get_versionMinor, _set_versionMinor, doc="version_minor")
-	
-	def _get_year(self):
-		return self._object.year
-
-	def _set_year(self, value):
-		self._object.year = value
-
-	year = property(_get_year, _set_year, doc="year")
-	
-	def _get_note(self):
-		s = self._object.note
-		if s is None:
-			return s
-		return unicode(s, LOCAL_ENCODING)
-
-	def _set_note(self, value):
-		if value is not None:
-			value = value.encode(LOCAL_ENCODING)
-		self._object.note = value
-
-	note = property(_get_note, _set_note, doc="note")
-	
-	def _get_copyright(self):
-		s = self._object.copyright
-		if s is None:
-			return s
-		return unicode(s, LOCAL_ENCODING)
-
-	def _set_copyright(self, value):
-		if value is not None:
-			value = value.encode(LOCAL_ENCODING)
-		self._object.copyright = value
-
-	copyright = property(_get_copyright, _set_copyright, doc="copyright")
-	
-	def _get_notice(self):
-		s = self._object.notice
-		if s is None:
-			return s
-		return unicode(s, LOCAL_ENCODING)
-
-	def _set_notice(self, value):
-		if value is not None:
-			value = value.encode(LOCAL_ENCODING)
-		self._object.notice = value
-
-	notice = property(_get_notice, _set_notice, doc="notice")
-	
-	def _get_trademark(self):
-		s = self._object.trademark
-		if s is None:
-			return s
-		return unicode(s, LOCAL_ENCODING)
-
-	def _set_trademark(self, value):
-		if value is not None:
-			value = value.encode(LOCAL_ENCODING)
-		self._object.trademark = value
-
-	trademark = property(_get_trademark, _set_trademark, doc="trademark")
-	
-	def _get_license(self):
-		s = self._object.license
-		if s is None:
-			return s
-		return unicode(s, LOCAL_ENCODING)
-
-	def _set_license(self, value):
-		if value is not None:
-			value = value.encode(LOCAL_ENCODING)
-		self._object.license = value
-
-	license = property(_get_license, _set_license, doc="license")
-	
-	def _get_licenseURL(self):
-		return self._object.license_url
-
-	def _set_licenseURL(self, value):
-		self._object.license_url = value
-
-	licenseURL = property(_get_licenseURL, _set_licenseURL, doc="license_url")
-	
-	def _get_createdBy(self):
-		s = self._object.source
-		if s is None:
-			return s
-		return unicode(s, LOCAL_ENCODING)
-
-	def _set_createdBy(self, value):
-		if value is not None:
-			value = value.encode(LOCAL_ENCODING)
-		self._object.source = value
-
-	createdBy = property(_get_createdBy, _set_createdBy, doc="source")
-	
-	def _get_designer(self):
-		s = self._object.designer
-		if s is None:
-			return s
-		return unicode(s, LOCAL_ENCODING)
-
-	def _set_designer(self, value):
-		if value is not None:
-			value = value.encode(LOCAL_ENCODING)
-		self._object.designer = value
-
-	designer = property(_get_designer, _set_designer, doc="designer")
-	
-	def _get_designerURL(self):
-		return self._object.designer_url
-
-	def _set_designerURL(self, value):
-		self._object.designer_url = value
-
-	designerURL = property(_get_designerURL, _set_designerURL, doc="designer_url")
-	
-	def _get_vendorURL(self):
-		return self._object.vendor_url
-
-	def _set_vendorURL(self, value):
-		self._object.vendor_url = value
-
-	vendorURL = property(_get_vendorURL, _set_vendorURL, doc="vendor_url")
-	
-	def _get_ttVendor(self):
-		return self._object.vendor
-
-	def _set_ttVendor(self, value):
-		self._object.vendor = value
-
-	ttVendor = property(_get_ttVendor, _set_ttVendor, doc="vendor")
-	
-	def _get_ttUniqueID(self):
-		return self._object.tt_u_id
-
-	def _set_ttUniqueID(self, value):
-		self._object.tt_u_id = value
-
-	ttUniqueID = property(_get_ttUniqueID, _set_ttUniqueID, doc="tt_u_id")
-	
-	def _get_ttVersion(self):
-		return self._object.tt_version
-
-	def _set_ttVersion(self, value):
-		self._object.tt_version = value
-
-	ttVersion = property(_get_ttVersion, _set_ttVersion, doc="tt_version")
-	
-	def _get_unitsPerEm(self):
-		return self._object.upm
-		
-	def _set_unitsPerEm(self, value):
-		self._object.upm = int(round(value))
-
-	unitsPerEm = property(_get_unitsPerEm, _set_unitsPerEm, doc="")
-	
-	def _get_ascender(self):
-		return self._object.ascender[0]
-	
-	def _set_ascender(self, value):
-		value = int(round(value))
-		self._object.ascender[0] = value
-	
-	ascender = property(_get_ascender, _set_ascender, doc="ascender value")
-
-	def _get_descender(self):
-		return self._object.descender[0]
-	
-	def _set_descender(self, value):
-		value = int(round(value))
-		self._object.descender[0] = value
-		
-	descender = property(_get_descender, _set_descender, doc="descender value")
-	
-	def _get_capHeight(self):
-		return self._object.cap_height[0]
-	
-	def _set_capHeight(self, value):
-		value = int(round(value))
-		self._object.cap_height[0] = value
-		
-	capHeight = property(_get_capHeight, _set_capHeight, doc="cap height value")
-
-	def _get_xHeight(self):
-		return self._object.x_height[0]
-		
-	def _set_xHeight(self, value):
-		value = int(round(value))
-		self._object.x_height[0] = value
-		
-	xHeight = property(_get_xHeight, _set_xHeight, doc="x height value")
-
-	def _get_defaultWidth(self):
-		return self._object.default_width[0]
-	
-	def _set_defaultWidth(self, value):
-		value = int(round(value))
-		self._object.default_width[0] = value	
-
-	defaultWidth = property(_get_defaultWidth, _set_defaultWidth, doc="default width value")
-	
-	def _get_italicAngle(self):
-		return self._object.italic_angle
-
-	def _set_italicAngle(self, value):
-		try:
-			self._object.italic_angle = float(value)
-		except TypeError:
-			print "robofab.objects.objectsFL: can't set italic angle, possibly a FontLab API limitation"
-
-	italicAngle = property(_get_italicAngle, _set_italicAngle, doc="italic_angle")
-	
-	def _get_slantAngle(self):
-		return self._object.slant_angle
-
-	def _set_slantAngle(self, value):
-		try:
-			self._object.slant_angle = float(value)
-		except TypeError:
-			print "robofab.objects.objectsFL: can't set slant angle, possibly a FontLab API limitation"
-
-	slantAngle = property(_get_slantAngle, _set_slantAngle, doc="slant_angle")
-	
-	#is this still needed?
-	def _get_full_name(self):
-		return self._object.full_name
-
-	def _set_full_name(self, value):
-		self._object.full_name = value
-
-	full_name = property(_get_full_name, _set_full_name, doc="FL: full_name")
-	
-	#is this still needed?
-	def _get_ms_charset(self):
-		return self._object.ms_charset
-
-	def _set_ms_charset(self, value):
-		self._object.ms_charset = value
-
-	ms_charset = property(_get_ms_charset, _set_ms_charset, doc="FL: ms_charset")

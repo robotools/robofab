@@ -1,11 +1,6 @@
 """UFO implementation for the objects as used by FontLab 4.5 and higher"""
 
-from FL import *
-
-import os
-from warnings import warn
-import datetime
-from StringIO import StringIO
+from FL import *	
 
 from robofab.tools.toolsFL import GlyphIndexTable,\
 		AllFonts, NewGlyph
@@ -18,8 +13,12 @@ from robofab.objects.objectsBase import BaseFont, BaseGlyph, BaseContour, BaseSe
 from fontTools.misc import arrayTools
 from robofab.pens.flPen import FLPointPen
 from robofab import RoboFabError
+import os
 from robofab.plistlib import Data, Dict, readPlist, writePlist
-from robofab import ufoLib
+from StringIO import StringIO
+import ufoLib
+from warnings import warn
+import datetime
 
 # local encoding
 if os.name in ["mac", "posix"]:
@@ -63,7 +62,6 @@ _flGenerateTypes ={	PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PF
 			MAC_TT_DFONT	:	(ftMACTRUETYPE_DFONT,	'dfont'),	# Mac TrueType font (generates suitcase with resources in data fork) 
 			}
 
-
 ## FL Hint stuff
 # this should not be referenced outside of this module
 # since we may be changing the way this works in the future.
@@ -90,7 +88,7 @@ _flGenerateTypes ={	PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PF
 
 	blue_values_num(integer)             - number of defined blue values
 	blue_values[integer[integer]]        - two-dimentional array of BlueValues
-	                                      master index is top-level index
+                                         master index is top-level index
 
 	other_blues_num(integer)             - number of defined OtherBlues values
 	other_blues[integer[integer]]        - two-dimentional array of OtherBlues
@@ -113,7 +111,7 @@ _flGenerateTypes ={	PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PF
  """
 
 class PostScriptFontHintValues(BasePostScriptFontHintValues):
-	""" Wrapper for font-level PostScript hinting information for FontLab.
+	"""	Wrapper for font-level PostScript hinting information for FontLab.
 		Blues values, stem values. 
 	"""
 	def __init__(self, font=None, impliedMasterIndex=0):
@@ -229,7 +227,7 @@ class PostScriptFontHintValues(BasePostScriptFontHintValues):
 			
 
 class PostScriptGlyphHintValues(BasePostScriptGlyphHintValues):
-	""" Wrapper for glyph-level PostScript hinting information for FontLab.
+	"""	Wrapper for glyph-level PostScript hinting information for FontLab.
 		vStems, hStems.
 	"""
 	def __init__(self, glyph=None):
@@ -393,7 +391,7 @@ def _dictHintsToGlyph(glyph, aDict):
 			glyph.replace_table.append(Replace(d['type'], d['index']))
 	
 # FL Node Types
-flMOVE = 17
+flMOVE = 17			
 flLINE = 1
 flCURVE = 35
 flOFFCURVE = 65
@@ -405,11 +403,10 @@ flSMOOTH = 4096
 flFIXED = 12288
 
 
-_flToRFSegmentDict = {
-			flMOVE		:	MOVE,
-			flLINE		:	LINE,
-			flCURVE :	CURVE,
-			flOFFCURVE	:	OFFCURVE
+_flToRFSegmentDict = {	flMOVE		:	MOVE,
+				flLINE		:	LINE,
+				flCURVE	:	CURVE,
+				flOFFCURVE	:	OFFCURVE
 			}
 
 _rfToFLSegmentDict = {}
@@ -454,7 +451,7 @@ def CurrentGlyph():
 			break
 	xx =  currentFont[glyphName]
 	#print "objectsFL.CurrentGlyph parent for %d"% id(xx), xx.getParent()
-	return xx
+ 	return xx
 	
 def OpenFont(path=None, note=None):
 	"""Open a font from a path."""
@@ -929,7 +926,7 @@ class RFont(BaseFont):
 		"""Remove a horizontal guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getHGuides():
-			if	(g.position, g.angle) == pos:
+			if  (g.position, g.angle) == pos:
 				del self._object.hguides[g.index]
 				break
 				
@@ -937,7 +934,7 @@ class RFont(BaseFont):
 		"""Remove a vertical guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getVGuides():
-			if	(g.position, g.angle) == pos:
+			if  (g.position, g.angle) == pos:
 				del self._object.vguides[g.index]
 				break
 
@@ -961,9 +958,9 @@ class RFont(BaseFont):
 		'pctype1'	:	PC Type 1 font (binary/PFB)
 		'pcmm'		:	PC MultipleMaster font (PFB)
 		'pctype1ascii'	:	PC Type 1 font (ASCII/PFA)
-		'pcmmascii' :	PC MultipleMaster font (ASCII/PFA)
-		'unixascii' :	UNIX ASCII font (ASCII/PFA)
-		'mactype1'	:	Mac Type 1 font (generates suitcase	 and LWFN file)
+		'pcmmascii'	:	PC MultipleMaster font (ASCII/PFA)
+		'unixascii'	:	UNIX ASCII font (ASCII/PFA)
+		'mactype1'	:	Mac Type 1 font (generates suitcase  and LWFN file)
 		'otfcff'		:	PS OpenType (CFF-based) font (OTF)
 		'otfttf'		:	PC TrueType/TT OpenType font (TTF)
 		'macttf'	:	Mac TrueType font (generates suitcase)
@@ -1501,7 +1498,7 @@ class RGlyph(BaseGlyph):
 		"""Remove a horizontal guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getHGuides():
-			if	(g.position, g.angle) == pos:
+			if  (g.position, g.angle) == pos:
 				del self._object.hguides[g.index]
 				break
 				
@@ -1509,7 +1506,7 @@ class RGlyph(BaseGlyph):
 		"""Remove a vertical guide."""
 		pos = (guide.position, guide.angle)
 		for g in self.getVGuides():
-			if	(g.position, g.angle) == pos:
+			if  (g.position, g.angle) == pos:
 				del self._object.vguides[g.index]
 				break
 
@@ -1783,7 +1780,7 @@ class RContour(BaseContour):
 		
 	def insertSegment(self, index, segmentType, points, smooth=False):
 		"""insert a seggment into the contour"""
-		# do a	qcurve insertion
+		# do a  qcurve insertion
 		if segmentType == QCURVE:
 			count = 0
 			for point in points[:-1]:
@@ -2140,7 +2137,7 @@ class RComponent(BaseComponent):
 
 	def __init__(self, flComponent, index):
 		BaseComponent.__init__(self)
-		self._object =	flComponent
+		self._object =  flComponent
 		self._index=index
 		
 	def _get_index(self):
@@ -2195,7 +2192,7 @@ class RAnchor(BaseAnchor):
 
 	def __init__(self, flAnchor, index):
 		BaseAnchor.__init__(self)
-		self._object =	flAnchor
+		self._object =  flAnchor
 		self._index = index
 	
 	def _get_y(self):
@@ -2896,5 +2893,3 @@ class RInfo(BaseInfo):
 	def _set_postscriptWindowsCharacterSet(self, value):
 		value = _postscriptWindowsCharacterSet_toFL[value]
 		self._object.ms_charset = value
-
-

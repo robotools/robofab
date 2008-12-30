@@ -2885,12 +2885,20 @@ class BaseGuide(RBaseObject):
 
 class BaseInfo(RBaseObject):
 
-	_baseAttributes = ["_object", "changed", "selected"]
+	_baseAttributes = ["_object", "changed", "selected", "getParent"]
 	_deprecatedAttributes = ufoLib.deprecatedFontInfoAttributesVersion2
 	_infoAttributes = ufoLib.fontInfoAttributesVersion2
 	# subclasses may define a list of environment
 	# specific attributes that can be retrieved or set.
 	_environmentAttributes = []
+	# subclasses may define a list of attributes
+	# that should not follow the standard get/set
+	# order provided by __setattr__ and __getattr__.
+	# for these attributes, the environment specific
+	# set and get methods must handle this value
+	# without any pre-call validation.
+	# (yeah. this is because of some FontLab dumbness.)
+	_environmentOverrides = []
 
 	def __setattr__(self, attr, value):
 		# check to see if the attribute has been
@@ -2928,6 +2936,8 @@ class BaseInfo(RBaseObject):
 	# 	pass
 
 	def __getattr__(self, attr):
+		if attr in self._environmentOverrides:
+			return self._environmentGetAttr(attr)
 		# check to see if the attribute has been
 		# deprecated. if so, warn the caller and
 		# flag the value as needing conversion.

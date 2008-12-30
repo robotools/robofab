@@ -1,11 +1,11 @@
 """UFO implementation for the objects as used by FontLab 4.5 and higher"""
 
+from FL import *
+
 import os
 from warnings import warn
 import datetime
 from StringIO import StringIO
-
-from FL import *
 
 from robofab.tools.toolsFL import GlyphIndexTable,\
 		AllFonts, NewGlyph
@@ -51,7 +51,7 @@ MAC_TT_DFONT = 'macttdfont'
 
 # doc for these functions taken from: http://dev.fontlab.net/flpydoc/
 #			internal name			(FontLab name,		extension)
-_flGenerateTypes ={ PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PFB)
+_flGenerateTypes ={	PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PFB)
 			PC_MM		:	(ftTYPE1_MM,		'mm'),		# PC MultipleMaster font (PFB)
 			PC_TYPE1_ASCII	:	(ftTYPE1ASCII,		'pfa'),		# PC Type 1 font (ASCII/PFA)
 			PC_MM_ASCII		:	(ftTYPE1ASCII_MM,		'mm'),		# PC MultipleMaster font (ASCII/PFA)
@@ -62,6 +62,7 @@ _flGenerateTypes ={ PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PF
 			MAC_TT		:	(ftMACTRUETYPE,		'ttf'),		# Mac TrueType font (generates suitcase)
 			MAC_TT_DFONT	:	(ftMACTRUETYPE_DFONT,	'dfont'),	# Mac TrueType font (generates suitcase with resources in data fork) 
 			}
+
 
 ## FL Hint stuff
 # this should not be referenced outside of this module
@@ -87,24 +88,24 @@ _flGenerateTypes ={ PC_TYPE1		:	(ftTYPE1,			'pfb'),		# PC Type 1 font (binary/PF
 	blue_scale
 	blue_shift
 
-	blue_values_num(integer)			 - number of defined blue values
-	blue_values[integer[integer]]		 - two-dimentional array of BlueValues
-										 master index is top-level index
+	blue_values_num(integer)             - number of defined blue values
+	blue_values[integer[integer]]        - two-dimentional array of BlueValues
+	                                      master index is top-level index
 
-	other_blues_num(integer)			 - number of defined OtherBlues values
-	other_blues[integer[integer]]		 - two-dimentional array of OtherBlues
-										   master index is top-level index
+	other_blues_num(integer)             - number of defined OtherBlues values
+	other_blues[integer[integer]]        - two-dimentional array of OtherBlues
+	                                       master index is top-level index
 
-	family_blues_num(integer)			 - number of FamilyBlues records
-	family_blues[integer[integer]]		 - two-dimentional array of FamilyBlues
-										   master index is top-level index
+	family_blues_num(integer)            - number of FamilyBlues records
+	family_blues[integer[integer]]       - two-dimentional array of FamilyBlues
+	                                       master index is top-level index
 
-	family_other_blues_num(integer)		 - number of FamilyOtherBlues records
+	family_other_blues_num(integer)      - number of FamilyOtherBlues records
 	family_other_blues[integer[integer]] - two-dimentional array of FamilyOtherBlues
-										   master index is top-level index
+	                                       master index is top-level index
 
-	force_bold[integer]					 - list of Force Bold values, one for 
-										   each master
+	force_bold[integer]                  - list of Force Bold values, one for 
+	                                       each master
 	stem_snap_h_num(integer)
 	stem_snap_h
 	stem_snap_v_num(integer)
@@ -392,7 +393,7 @@ def _dictHintsToGlyph(glyph, aDict):
 			glyph.replace_table.append(Replace(d['type'], d['index']))
 	
 # FL Node Types
-flMOVE = 17			
+flMOVE = 17
 flLINE = 1
 flCURVE = 35
 flOFFCURVE = 65
@@ -404,10 +405,11 @@ flSMOOTH = 4096
 flFIXED = 12288
 
 
-_flToRFSegmentDict = {	flMOVE		:	MOVE,
-				flLINE		:	LINE,
-				flCURVE :	CURVE,
-				flOFFCURVE	:	OFFCURVE
+_flToRFSegmentDict = {
+			flMOVE		:	MOVE,
+			flLINE		:	LINE,
+			flCURVE :	CURVE,
+			flOFFCURVE	:	OFFCURVE
 			}
 
 _rfToFLSegmentDict = {}
@@ -2623,6 +2625,28 @@ _postscriptWindowsCharacterSet_fromFL = {
 }
 _postscriptWindowsCharacterSet_toFL = _flipDict(_postscriptWindowsCharacterSet_toFL)
 
+_openTypeOS2Type_toFL = {
+	1 : 0x0002,
+	2 : 0x0004,
+	3 : 0x0008,
+	8 : 0x0100,
+	9 : 0x0200,
+}
+_openTypeOS2Type_fromFL = _flipDict(_openTypeOS2Type_toFL)
+
+_openTypeOS2WidthClass_fromFL = {
+	"Ultra-condensed" : 1,
+	"Extra-condensed" : 2,
+	"Condensed"		  : 3,
+	"Semi-condensed"  : 4,
+	"Medium (normal)" : 5,
+	"Semi-expanded"	  : 6,
+	"Expanded"		  : 7,
+	"Extra-expanded"  : 8,
+	"Ultra-expanded"  : 9,
+}
+_openTypeOS2Type_toFL = _flipDict(_openTypeOS2WidthClass_fromFL)
+
 class RInfo(BaseInfo):
 
 	"""RoboFab wrapper for FL Font Info"""
@@ -2647,7 +2671,7 @@ class RInfo(BaseInfo):
 		"note"									: _infoMapDict(valueType=str, nakedAttribute="note"),
 		"openTypeHeadCreated"					: _infoMapDict(valueType=str, nakedAttribute="ttinfo.head_creation", specialGetSet=True),
 		"openTypeHeadLowestRecPPEM"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.head_lowest_rec_ppem"),
-		"openTypeHeadFlags"						: _infoMapDict(valueType="intList", nakedAttribute="ttinfo.head_flags", specialGetSet=True),
+		"openTypeHeadFlags"						: _infoMapDict(valueType="intList", nakedAttribute=None), # There is an attribute (ttinfo.head_flags), but no user interface.
 		"openTypeHheaAscender"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_ascender"),
 		"openTypeHheaDescender"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_descender"),
 		"openTypeHheaLineGap"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_line_gap"),
@@ -2669,9 +2693,9 @@ class RInfo(BaseInfo):
 		"openTypeNameSampleText"				: _infoMapDict(valueType=str, nakedAttribute=None),
 		"openTypeNameWWSFamilyName"				: _infoMapDict(valueType=str, nakedAttribute=None),
 		"openTypeNameWWSSubfamilyName"			: _infoMapDict(valueType=str, nakedAttribute=None),
-		"openTypeOS2WidthClass"					: _infoMapDict(valueType=int, nakedAttribute="width", specialGetSet=True),
+		"openTypeOS2WidthClass"					: _infoMapDict(valueType=int, nakedAttribute="width"),
 		"openTypeOS2WeightClass"				: _infoMapDict(valueType=int, nakedAttribute="weight_code"),
-		"openTypeOS2Selection"					: _infoMapDict(valueType="intList", nakedAttribute="ttinfo.os2_fs_selection", specialGetSet=True),
+		"openTypeOS2Selection"					: _infoMapDict(valueType="intList", nakedAttribute=None), # ttinfo.os2_fs_selection only returns 0
 		"openTypeOS2VendorID"					: _infoMapDict(valueType=str, nakedAttribute="vendor"),
 		"openTypeOS2Panose"						: _infoMapDict(valueType="intList", nakedAttribute="panose", masterSpecific=True),
 		"openTypeOS2UnicodeRanges"				: _infoMapDict(valueType="intList", nakedAttribute="unicoderanges"),
@@ -2723,12 +2747,25 @@ class RInfo(BaseInfo):
 		"macintoshFONDFamilyID"					: _infoMapDict(valueType=str, nakedAttribute="fond_id"),
 		"macintoshFONDName"						: _infoMapDict(valueType=int, nakedAttribute="apple_name"),
 	}
+	# ugh
+	_environmentOverrides = ["width", "openTypeOS2WidthClass"]
 
 	def __init__(self, font):
 		BaseInfo.__init__(self)
 		self._object = font
 
 	def _environmentSetAttr(self, attr, value):
+		# special fontlab workarounds
+		if attr == "width":
+			warn("The width attribute has been deprecated. Use the new openTypeOS2WidthClass attribute.", DeprecationWarning)
+			attr = "openTypeOS2WidthClass"
+		if attr == "openTypeOS2WidthClass":
+			if isinstance(value, basestring) and value not in _openTypeOS2WidthClass_toFL:
+				warn("The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification. The value will be set into the FontLab file for now." % value)
+				self._object.width = value
+			else:
+				self._object.width = _openTypeOS2WidthClass_toFL[value]
+			return
 		# get the attribute data
 		data = self._ufoToFLAttrMapping[attr]
 		flAttr = data["nakedAttribute"]
@@ -2773,6 +2810,17 @@ class RInfo(BaseInfo):
 			setattr(obj, flAttr, value)
 
 	def _environmentGetAttr(self, attr):
+		# special fontlab workarounds
+		if attr == "width":
+			warn("The width attribute has been deprecated. Use the new openTypeOS2WidthClass attribute.", DeprecationWarning)
+			attr = "openTypeOS2WidthClass"
+		if attr == "openTypeOS2WidthClass":
+			value = self._object.width
+			if value not in _openTypeOS2WidthClass_fromFL:
+				warn("The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification." % value)
+				return
+			else:
+				return _openTypeOS2WidthClass_fromFL[value]
 		# get the attribute data
 		data = self._ufoToFLAttrMapping[attr]
 		flAttr = data["nakedAttribute"]
@@ -2782,10 +2830,6 @@ class RInfo(BaseInfo):
 		# warn about setting attributes not supported by FL
 		if flAttr is None:
 			warn("The attribute %s is not supported by FontLab." % attr)
-			return
-		# skip special conversion for now
-		if specialGetSet:
-			warn("Converting %s to FontLab values is not yet supported." % attr)
 			return
 		# get the value
 		if len(flAttr.split(".")) > 1:
@@ -2828,6 +2872,21 @@ class RInfo(BaseInfo):
 		delta = value - datetime.datetime(1904, 1, 1, 0, 0, 0)
 		seconds = delta.seconds
 		# XXX how should this be set?
+
+	def _get_openTypeOS2Type(self):
+		value = self._object.ttinfo-os2_fs_type
+		intList = []
+		for bit, bitNumber in _openTypeOS2Type_fromFL.items():
+			if value & bit:
+				intList.append(bitNumber)
+		return intList
+
+	def _set_openTypeOS2Type(self, value):
+		value = 0
+		for bitNumber in value:
+			bit = _openTypeOS2Type_toFL[bitNumber]
+			value = value | bit
+		self._object.ttinfo.os2_fs_type = value
 
 	def _get_postscriptWindowsCharacterSet(self):
 		value = self._object.ms_charset

@@ -45,8 +45,10 @@ def OpenFont(path=None, note=None):
 def NewFont(familyName=None, styleName=None):
 	"""Make a new font"""
 	new = RFont()
-	new.info.familyName = familyName
-	new.info.styleName = styleName
+	if familyName is not None:
+		new.info.familyName = familyName
+	if styleName is not None:
+		new.info.styleName = styleName
 	return new
 	
 def AllFonts():

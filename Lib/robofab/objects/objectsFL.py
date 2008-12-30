@@ -16,7 +16,7 @@ from robofab import RoboFabError
 import os
 from robofab.plistlib import Data, Dict, readPlist, writePlist
 from StringIO import StringIO
-import ufoLib
+from robofab import ufoLib
 from warnings import warn
 import datetime
 
@@ -2620,7 +2620,7 @@ _postscriptWindowsCharacterSet_fromFL = {
 	238 : 19,
 	255 : 20,
 }
-_postscriptWindowsCharacterSet_toFL = _flipDict(_postscriptWindowsCharacterSet_toFL)
+_postscriptWindowsCharacterSet_toFL = _flipDict(_postscriptWindowsCharacterSet_fromFL)
 
 _openTypeOS2Type_toFL = {
 	1 : 0x0002,
@@ -2823,7 +2823,7 @@ class RInfo(BaseInfo):
 		flAttr = data["nakedAttribute"]
 		valueType = data["valueType"]
 		masterSpecific = data["masterSpecific"]
-		specialConversion = data["specialConversion"]
+		specialGetSet = data["specialGetSet"]
 		# warn about setting attributes not supported by FL
 		if flAttr is None:
 			warn("The attribute %s is not supported by FontLab." % attr)

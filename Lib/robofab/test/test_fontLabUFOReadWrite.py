@@ -132,11 +132,8 @@ class ReadUFOTestCase(unittest.TestCase):
 class WriteUFOTestCase(unittest.TestCase):
 
 	def setUpFont(self, doInfo=False, doKerning=False, doGroups=False, doLib=False, doFeatures=False):
-		#self.dstDir = tempfile.mktemp()
-		#os.mkdir(self.dstDir)
-		d = "/Users/tal/Desktop/crap"
-		number = len(os.listdir(d))
-		self.dstDir = os.path.join(d, str(number) + ".ufo")
+		self.dstDir = tempfile.mktemp()
+		os.mkdir(self.dstDir)
 		self.font = OpenFont(vfbPath)
 		self.font.writeUFO(self.dstDir, doInfo=doInfo, doKerning=doKerning, doGroups=doGroups, doLib=doLib, doFeatures=doFeatures)
 		self.font.close()

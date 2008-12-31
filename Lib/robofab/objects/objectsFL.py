@@ -2666,6 +2666,7 @@ class RInfo(BaseInfo):
 		"styleMapStyleName"						: _infoMapDict(valueType=str, nakedAttribute="font_style", specialGetSet=True),
 		"versionMajor"							: _infoMapDict(valueType=int, nakedAttribute="version_major"),
 		"versionMinor"							: _infoMapDict(valueType=int, nakedAttribute="version_minor"),
+		"year"									: _infoMapDict(valueType=int, nakedAttribute="year"),
 		"copyright"								: _infoMapDict(valueType=str, nakedAttribute="copyright"),
 		"trademark"								: _infoMapDict(valueType=str, nakedAttribute="trademark"),
 		"unitsPerEm"							: _infoMapDict(valueType=int, nakedAttribute="upm"),

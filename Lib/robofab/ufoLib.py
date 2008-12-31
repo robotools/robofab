@@ -796,6 +796,7 @@ _fontInfoAttributesVersion2ValueData = {
 	"styleMapStyleName"						: dict(type=(str, unicode), valueValidator=_fontInfoVersion2StyleMapStyleNameValidator),
 	"versionMajor"							: dict(type=int),
 	"versionMinor"							: dict(type=int),
+	"year"									: dict(type=int),
 	"copyright"								: dict(type=(str, unicode)),
 	"trademark"								: dict(type=(str, unicode)),
 	"unitsPerEm"							: dict(type=int),

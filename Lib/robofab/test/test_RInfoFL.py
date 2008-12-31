@@ -65,13 +65,9 @@ class RInfoRFTestCase(unittest.TestCase):
 		font = NewFont()
 		infoObject = font.info
 		for attr, value in fontInfoVersion1.items():
-			if attr == "year":
-				continue
 			if attr not in ufoLib.deprecatedFontInfoAttributesVersion2:
 				setattr(infoObject, attr, value)
 		for attr, expectedValue in fontInfoVersion1.items():
-			if attr == "year":
-				continue
 			if attr not in ufoLib.deprecatedFontInfoAttributesVersion2:
 				value = getattr(infoObject, attr)
 				self.assertEqual((attr, expectedValue), (attr, value))

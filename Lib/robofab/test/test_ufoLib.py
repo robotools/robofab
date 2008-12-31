@@ -863,8 +863,6 @@ class WriteFontInfoVersion1TestCase(unittest.TestCase):
 		writer.writeInfo(infoObject)
 		writtenData = self.readPlist()
 		for attr, originalValue in fontInfoVersion1.items():
-			if attr == "year":
-				continue
 			newValue = writtenData[attr]
 			self.assertEqual(newValue, originalValue)
 

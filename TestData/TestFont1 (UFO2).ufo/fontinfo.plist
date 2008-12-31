@@ -227,6 +227,8 @@
 	<integer>0</integer>
 	<key>xHeight</key>
 	<integer>500</integer>
+	<key>year</key>
+	<integer>2008</integer>
 </dict>
 </plist>
 

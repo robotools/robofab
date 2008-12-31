@@ -99,6 +99,7 @@ fontInfoVersion2 = {
 	"styleMapStyleName"					 : "regular",
 	"versionMajor"						 : 1,
 	"versionMinor"						 : 0,
+	"year"								 : 2008,
 	"copyright"							 : "Copyright Some Foundry.",
 	"trademark"							 : "Trademark Some Foundry",
 	"unitsPerEm"						 : 1000,
@@ -201,6 +202,7 @@ expectedFontInfo1To2Conversion = {
 	"italicAngle"						: -12.5,
 	"versionMajor"						: 1,
 	"versionMinor"						: 0,
+	"year"								: 2008,
 	"copyright"							: "Copyright Some Foundry.",
 	"trademark"							: "Trademark Some Foundry",
 	"note"								: "A note.",
@@ -272,5 +274,5 @@ expectedFontInfo2To1Conversion = {
 	"uniqueID"	  	: 4000000,
 	"weightName"  	: "Medium",
 	"msCharSet"	  	: 0,
-	#"year"			: 2008 XXX
+	"year"			: 2008
 }

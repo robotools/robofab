@@ -418,6 +418,31 @@ class ReadFontInfoVersion2TestCase(unittest.TestCase):
 		self._writeInfoToPlist(info)
 		reader = UFOReader(self.dstDir)
 		self.assertRaises(UFOLibError, reader.readInfo, info=TestInfoObject())
+		# openTypeOS2FamilyClass
+		## not an int
+		info = dict(fontInfoVersion2)
+		info["openTypeOS2FamilyClass"] = [1, str(1)]
+		self._writeInfoToPlist(info)
+		reader = UFOReader(self.dstDir)
+		self.assertRaises(UFOLibError, reader.readInfo, info=TestInfoObject())
+		## too few values
+		info = dict(fontInfoVersion2)
+		info["openTypeOS2FamilyClass"] = [1]
+		self._writeInfoToPlist(info)
+		reader = UFOReader(self.dstDir)
+		self.assertRaises(UFOLibError, reader.readInfo, info=TestInfoObject())
+		## too many values
+		info = dict(fontInfoVersion2)
+		info["openTypeOS2FamilyClass"] = [1, 1, 1]
+		self._writeInfoToPlist(info)
+		reader = UFOReader(self.dstDir)
+		self.assertRaises(UFOLibError, reader.readInfo, info=TestInfoObject())
+		## out of range
+		info = dict(fontInfoVersion2)
+		info["openTypeOS2FamilyClass"] = [1, 201]
+		self._writeInfoToPlist(info)
+		reader = UFOReader(self.dstDir)
+		self.assertRaises(UFOLibError, reader.readInfo, info=TestInfoObject())
 		# openTypeOS2UnicodeRanges
 		## not an int
 		info = dict(fontInfoVersion2)
@@ -838,6 +863,8 @@ class WriteFontInfoVersion1TestCase(unittest.TestCase):
 		writer.writeInfo(infoObject)
 		writtenData = self.readPlist()
 		for attr, originalValue in fontInfoVersion1.items():
+			if attr == "year":
+				continue
 			newValue = writtenData[attr]
 			self.assertEqual(newValue, originalValue)
 
@@ -1161,6 +1188,27 @@ class WriteFontInfoVersion2TestCase(unittest.TestCase):
 		## too many values
 		infoObject = self.makeInfoObject()
 		infoObject.openTypeOS2Panose = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		writer = UFOWriter(self.dstDir)
+		self.assertRaises(UFOLibError, writer.writeInfo, info=infoObject)
+		# openTypeOS2FamilyClass
+		## not an int
+		infoObject = self.makeInfoObject()
+		infoObject.openTypeOS2FamilyClass = [0, str(1)]
+		writer = UFOWriter(self.dstDir)
+		self.assertRaises(UFOLibError, writer.writeInfo, info=infoObject)
+		## too few values
+		infoObject = self.makeInfoObject()
+		infoObject.openTypeOS2FamilyClass = [1]
+		writer = UFOWriter(self.dstDir)
+		self.assertRaises(UFOLibError, writer.writeInfo, info=infoObject)
+		## too many values
+		infoObject = self.makeInfoObject()
+		infoObject.openTypeOS2FamilyClass = [1, 1, 1]
+		writer = UFOWriter(self.dstDir)
+		self.assertRaises(UFOLibError, writer.writeInfo, info=infoObject)
+		## out of range
+		infoObject = self.makeInfoObject()
+		infoObject.openTypeOS2FamilyClass = [1, 20]
 		writer = UFOWriter(self.dstDir)
 		self.assertRaises(UFOLibError, writer.writeInfo, info=infoObject)
 		# openTypeOS2UnicodeRanges

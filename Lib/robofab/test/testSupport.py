@@ -137,6 +137,7 @@ fontInfoVersion2 = {
 	"openTypeOS2Selection"				 : [3],
 	"openTypeOS2VendorID"				 : "SOME",
 	"openTypeOS2Panose"					 : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	"openTypeOS2FamilyClass"			 : [1, 1],
 	"openTypeOS2UnicodeRanges"			 : [0, 1],
 	"openTypeOS2CodePageRanges"			 : [0, 1],
 	"openTypeOS2TypoAscender"			 : 750,

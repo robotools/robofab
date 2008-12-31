@@ -723,6 +723,21 @@ def _fontInfoVersion2OpenTypeOS2PanoseValidator(values):
 	# XXX further validation?
 	return True
 
+def _fontInfoVersion2OpenTypeOS2FamilyClassValidator(values):
+	if not isinstance(values, list):
+		return False
+	if len(values) != 2:
+		return False
+	for value in values:
+		if not isinstance(value, int):
+			return False
+	classID, subclassID = values
+	if classID < 0 or classID > 14:
+		return False
+	if subclassID < 0 or subclassID > 15:
+		return False
+	return True
+
 def _fontInfoVersion2PostscriptBluesValidator(values):
 	if not isinstance(values, list):
 		return False
@@ -819,6 +834,7 @@ _fontInfoAttributesVersion2ValueData = {
 	"openTypeOS2Selection"					: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2SelectionOptions),
 	"openTypeOS2VendorID"					: dict(type=(str, unicode)),
 	"openTypeOS2Panose"						: dict(type="integerList", valueValidator=_fontInfoVersion2OpenTypeOS2PanoseValidator),
+	"openTypeOS2FamilyClass"				: dict(type="integerList", valueValidator=_fontInfoVersion2OpenTypeOS2FamilyClassValidator),
 	"openTypeOS2UnicodeRanges"				: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2UnicodeRangesOptions),
 	"openTypeOS2CodePageRanges"				: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2CodePageRangesOptions),
 	"openTypeOS2TypoAscender"				: dict(type=int),

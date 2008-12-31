@@ -2863,8 +2863,7 @@ class RInfo(BaseInfo):
 		"macintoshFONDFamilyID"					: _infoMapDict(valueType=int, nakedAttribute="fond_id"),
 		"macintoshFONDName"						: _infoMapDict(valueType=str, nakedAttribute="apple_name"),
 	}
-	# ugh
-	_environmentOverrides = ["width", "openTypeOS2WidthClass"]
+	_environmentOverrides = ["width", "openTypeOS2WidthClass"] # ugh.
 
 	def __init__(self, font):
 		super(RInfo, self).__init__()
@@ -2877,7 +2876,7 @@ class RInfo(BaseInfo):
 			attr = "openTypeOS2WidthClass"
 		if attr == "openTypeOS2WidthClass":
 			if isinstance(value, basestring) and value not in _openTypeOS2WidthClass_toFL:
-				warn("The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification. The value will be set into the FontLab file for now." % value)
+				print "The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification. The value will be set into the FontLab file for now." % value
 				self._object.width = value
 			else:
 				self._object.width = _openTypeOS2WidthClass_toFL[value]
@@ -2891,7 +2890,7 @@ class RInfo(BaseInfo):
 		specialGetSet = data["specialGetSet"]
 		# warn about setting attributes not supported by FL
 		if flAttr is None:
-			warn("The attribute %s is not supported by FontLab." % attr)
+			print "The attribute %s is not supported by FontLab. This data will not be set." % attr
 			return
 		# make sure that the value is the proper type for FL
 		if valueType == "intList":
@@ -2940,7 +2939,7 @@ class RInfo(BaseInfo):
 		if attr == "openTypeOS2WidthClass":
 			value = self._object.width
 			if value not in _openTypeOS2WidthClass_fromFL:
-				warn("The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification." % value)
+				print "The existing openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification." % value
 				return
 			else:
 				return _openTypeOS2WidthClass_fromFL[value]
@@ -2953,7 +2952,7 @@ class RInfo(BaseInfo):
 		# warn about setting attributes not supported by FL
 		if flAttr is None:
 			if not _IN_UFO_EXPORT:
-				warn("The attribute %s is not supported by FontLab." % attr)
+				print "The attribute %s is not supported by FontLab." % attr
 			return
 		# handle special cases
 		if specialGetSet:
@@ -3017,12 +3016,13 @@ class RInfo(BaseInfo):
 		seconds = delta.seconds
 		# XXX how should this be set?
 
-	# openTypeOS2WidthClass
+	# openTypeOS2WeightClass
 
 	def _get_openTypeOS2WeightClass(self):
 		value = self._object.weight_code
 		if value == -1:
-			return None
+			value = None
+		return value
 
 	def _set_openTypeOS2WeightClass(self, value):
 		self._object.weight_code = value

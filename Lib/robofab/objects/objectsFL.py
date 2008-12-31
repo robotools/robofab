@@ -1029,12 +1029,13 @@ class RFont(BaseFont):
 		# and only some files are set to be written
 		# raise an error.
 		if os.path.exists(path):
-			reader = ufoLib.UFOReader(path)
-			existingFormatVersion = reader.formatVersion
-			if formatVersion != existingFormatVersion:
-				if False in [doInfo, doKerning, doGroups, doLib, doFeatures, set(glyphs) == set(self.keys())]:
-					Message("When overwriting an existing UFO with a different format version all files must be written.")
-					return
+			if os.path.exists(os.path.join(path, "metainfo.plist")):
+				reader = ufoLib.UFOReader(path)
+				existingFormatVersion = reader.formatVersion
+				if formatVersion != existingFormatVersion:
+					if False in [doInfo, doKerning, doGroups, doLib, doFeatures, set(glyphs) == set(self.keys())]:
+						Message("When overwriting an existing UFO with a different format version all files must be written.")
+						return
 		# the lib must be written if format version is 1
 		if not doLib and formatVersion == 1:
 			Message("The lib must be written when exporting format version 1.")
@@ -1110,7 +1111,6 @@ class RFont(BaseFont):
 					if bar and not count % 10:
 						bar.tick(count)
 					count = count + 1
-				assert None not in glyphOrder, glyphOrder
 				glyphSet.writeContents()
 		# only blindly stop if the user says to
 		except KeyboardInterrupt:

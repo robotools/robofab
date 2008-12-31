@@ -2784,7 +2784,7 @@ class RInfo(BaseInfo):
 		"ascender"								: _infoMapDict(valueType=int, nakedAttribute="ascender", masterSpecific=True),
 		"italicAngle"							: _infoMapDict(valueType=float, nakedAttribute="italic_angle"),
 		"note"									: _infoMapDict(valueType=str, nakedAttribute="note"),
-		"openTypeHeadCreated"					: _infoMapDict(valueType=str, nakedAttribute=None, specialGetSet=True), # ttinfo.head_creation has an unknown format
+		"openTypeHeadCreated"					: _infoMapDict(valueType=str, nakedAttribute=None, specialGetSet=True), # i can't figure out the ttinfo.head_creation values
 		"openTypeHeadLowestRecPPEM"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.head_lowest_rec_ppem"),
 		"openTypeHeadFlags"						: _infoMapDict(valueType="intList", nakedAttribute=None), # There is an attribute (ttinfo.head_flags), but no user interface.
 		"openTypeHheaAscender"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_ascender"),
@@ -2998,23 +2998,25 @@ class RInfo(BaseInfo):
 
 	# openTypeHeadCreated
 
+	# fontlab epoch: 1969-12-31 19:00:00
+
 	def _get_openTypeHeadCreated(self):
 		value = self._object.ttinfo.head_creation
-		# XXX how should this be interpretted? [-981610036,0]
-		delta = value[0]
-		delta = datetime.timedelta(seconds=delta)
-		t = datetime.datetime(1904, 1, 1, 0, 0, 0) + delta
+		epoch = datetime.datetime(1969, 12, 31, 19, 0, 0)
+		delta = datetime.timedelta(seconds=value[0])
+		t = epoch - delta
 		string = "%s-%s-%s %s:%s:%s" % (str(t.year).zfill(4), str(t.month).zfill(2), str(t.day).zfill(2), str(t.hour).zfill(2), str(t.minute).zfill(2), str(t.second).zfill(2))
-		return value[0]
+		return string
 
 	def _set_openTypeHeadCreated(self, value):
 		date, time = value.split(" ")
 		year, month, day = [int(i) for i in date.split("-")]
 		hour, minute, second = [int(i) for i in time.split(":")]
 		value = datetime.datetime(year, month, day, hour, minute, second)
-		delta = value - datetime.datetime(1904, 1, 1, 0, 0, 0)
+		epoch = datetime.datetime(1969, 12, 31, 19, 0, 0)
+		delta = epoch - value
 		seconds = delta.seconds
-		# XXX how should this be set?
+		self._object.ttinfo.head_creation[0] = seconds
 
 	# openTypeOS2WeightClass
 

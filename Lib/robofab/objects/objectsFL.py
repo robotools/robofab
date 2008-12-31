@@ -1143,6 +1143,103 @@ class RFont(BaseFont):
 			fontLib["org.robofab.opentype.features"] = features
 			fontLib["org.robofab.opentype.featureorder"] = order
 
+	def readUFO(self, path, doProgress=False,
+		doHints=False, doInfo=True, doKerning=True, doGroups=True, doLib=True, doFeatures=True, glyphs=None):
+		"""read a .ufo into the font"""
+		from robofab.pens.flPen import FLPointPen
+		from robofab.interface.all.dialogs import ProgressBar
+		from robofab.tools.fontlabFeatureSplitter import splitFeaturesForFontLab
+		# start up the reader
+		reader = ufoLib.UFOReader(path)
+		glyphSet = reader.getGlyphSet()
+		# get a list of glyphs that should be imported
+		if glyphs is None:
+			glyphs = glyphSet.keys()
+		# set up the progress bar
+		nonGlyphCount = [doInfo, doKerning, doGroups, doLib, doFeatures].count(True)
+		bar = None
+		if doProgress:
+			bar = ProgressBar("Importing UFO", nonGlyphCount + len(glyphs))
+		# start reading
+		try:
+			fontLib = reader.readLib()
+			# info
+			if doInfo:
+				reader.readInfo(self.info)
+				if bar:
+					bar.tick()
+			# glyphs
+			count = 1
+			glyphOrder = self._getGlyphOrderFromLib(fontLib, glyphSet)
+			for glyphName in glyphOrder:
+				if glyphName not in glyphs:
+					continue
+				glyph = self.newGlyph(glyphName, clear=True)
+				pen = FLPointPen(glyph.naked())
+				glyphSet.readGlyph(glyphName=glyphName, glyphObject=glyph, pointPen=pen)
+				if doHints:
+					hintData = glyph.lib.get(postScriptHintDataLibKey)
+					if hintData:
+						_dictHintsToGlyph(glyph.naked(), hintData)
+					# now that the hints have been extracted from the glyph
+					# there is no reason to keep the location in the lib.
+					if glyph.lib.has_key(postScriptHintDataLibKey):
+						del glyph.lib[postScriptHintDataLibKey]
+				glyph.update()
+				if bar and not count % 10:
+					bar.tick(count)
+				count = count + 1
+			# features
+			if doFeatures:
+				if reader.formatVersion == 1:
+					self._readOpenTypeFeaturesFromLib(fontLib)
+				else:
+					featureText = reader.readFeatures()
+					classes, features = splitFeaturesForFontLab(featureText)
+					naked = self.naked()
+					naked.ot_classes = classes
+					naked.features.clean()
+					for featureName, featureText in features:
+						f = Feature(featureName, featureText)
+						naked.features.append(f)
+				if bar:
+					bar.tick()
+			else:
+				# remove features stored in the lib
+				self._readOpenTypeFeaturesFromLib(fontLib, setFeatures=False)
+			# kerning
+			if doKerning:
+				self.kerning.clear()
+				self.kerning.update(reader.readKerning())
+				if bar:
+					bar.tick()
+			# groups
+			if doGroups:
+				self.groups.clear()
+				self.groups.update(reader.readGroups())
+				if bar:
+					bar.tick()
+			# hints in format version 1
+			if doHints and reader.formatVersion == 1:
+				self.psHints._loadFromLib(fontLib)
+			else:
+				# remove hint data stored in the lib
+				if fontLib.has_key(postScriptHintDataLibKey):
+					del fontLib[postScriptHintDataLibKey]
+			# lib
+			if doLib:
+				self.lib.clear()
+				self.lib.update(fontLib)
+				if bar:
+					bar.tick()
+		# only blindly stop if the user says to
+		except KeyboardInterrupt:
+			bar.close()
+			bar = None
+		# kill the bar
+		if bar:
+			bar.close()
+
 	def _getGlyphOrderFromLib(self, fontLib, glyphSet):
 		glyphOrder = fontLib.get("org.robofab.glyphOrder")
 		if glyphOrder is not None:
@@ -1161,16 +1258,17 @@ class RFont(BaseFont):
 					glyphNames.append(glyphName)
 		else:
 			glyphNames = glyphSet.keys()
-			# Sort according to unicode would be best, but is really
-			# expensive...
 			glyphNames.sort()
 		return glyphNames
 	
-	def _readOpenTypeFeaturesFromLib(self, fontLib):
+	def _readOpenTypeFeaturesFromLib(self, fontLib, setFeatures=True):
+		# setFeatures may be False. in this case, this method
+		# should only clear the data from the lib.
 		classes = fontLib.get("org.robofab.opentype.classes")
 		if classes is not None:
 			del fontLib["org.robofab.opentype.classes"]
-			self.naked().ot_classes = classes
+			if setFeatures:
+				self.naked().ot_classes = classes
 		features = fontLib.get("org.robofab.opentype.features")
 		if features is not None:
 			order = fontLib.get("org.robofab.opentype.featureorder")
@@ -1187,62 +1285,11 @@ class RFont(BaseFont):
 				oneFeature = features.get(tag)
 				if oneFeature is not None:
 					orderedFeatures.append((tag, oneFeature))
-			self.naked().features.clean()
-			for tag, src in orderedFeatures:
-				self.naked().features.append(Feature(tag, src))
-	
-	def readUFO(self, path, doProgress=False, doHints=True):
-		"""read a .ufo into the font"""
-		from robofab.ufoLib import UFOReader
-		from robofab.pens.flPen import FLPointPen
-		from robofab.interface.all.dialogs import ProgressBar
-		nonGlyphCount = 4
-		bar = None
-		u = UFOReader(path)
-		glyphSet = u.getGlyphSet()
-		fontLib = u.readLib()
-		glyphNames = self._getGlyphOrderFromLib(fontLib, glyphSet)
-		if doProgress:
-			bar = ProgressBar('Importing UFO', nonGlyphCount+len(glyphNames))
-		try:
-			u.readInfo(self.info)
-			if bar:
-				bar.tick()
-			self._readOpenTypeFeaturesFromLib(fontLib)
-			self.lib.clear()
-			self.lib = fontLib
-			if bar:
-				bar.tick()
-			count = 2
-			for glyphName in glyphNames:
-				glyph = self.newGlyph(glyphName, clear=True)
-				pen = FLPointPen(glyph.naked())
-				glyphSet.readGlyph(glyphName=glyphName, glyphObject=glyph, pointPen=pen)
-				if doHints:
-					hintData = glyph.lib.get(postScriptHintDataLibKey)
-					if hintData:
-						_dictHintsToGlyph(glyph.naked(), hintData)
-					# now that the hints have been extracted from the glyph
-					# there is no reason to keep the location in the lib.
-					if glyph.lib.has_key(postScriptHintDataLibKey):
-						del glyph.lib[postScriptHintDataLibKey]
-				glyph.update()
-				if bar and not count % 10:
-					bar.tick(count)
-				count = count + 1
-			# import postscript font hint data
-			self.psHints._loadFromLib(fontLib)
-			self.kerning.clear()
-			self.kerning.update(u.readKerning())
-			if bar:
-				bar.tick()
-			self.groups.clear()
-			self.groups = u.readGroups()
-		except KeyboardInterrupt:
-			bar.close()
-			bar = None
-		if bar:
-			bar.close()
+			if setFeatures:
+				self.naked().features.clean()
+				for tag, src in orderedFeatures:
+					self.naked().features.append(Feature(tag, src))
+
 
 
 class RGlyph(BaseGlyph):
@@ -2977,7 +3024,7 @@ class RInfo(BaseInfo):
 		if value == -1:
 			return None
 
-	def _set_openTypeOS2WinDescent(self, value):
+	def _set_openTypeOS2WeightClass(self, value):
 		self._object.weight_code = value
 
 	# openTypeOS2WinDescent

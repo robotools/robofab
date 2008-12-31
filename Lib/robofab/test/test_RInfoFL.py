@@ -21,8 +21,10 @@ class RInfoRFTestCase(unittest.TestCase):
 
 	def testVersion2UnsupportedSet(self):
 		saveStderr = sys.stderr
+		saveStdout = sys.stdout
 		tempStderr = StringIO()
 		sys.stderr = tempStderr
+		sys.stdout = tempStderr
 		font = NewFont()
 		infoObject = font.info
 		requiredWarnings = []
@@ -35,6 +37,7 @@ class RInfoRFTestCase(unittest.TestCase):
 				requiredWarnings.append((attr, s))
 		finally:
 			sys.stderr = saveStderr
+			sys.stdout = saveStdout
 		tempStderr = tempStderr.getvalue()
 		for attr, line in requiredWarnings:
 			self.assertEquals((attr, line in tempStderr), (attr, True))
@@ -42,8 +45,10 @@ class RInfoRFTestCase(unittest.TestCase):
 
 	def testVersion2UnsupportedGet(self):
 		saveStderr = sys.stderr
+		saveStdout = sys.stdout
 		tempStderr = StringIO()
 		sys.stderr = tempStderr
+		sys.stdout = tempStderr
 		font = NewFont()
 		infoObject = font.info
 		requiredWarnings = []
@@ -56,6 +61,7 @@ class RInfoRFTestCase(unittest.TestCase):
 				requiredWarnings.append((attr, s))
 		finally:
 			sys.stderr = saveStderr
+			sys.stdout = saveStdout
 		tempStderr = tempStderr.getvalue()
 		for attr, line in requiredWarnings:
 			self.assertEquals((attr, line in tempStderr), (attr, True))
@@ -75,8 +81,10 @@ class RInfoRFTestCase(unittest.TestCase):
 
 	def testVersion1DeprecationRoundTrip(self):
 		saveStderr = sys.stderr
+		saveStdout = sys.stdout
 		tempStderr = StringIO()
 		sys.stderr = tempStderr
+		sys.stdout = tempStderr
 		font = NewFont()
 		infoObject = font.info
 		requiredWarnings = []
@@ -90,6 +98,7 @@ class RInfoRFTestCase(unittest.TestCase):
 					requiredWarnings.append((attr, s))
 		finally:
 			sys.stderr = saveStderr
+			sys.stdout = saveStdout
 		tempStderr = tempStderr.getvalue()
 		for attr, line in requiredWarnings:
 			self.assertEquals((attr, line in tempStderr), (attr, True))

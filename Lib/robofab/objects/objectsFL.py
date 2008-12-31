@@ -20,11 +20,18 @@ from robofab import ufoLib
 from warnings import warn
 import datetime
 
+try:
+	set
+except NameError:
+	from sets import Set as set
+
 # local encoding
 if os.name in ["mac", "posix"]:
 	LOCAL_ENCODING = "macroman"
 else:
 	LOCAL_ENCODING = "latin-1"
+
+_IN_UFO_EXPORT = False
 
 # a list of attributes that are to be copied when copying a glyph.
 # this is used by glyph.copy and font.insertGlyph
@@ -996,12 +1003,137 @@ class RFont(BaseFont):
 		# the font must be the current font. so, make it so.
 		fl.ifont = self.fontIndex
 		fl.GenerateFont(flOutputType, finalPath)
-	
+
+	def writeUFO(self, path=None, doProgress=False, glyphNameToFileNameFunc=None,
+		doHints=False, doInfo=True, doKerning=True, doGroups=True, doLib=True, doFeatures=True, glyphs=None, formatVersion=2):
+		from robofab.interface.all.dialogs import ProgressBar, Message
+		# special glyph name to file name conversion
+		if glyphNameToFileNameFunc is None:
+			glyphNameToFileNameFunc = self.getGlyphNameToFileNameFunc()
+			if glyphNameToFileNameFunc is None:
+				from robofab.tools.glyphNameSchemes import glyphNameToShortFileName
+				glyphNameToFileNameFunc = glyphNameToShortFileName
+		# get a valid path
+		if not path:
+			if self.path is None:
+				Message("Please save this font first before exporting to UFO...")
+				return
+			else:
+				path = ufoLib.makeUFOPath(self.path)
+		# get the glyphs to export
+		if glyphs is None:
+			glyphs = self.keys()
+		# if the file exists, check the format version.
+		# if the format version being written is different
+		# from the format version of the existing UFO
+		# and only some files are set to be written
+		# raise an error.
+		if os.path.exists(path):
+			reader = ufoLib.UFOReader(path)
+			existingFormatVersion = reader.formatVersion
+			if formatVersion != existingFormatVersion:
+				if False in [doInfo, doKerning, doGroups, doLib, doFeatures, set(glyphs) == set(self.keys())]:
+					Message("When overwriting an existing UFO with a different format version all files must be written.")
+					return
+		# the lib must be written if format version is 1
+		if not doLib and formatVersion == 1:
+			Message("The lib must be written when exporting format version 1.")
+			return
+		# set up the progress bar
+		nonGlyphCount = [doInfo, doKerning, doGroups, doLib, doFeatures].count(True)
+		bar = None
+		if doProgress:
+			bar = ProgressBar("Exporting UFO", nonGlyphCount + len(glyphs))
+		# try writing
+		try:
+			writer = ufoLib.UFOWriter(path, formatVersion=formatVersion)
+			# write the font info
+			if doInfo:
+				global _IN_UFO_EXPORT
+				_IN_UFO_EXPORT = True
+				writer.writeInfo(self.info)
+				_IN_UFO_EXPORT = False
+				if bar:
+					bar.tick()
+			# write the kerning
+			if doKerning:
+				writer.writeKerning(self.kerning.asDict())
+				if bar:
+					bar.tick()
+			# write the groups
+			if doGroups:
+				writer.writeGroups(self.groups)
+				if bar:
+					bar.tick()
+			# write the features
+			if doFeatures and formatVersion > 1:
+				writer.writeFeatures(self._openTypeFeatureText())
+				if bar:
+					bar.tick()
+			# write the lib
+			if doLib:
+				## We make a shallow copy if lib, since we add some stuff for export
+				## that doesn't need to be retained in memory.
+				fontLib = dict(self.lib)
+				## Always export the postscript font hint values to the lib in format version 1
+				if formatVersion == 1:
+					psh = PostScriptFontHintValues(self)
+					d = psh.asDict()
+					fontLib[postScriptHintDataLibKey] = d
+				## Export the glyph order to the lib
+				glyphOrder = [nakedGlyph.name for nakedGlyph in self.naked().glyphs]
+				fontLib["org.robofab.glyphOrder"] = glyphOrder
+				## export the features
+				if doFeatures and formatVersion == 1:
+					self._writeOpenTypeFeaturesToLib(fontLib)
+					if bar:
+						bar.tick()
+				writer.writeLib(fontLib)
+				if bar:
+					bar.tick()
+			# write the glyphs
+			if glyphs:
+				glyphSet = writer.getGlyphSet(glyphNameToFileNameFunc)
+				count = nonGlyphCount
+				for nakedGlyph in self.naked().glyphs:
+					if nakedGlyph.name not in glyphs:
+						continue
+					glyph = RGlyph(nakedGlyph)
+					if doHints:
+						hintStuff = _glyphHintsToDict(glyph.naked())
+						if hintStuff:
+							glyph.lib[postScriptHintDataLibKey] = hintStuff
+					glyphSet.writeGlyph(glyph.name, glyph, glyph.drawPoints)
+					# remove the hint dict from the lib
+					if doHints and glyph.lib.has_key(postScriptHintDataLibKey):
+						del glyph.lib[postScriptHintDataLibKey]
+					if bar and not count % 10:
+						bar.tick(count)
+					count = count + 1
+				assert None not in glyphOrder, glyphOrder
+				glyphSet.writeContents()
+		# only blindly stop if the user says to
+		except KeyboardInterrupt:
+			if bar:
+				bar.close()
+			bar = None
+		# kill the bar
+		if bar:
+			bar.close()
+
+	def _openTypeFeatureText(self):
+		naked = self.naked()
+		features = []
+		if naked.ot_classes:
+			features.append(_normalizeLineEndings(naked.ot_classes))
+		for feature in naked.features:
+			features.append(_normalizeLineEndings(feature.value))
+		return "\n".join(features)
+
 	def _writeOpenTypeFeaturesToLib(self, fontLib):
+		# this should only be used for UFO format version 1
 		flFont = self.naked()
-		if flFont.ot_classes:
-			fontLib["org.robofab.opentype.classes"] = _normalizeLineEndings(
-					flFont.ot_classes)
+		fontLib["org.robofab.opentype.classes"] = _normalizeLineEndings(flFont.ot_classes)
 		if flFont.features:
 			features = {}
 			order = []
@@ -1010,78 +1142,7 @@ class RFont(BaseFont):
 				features[feature.tag] = _normalizeLineEndings(feature.value)
 			fontLib["org.robofab.opentype.features"] = features
 			fontLib["org.robofab.opentype.featureorder"] = order
-	
-	def writeUFO(self, path=None, doProgress=False, glyphNameToFileNameFunc=None, doHints=False):
-		"""write a font to .ufo"""
-		from robofab.ufoLib import makeUFOPath, UFOWriter
-		from robofab.interface.all.dialogs import ProgressBar
-		if glyphNameToFileNameFunc is None:
-			glyphNameToFileNameFunc = self.getGlyphNameToFileNameFunc()
-			if glyphNameToFileNameFunc is None:
-				from robofab.tools.glyphNameSchemes import glyphNameToShortFileName
-				glyphNameToFileNameFunc = glyphNameToShortFileName
-		if not path:
-			if self.path is None:
-				# XXX this should really raise an exception instead
-				from robofab.interface.all.dialogs import Message
-				Message("Please save this font first before exporting to UFO...")
-				return
-			else:
-				path = makeUFOPath(self.path)
-		nonGlyphCount = 4
-		bar = None
-		if doProgress:
-			bar = ProgressBar('Exporting UFO', nonGlyphCount+len(self.glyphs))
-		try:
-			u = UFOWriter(path)
-			u.writeInfo(self.info)
-			if bar:
-				bar.tick()
-			u.writeKerning(self.kerning.asDict())
-			if bar:
-				bar.tick()
-			u.writeGroups(self.groups)
-			if bar:
-				bar.tick()
-			count = nonGlyphCount
-			glyphSet = u.getGlyphSet(glyphNameToFileNameFunc)
-			glyphOrder = []
-			for nakedGlyph in self.naked().glyphs:
-				glyph = RGlyph(nakedGlyph)
-				glyphOrder.append(glyph.name)
-				if doHints:
-					hintStuff = _glyphHintsToDict(glyph.naked())
-					if hintStuff:
-						glyph.lib[postScriptHintDataLibKey] = hintStuff
-				glyphSet.writeGlyph(glyph.name, glyph, glyph.drawPoints)
-				# remove the hint dict from the lib
-				if doHints and glyph.lib.has_key(postScriptHintDataLibKey):
-					del glyph.lib[postScriptHintDataLibKey]
-				if bar and not count % 10:
-					bar.tick(count)
-				count = count + 1
-			assert None not in glyphOrder, glyphOrder
-			glyphSet.writeContents()
-			# We make a shallow copy if lib, since we add some stuff for export
-			# that doesn't need to be retained in memory.
-			fontLib = dict(self.lib)
-			# Always export the postscript font hint values
-			psh = PostScriptFontHintValues(self)
-			d = psh.asDict()
-			fontLib[postScriptHintDataLibKey] = d
-			# Export the glyph order
-			fontLib["org.robofab.glyphOrder"] = glyphOrder
-			self._writeOpenTypeFeaturesToLib(fontLib)
-			u.writeLib(fontLib)
-			if bar:
-				bar.tick()
-		except KeyboardInterrupt:
-			if bar:
-				bar.close()
-			bar = None
-		if bar:
-			bar.close()
-	
+
 	def _getGlyphOrderFromLib(self, fontLib, glyphSet):
 		glyphOrder = fontLib.get("org.robofab.glyphOrder")
 		if glyphOrder is not None:
@@ -2701,7 +2762,7 @@ class RInfo(BaseInfo):
 		"openTypeNameWWSFamilyName"				: _infoMapDict(valueType=str, nakedAttribute=None),
 		"openTypeNameWWSSubfamilyName"			: _infoMapDict(valueType=str, nakedAttribute=None),
 		"openTypeOS2WidthClass"					: _infoMapDict(valueType=int, nakedAttribute="width"),
-		"openTypeOS2WeightClass"				: _infoMapDict(valueType=int, nakedAttribute="weight_code"),
+		"openTypeOS2WeightClass"				: _infoMapDict(valueType=int, nakedAttribute="weight_code", specialGetSet=True),
 		"openTypeOS2Selection"					: _infoMapDict(valueType="intList", nakedAttribute=None), # ttinfo.os2_fs_selection only returns 0
 		"openTypeOS2VendorID"					: _infoMapDict(valueType=str, nakedAttribute="vendor"),
 		"openTypeOS2Panose"						: _infoMapDict(valueType="intList", nakedAttribute="panose", specialGetSet=True),
@@ -2759,7 +2820,7 @@ class RInfo(BaseInfo):
 	_environmentOverrides = ["width", "openTypeOS2WidthClass"]
 
 	def __init__(self, font):
-		BaseInfo.__init__(self)
+		super(RInfo, self).__init__()
 		self._object = font
 
 	def _environmentSetAttr(self, attr, value):
@@ -2844,7 +2905,8 @@ class RInfo(BaseInfo):
 		specialGetSet = data["specialGetSet"]
 		# warn about setting attributes not supported by FL
 		if flAttr is None:
-			warn("The attribute %s is not supported by FontLab." % attr)
+			if not _IN_UFO_EXPORT:
+				warn("The attribute %s is not supported by FontLab." % attr)
 			return
 		# handle special cases
 		if specialGetSet:
@@ -2907,6 +2969,16 @@ class RInfo(BaseInfo):
 		delta = value - datetime.datetime(1904, 1, 1, 0, 0, 0)
 		seconds = delta.seconds
 		# XXX how should this be set?
+
+	# openTypeOS2WidthClass
+
+	def _get_openTypeOS2WeightClass(self):
+		value = self._object.weight_code
+		if value == -1:
+			return None
+
+	def _set_openTypeOS2WinDescent(self, value):
+		self._object.weight_code = value
 
 	# openTypeOS2WinDescent
 

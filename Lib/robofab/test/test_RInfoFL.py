@@ -12,7 +12,7 @@ class RInfoRFTestCase(unittest.TestCase):
 		font = NewFont()
 		infoObject = font.info
 		for attr, value in fontInfoVersion2.items():
-			if "Vhea" in attr:
+			if attr in infoObject._ufoToFLAttrMapping and infoObject._ufoToFLAttrMapping[attr]["nakedAttribute"] is None:
 				continue
 			setattr(infoObject, attr, value)
 			newValue = getattr(infoObject, attr)
@@ -27,8 +27,8 @@ class RInfoRFTestCase(unittest.TestCase):
 		infoObject = font.info
 		requiredWarnings = []
 		try:
-			for attr, value in fontInfoVersion1.items():
-				if "Vhea" not in attr or attr != "postscriptNominalWidthX":
+			for attr, value in fontInfoVersion2.items():
+				if attr in infoObject._ufoToFLAttrMapping and infoObject._ufoToFLAttrMapping[attr]["nakedAttribute"] is not None:
 					continue
 				setattr(infoObject, attr, value)
 				s = "The attribute %s is not supported by FontLab." % attr
@@ -48,8 +48,8 @@ class RInfoRFTestCase(unittest.TestCase):
 		infoObject = font.info
 		requiredWarnings = []
 		try:
-			for attr, value in fontInfoVersion1.items():
-				if "Vhea" not in attr or attr != "postscriptNominalWidthX":
+			for attr, value in fontInfoVersion2.items():
+				if attr in infoObject._ufoToFLAttrMapping and infoObject._ufoToFLAttrMapping[attr]["nakedAttribute"] is not None:
 					continue
 				getattr(infoObject, attr, value)
 				s = "The attribute %s is not supported by FontLab." % attr

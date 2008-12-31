@@ -2598,6 +2598,14 @@ def _flipDict(d):
 		f[v] = k
 	return f
 
+_styleMapStyleName_fromFL = {
+	64 : "regular",
+	1  : "italic",
+	32 : "bold",
+	33 : "bold italic"
+}
+_styleMapStyleName_toFL = _flipDict(_styleMapStyleName_fromFL)
+
 _postscriptWindowsCharacterSet_fromFL = {
 	0   : 1,
 	1   : 2,
@@ -2642,7 +2650,8 @@ _openTypeOS2WidthClass_fromFL = {
 	"Extra-expanded"  : 8,
 	"Ultra-expanded"  : 9,
 }
-_openTypeOS2Type_toFL = _flipDict(_openTypeOS2WidthClass_fromFL)
+_openTypeOS2WidthClass_toFL = _flipDict(_openTypeOS2WidthClass_fromFL)
+
 
 class RInfo(BaseInfo):
 
@@ -2654,7 +2663,7 @@ class RInfo(BaseInfo):
 		"familyName"							: _infoMapDict(valueType=str, nakedAttribute="family_name"),
 		"styleName"								: _infoMapDict(valueType=str, nakedAttribute="style_name"),
 		"styleMapFamilyName"					: _infoMapDict(valueType=str, nakedAttribute="menu_name"),
-		"styleMapStyleName"						: _infoMapDict(valueType=str, nakedAttribute="font_style"),
+		"styleMapStyleName"						: _infoMapDict(valueType=str, nakedAttribute="font_style", specialGetSet=True),
 		"versionMajor"							: _infoMapDict(valueType=int, nakedAttribute="version_major"),
 		"versionMinor"							: _infoMapDict(valueType=int, nakedAttribute="version_minor"),
 		"copyright"								: _infoMapDict(valueType=str, nakedAttribute="copyright"),
@@ -2666,7 +2675,7 @@ class RInfo(BaseInfo):
 		"ascender"								: _infoMapDict(valueType=int, nakedAttribute="ascender", masterSpecific=True),
 		"italicAngle"							: _infoMapDict(valueType=float, nakedAttribute="italic_angle"),
 		"note"									: _infoMapDict(valueType=str, nakedAttribute="note"),
-		"openTypeHeadCreated"					: _infoMapDict(valueType=str, nakedAttribute="ttinfo.head_creation", specialGetSet=True),
+		"openTypeHeadCreated"					: _infoMapDict(valueType=str, nakedAttribute=None, specialGetSet=True), # ttinfo.head_creation has an unknown format
 		"openTypeHeadLowestRecPPEM"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.head_lowest_rec_ppem"),
 		"openTypeHeadFlags"						: _infoMapDict(valueType="intList", nakedAttribute=None), # There is an attribute (ttinfo.head_flags), but no user interface.
 		"openTypeHheaAscender"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.hhea_ascender"),
@@ -2694,14 +2703,15 @@ class RInfo(BaseInfo):
 		"openTypeOS2WeightClass"				: _infoMapDict(valueType=int, nakedAttribute="weight_code"),
 		"openTypeOS2Selection"					: _infoMapDict(valueType="intList", nakedAttribute=None), # ttinfo.os2_fs_selection only returns 0
 		"openTypeOS2VendorID"					: _infoMapDict(valueType=str, nakedAttribute="vendor"),
-		"openTypeOS2Panose"						: _infoMapDict(valueType="intList", nakedAttribute="panose", masterSpecific=True),
+		"openTypeOS2Panose"						: _infoMapDict(valueType="intList", nakedAttribute="panose", specialGetSet=True),
+		"openTypeOS2FamilyClass"				: _infoMapDict(valueType="intList", nakedAttribute="ttinfo.os2_s_family_class", specialGetSet=True),
 		"openTypeOS2UnicodeRanges"				: _infoMapDict(valueType="intList", nakedAttribute="unicoderanges"),
 		"openTypeOS2CodePageRanges"				: _infoMapDict(valueType="intList", nakedAttribute="codepages"),
 		"openTypeOS2TypoAscender"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_s_typo_ascender"),
 		"openTypeOS2TypoDescender"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_s_typo_descender"),
 		"openTypeOS2TypoLineGap"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_s_typo_line_gap"),
 		"openTypeOS2WinAscent"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_us_win_ascent"),
-		"openTypeOS2WinDescent"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_us_win_descent"),
+		"openTypeOS2WinDescent"					: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_us_win_descent", specialGetSet=True),
 		"openTypeOS2Type"						: _infoMapDict(valueType="intList", nakedAttribute="ttinfo.os2_fs_type", specialGetSet=True),
 		"openTypeOS2SubscriptXSize"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_subscript_x_size"),
 		"openTypeOS2SubscriptYSize"				: _infoMapDict(valueType=int, nakedAttribute="ttinfo.os2_y_subscript_y_size"),
@@ -2741,8 +2751,8 @@ class RInfo(BaseInfo):
 		"postscriptWeightName"					: _infoMapDict(valueType=str, nakedAttribute="weight"),
 		"postscriptDefaultCharacter"			: _infoMapDict(valueType=str, nakedAttribute="default_character"),
 		"postscriptWindowsCharacterSet"			: _infoMapDict(valueType=int, nakedAttribute="ms_charset", specialGetSet=True),
-		"macintoshFONDFamilyID"					: _infoMapDict(valueType=str, nakedAttribute="fond_id"),
-		"macintoshFONDName"						: _infoMapDict(valueType=int, nakedAttribute="apple_name"),
+		"macintoshFONDFamilyID"					: _infoMapDict(valueType=int, nakedAttribute="fond_id"),
+		"macintoshFONDName"						: _infoMapDict(valueType=str, nakedAttribute="apple_name"),
 	}
 	# ugh
 	_environmentOverrides = ["width", "openTypeOS2WidthClass"]
@@ -2774,10 +2784,6 @@ class RInfo(BaseInfo):
 		if flAttr is None:
 			warn("The attribute %s is not supported by FontLab." % attr)
 			return
-		# skip special conversion for now
-		if specialGetSet:
-			warn("Converting %s to FontLab values is not yet supported." % attr)
-			return
 		# make sure that the value is the proper type for FL
 		if valueType == "intList":
 			value = [int(i) for i in value]
@@ -2789,6 +2795,11 @@ class RInfo(BaseInfo):
 			value = int(round(value))
 		elif not isinstance(value, valueType):
 			value = valueType(value)
+		# handle special cases
+		if specialGetSet:
+			attr = "_set_%s" % attr
+			method = getattr(self, attr)
+			return method(value)
 		# set the value
 		obj = self._object
 		if len(flAttr.split(".")) > 1:
@@ -2800,9 +2811,15 @@ class RInfo(BaseInfo):
 		if requiresSetNum:
 			numAttr = flAttr + "_num"
 			setattr(obj, numAttr, len(value))
+		## set master 0 if the data is master specific
 		if masterSpecific:
-			obj = getattr(obj, flAttr)
-			obj[0] = value
+			subObj = getattr(obj, flAttr)
+			if valueType == "intList":
+				for index, v in enumerate(value):
+					subObj[0][index] = v
+			else:
+				subObj[0] = value
+		## otherwise use a regular set
 		else:
 			setattr(obj, flAttr, value)
 
@@ -2828,6 +2845,11 @@ class RInfo(BaseInfo):
 		if flAttr is None:
 			warn("The attribute %s is not supported by FontLab." % attr)
 			return
+		# handle special cases
+		if specialGetSet:
+			attr = "_get_%s" % attr
+			method = getattr(self, attr)
+			return method()
 		# get the value
 		if len(flAttr.split(".")) > 1:
 			flAttrList = flAttr.split(".")
@@ -2852,8 +2874,23 @@ class RInfo(BaseInfo):
 			value = valueType(value)
 		return value
 
+	# ------------------------------
+	# individual attribute overrides
+	# ------------------------------
+
+	# styleMapStyleName
+
+	def _get_styleMapStyleName(self):
+		return _styleMapStyleName_fromFL[self._object.font_style]
+
+	def _set_styleMapStyleName(self, value):
+		value = _styleMapStyleName_toFL[value]
+		self._object.font_style = value
+
+	# openTypeHeadCreated
+
 	def _get_openTypeHeadCreated(self):
-		value = self._object.head_creation
+		value = self._object.ttinfo.head_creation
 		# XXX how should this be interpretted? [-981610036,0]
 		delta = value[0]
 		delta = datetime.timedelta(seconds=delta)
@@ -2870,20 +2907,70 @@ class RInfo(BaseInfo):
 		seconds = delta.seconds
 		# XXX how should this be set?
 
+	# openTypeOS2WinDescent
+
+	def _get_openTypeOS2WinDescent(self):
+		return -self._object.ttinfo.os2_us_win_descent
+
+	def _set_openTypeOS2WinDescent(self, value):
+		if value >= 0:
+			raise ValueError("FontLab can only handle negative values for openTypeOS2WinDescent.")
+		self._object.ttinfo.os2_us_win_descent = abs(value)
+
+	# openTypeOS2Type
+
 	def _get_openTypeOS2Type(self):
-		value = self._object.ttinfo-os2_fs_type
+		value = self._object.ttinfo.os2_fs_type
 		intList = []
 		for bit, bitNumber in _openTypeOS2Type_fromFL.items():
 			if value & bit:
 				intList.append(bitNumber)
 		return intList
 
-	def _set_openTypeOS2Type(self, value):
+	def _set_openTypeOS2Type(self, values):
 		value = 0
-		for bitNumber in value:
+		for bitNumber in values:
 			bit = _openTypeOS2Type_toFL[bitNumber]
 			value = value | bit
 		self._object.ttinfo.os2_fs_type = value
+
+	# openTypeOS2Panose
+
+	def _get_openTypeOS2Panose(self):
+		return [i for i in self._object.panose]
+
+	def _set_openTypeOS2Panose(self, values):
+		for index, value in enumerate(values):
+			self._object.panose[index] = value
+
+	# openTypeOS2FamilyClass
+
+	def _get_openTypeOS2FamilyClass(self):
+		value = self._object.ttinfo.os2_s_family_class
+		classID = None
+		for i in range(1, 15):
+			if value & (i * 256):
+				classID = i
+				break
+		if classID is None:
+			classID = 0
+		value = value & classID
+		subclassID = None
+		for i in range(1, 16):
+			if value & i:
+				subclassID = i
+				break
+		if subclassID is None:
+			subclassID = 0
+		return [classID, subclassID]
+
+	def _set_openTypeOS2FamilyClass(self, values):
+		classID, subclassID = values
+		classID = classID * 256
+		value = classID + subclassID
+		self._object.ttinfo.os2_s_family_class = value
+
+	# postscriptWindowsCharacterSet
 
 	def _get_postscriptWindowsCharacterSet(self):
 		value = self._object.ms_charset
@@ -2893,3 +2980,4 @@ class RInfo(BaseInfo):
 	def _set_postscriptWindowsCharacterSet(self, value):
 		value = _postscriptWindowsCharacterSet_toFL[value]
 		self._object.ms_charset = value
+

@@ -357,6 +357,7 @@ class UFOWriter(object):
 		self._formatVersion = formatVersion
 		self._fileCreator = fileCreator
 		self._writeMetaInfo()
+		# handle down conversion by removing features.fea?
 
 	def _get_formatVersion(self):
 		return self._formatVersion
@@ -527,9 +528,13 @@ def writeFileAtomically(text, path):
 		f.close()
 		if text == oldText:
 			return
-	f = open(path, WRITE_MODE)
-	f.write(text)
-	f.close()
+		# if the text is empty, remove the existing file
+		if not text:
+			os.remove(path)
+	if text:
+		f = open(path, WRITE_MODE)
+		f.write(text)
+		f.close()
 
 # ----------------------
 # fontinfo.plist Support

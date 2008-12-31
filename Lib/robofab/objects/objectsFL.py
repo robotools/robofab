@@ -1128,7 +1128,7 @@ class RFont(BaseFont):
 			features.append(_normalizeLineEndings(naked.ot_classes))
 		for feature in naked.features:
 			features.append(_normalizeLineEndings(feature.value))
-		return "\n".join(features)
+		return "".join(features)
 
 	def _writeOpenTypeFeaturesToLib(self, fontLib):
 		# this should only be used for UFO format version 1
@@ -3076,14 +3076,7 @@ class RInfo(BaseInfo):
 				break
 		if classID is None:
 			classID = 0
-		value = value & classID
-		subclassID = None
-		for i in range(1, 16):
-			if value & i:
-				subclassID = i
-				break
-		if subclassID is None:
-			subclassID = 0
+		subclassID = value - (classID * 256)
 		return [classID, subclassID]
 
 	def _set_openTypeOS2FamilyClass(self, values):

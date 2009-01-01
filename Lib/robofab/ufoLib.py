@@ -357,7 +357,12 @@ class UFOWriter(object):
 		self._formatVersion = formatVersion
 		self._fileCreator = fileCreator
 		self._writeMetaInfo()
-		# handle down conversion by removing features.fea?
+		# handle down conversion
+		if formatVersion == 1:
+			## remove existing features.fea
+			featuresPath = os.path.join(path, FEATURES_FILENAME)
+			if os.path.exists(featuresPath):
+				os.remove(featuresPath)
 
 	def _get_formatVersion(self):
 		return self._formatVersion

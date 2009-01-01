@@ -314,6 +314,8 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 
 	def _get_blueValues(self):
 		values = self.getParent().info.postscriptBlueValues
+		if values is None:
+			values = []
 		values = self._bluesToPairs(values)
 		return values
 
@@ -327,6 +329,8 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 
 	def _get_otherBlues(self):
 		values = self.getParent().info.postscriptOtherBlues
+		if values is None:
+			values = []
 		values = self._bluesToPairs(values)
 		return values
 
@@ -340,6 +344,8 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 
 	def _get_familyBlues(self):
 		values = self.getParent().info.postscriptFamilyBlues
+		if values is None:
+			values = []
 		values = self._bluesToPairs(values)
 		return values
 
@@ -353,6 +359,8 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 
 	def _get_familyOtherBlues(self):
 		values = self.getParent().info.postscriptFamilyOtherBlues
+		if values is None:
+			values = []
 		values = self._bluesToPairs(values)
 		return values
 

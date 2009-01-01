@@ -289,9 +289,6 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 	def __init__(self, data=None):
 		if data is not None:
 			self.fromDict(data)
-		else:
-			for name in self._attributeNames.keys():
-				setattr(self, name, self._attributeNames[name]['default'])
 
 	def __repr__(self):
 		return "<PostScript Font Hints Values>"
@@ -302,11 +299,9 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 		values.sort()
 		finalValues = []
 		for value in values:
-			if not finalValues:
+			if not finalValues or len(finalValues[-1]) == 2:
 				finalValues.append([])
 			finalValues[-1].append(value)
-			if len(finalValues[-1]) == 2:
-				finalValues.append()
 		return finalValues
 
 	def _bluesFromPairs(self, values):

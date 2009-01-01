@@ -69,13 +69,16 @@ class PostScriptFontHintValues(BasePostScriptFontHintValues):
 	"""
 	
 	def __init__(self, aFont=None, data=None):
-		# read the data from the font.lib, it won't be anywhere else
+		self.setParent(aFont)
 		BasePostScriptFontHintValues.__init__(self)
 		if aFont is not None:
-			self.setParent(aFont)
+			# in version 1, this data was stored in the lib
+			# if it is still there, guess that it is correct
+			# move it to font info and remove it from the lib.
 			libData = aFont.lib.get(postScriptHintDataLibKey)
 			if libData is not None:
 				self.fromDict(libData)
+				del libData[postScriptHintDataLibKey]
 		if data is not None:
 			self.fromDict(data)
 
@@ -129,11 +132,11 @@ class RFont(BaseFont):
 		self.groups.setParent(self)
 		self.lib = RLib()
 		self.lib.setParent(self)
-		self.psHints = PostScriptFontHintValues(self)
-		self.psHints.setParent(self)
-		
 		if path:
 			self._loadData(path)
+		else:
+			self.psHints = PostScriptFontHintValues(self)
+			self.psHints.setParent(self)
 		
 	def __setitem__(self, glyphName, glyph):
 		"""Set a glyph at key."""
@@ -154,19 +157,53 @@ class RFont(BaseFont):
 		return len(self._glyphSet)
 	
 	def _loadData(self, path):
-		#Load the data into the font
 		from robofab.ufoLib import UFOReader
-		u = UFOReader(path)
-		u.readInfo(self.info)
-		self.kerning.update(u.readKerning())
+		reader = UFOReader(path)
+		fontLib = reader.readLib()
+		# info
+		reader.readInfo(self.info)
+		# kerning
+		self.kerning.update(reader.readKerning())
 		self.kerning.setChanged(False)
-		self.groups.update(u.readGroups())
-		self.lib.update(u.readLib())
-		# after reading the lib, read hinting data from the lib
+		# groups
+		self.groups.update(reader.readGroups())
+		# features
+		if reader.formatVersion == 1:
+			# migrate features from the lib
+			features = []
+			classes = fontLib.get("org.robofab.opentype.classes")
+			if classes is not None:
+				del fontLib["org.robofab.opentype.classes"]
+				features.append(classes)
+			features = fontLib.get("org.robofab.opentype.features")
+			if features is not None:
+				order = fontLib.get("org.robofab.opentype.featureorder")
+				if order is None:
+					order = features.keys()
+					order.sort()
+				else:
+					del fontLib["org.robofab.opentype.featureorder"]
+				del fontLib["org.robofab.opentype.features"]
+				for tag in order:
+					oneFeature = features.get(tag)
+					if oneFeature is not None:
+						features.append(oneFeature)
+			features = "\n".join(features)
+		else:
+			features = reader.readFeatures()
+		self.features = features # XXX this needs a proper location
+		# hint data
+		## remove hints from the lib if the format version is 2.
+		## the migration from version 1 will happen in the hint data object.
+		if reader.formatVersion == 2 and postScriptHintDataLibKey in fontLib:
+			del fontLib[postScriptHintDataLibKey]
 		self.psHints = PostScriptFontHintValues(self)
-		self._glyphSet = u.getGlyphSet()
+		# lib
+		self.lib.update(fontLib)
+		# glyphs
+		self._glyphSet = reader.getGlyphSet()
 		self._hasNotChanged(doGlyphs=False)
-		
+
 	def _loadGlyph(self, glyphName):
 		"""Load a single glyph from the glyphSet, on request."""
 		from robofab.pens.rfUFOPen import RFUFOPointPen

@@ -368,7 +368,7 @@ class RFont(BaseFont):
 		return reverseMap
 		
 
-	def save(self, destDir=None, doProgress=False):
+	def save(self, destDir=None, doProgress=False, formatVersion=2):
 		"""Save the Font in UFO format."""
 		# XXX note that when doing "save as" by specifying the destDir argument
 		# _all_ glyphs get loaded into memory. This could be optimized by either
@@ -376,6 +376,7 @@ class RFont(BaseFont):
 		# well that would work) by simply clearing out self._objects after the
 		# save.
 		from robofab.ufoLib import UFOWriter
+		from robofab.tools.fontlabFeatureSplitter import splitFeaturesForFontLab
 		# if no destination is given, or if
 		# the given destination is the current
 		# path, this is not a save as operation
@@ -384,54 +385,78 @@ class RFont(BaseFont):
 			destDir = self._path
 		else:
 			saveAs = True
-		u = UFOWriter(destDir)
+		# start a progress bar
 		nonGlyphCount = 5
 		bar = None
 		if doProgress:
 			from robofab.interface.all.dialogs import ProgressBar
-			bar = ProgressBar('Exporting UFO', nonGlyphCount+len(self._object.keys()))
+			bar = ProgressBar("Exporting UFO", nonGlyphCount + len(self._object.keys()))
+		# write
+		writer = UFOWriter(destDir, formatVersion=formatVersion)
 		try:
-			#if self.info.changed:
+			# make a shallow copy of the lib. stuff may be added to it.
+			fontLib = dict(self.lib)
+			# info
 			if bar:
-				bar.label('Saving info...')
-			u.writeInfo(self.info)
+				bar.label("Saving info...")
+			writer.writeInfo(self.info)
 			if bar:
 				bar.tick()
+			# kerning
 			if self.kerning.changed or saveAs:
 				if bar:
-					bar.label('Saving kerning...')
-				u.writeKerning(self.kerning.asDict())
-				self.kerning.setChanged(False)
+					bar.label("Saving kerning...")
+				writer.writeKerning(self.kerning.asDict())
+				if bar:
+					bar.tick()
+			# groups
+			if bar:
+				bar.label("Saving groups...")
+			writer.writeGroups(self.groups)
 			if bar:
 				bar.tick()
-			#if self.groups.changed:
+			# features
 			if bar:
-				bar.label('Saving groups...')
-			u.writeGroups(self.groups)
+				bar.label("Saving features...")
+			features = self.features # XXX need real location
+			if features is None:
+				features = ""
+			if formatVersion == 2:
+				writer.writeFeatures(features)
+			else:
+				classes, features = splitFeaturesForFontLab(features)
+				if classes:
+					fontLib["org.robofab.opentype.classes"] = classes
+				if features:
+					featureDict = {}
+					for featureName, featureText in features:
+						featureDict[featureName] = featureText
+					fontLib["org.robofab.opentype.features"] = featureDict
+					fontLib["org.robofab.opentype.featureorder"] = [featureName for featureName, featureText in features]
 			if bar:
 				bar.tick()
-
-			# save postscript hint data
-			self.lib[postScriptHintDataLibKey] = self.psHints.asDict()
-
-			#if self.lib.changed:
+			# lib
+			if formatVersion == 1:
+				fontLib[postScriptHintDataLibKey] = self.psHints.asDict()
 			if bar:
-				bar.label('Saving lib...')
-			u.writeLib(self.lib)
+				bar.label("Saving lib...")
+			writer.writeLib(fontLib)
 			if bar:
 				bar.tick()
+			# glyphs
 			glyphNameToFileNameFunc = self.getGlyphNameToFileNameFunc()
-			glyphSet = u.getGlyphSet(glyphNameToFileNameFunc)
+
+			glyphSet = writer.getGlyphSet(glyphNameToFileNameFunc)
 			if len(self._scheduledForDeletion) != 0:
 				if bar:
-					bar.label('Removing deleted glyphs......')
+					bar.label("Removing deleted glyphs...")
 				for glyphName in self._scheduledForDeletion:
 					if glyphSet.has_key(glyphName):
 						glyphSet.deleteGlyph(glyphName)
 				if bar:
 					bar.tick()
 			if bar:
-				bar.label('Saving glyphs...')
+				bar.label("Saving glyphs...")
 			count = nonGlyphCount
 			if saveAs:
 				glyphNames = self.keys()
@@ -446,15 +471,18 @@ class RFont(BaseFont):
 				count = count + 1
 			glyphSet.writeContents()
 			self._glyphSet = glyphSet
+		# only blindly stop if the user says to
 		except KeyboardInterrupt:
 			bar.close()
 			bar = None
+		# kill the progress bar
 		if bar:
 			bar.close()
+		# reset internal stuff
 		self._path = destDir
 		self._scheduledForDeletion = []
 		self.setChanged(False)
-		
+
 	def newGlyph(self, glyphName, clear=True):
 		"""Make a new glyph with glyphName
 		if the glyph exists and clear=True clear the glyph"""

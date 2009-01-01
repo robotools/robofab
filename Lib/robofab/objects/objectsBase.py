@@ -149,39 +149,6 @@ class BasePostScriptHintValues(object):
 			setattr(n, k, dup)
 		return n
 
-	# math operations for psHint object
-	# Note: math operations can change integers to floats.
-	def __add__(self, other):
-		assert isinstance(other, BasePostScriptHintValues)
-		copied = self.copy()
-		self._processMathOne(copied, other, add)
-		return copied
-
-	def __sub__(self, other):
-		assert isinstance(other, BasePostScriptHintValues)
-		copied = self.copy()
-		self._processMathOne(copied, other, sub)
-		return copied
-
-	def __mul__(self, factor):
-		#if isinstance(factor, tuple):
-		#	factor = factor[0]
-		copiedInfo = self.copy()
-		self._processMathTwo(copiedInfo, factor, mul)
-		return copiedInfo
-
-	__rmul__ = __mul__
-
-	def __div__(self, factor):
-		#if isinstance(factor, tuple):
-		#	factor = factor[0]
-		copiedInfo = self.copy()
-		self._processMathTwo(copiedInfo, factor, div)
-		return copiedInfo
-
-	__rdiv__ = __div__
-	
-	
 class BasePostScriptGlyphHintValues(BasePostScriptHintValues):
 	""" Base class for glyph-level postscript hinting information.
 		vStems, hStems
@@ -214,6 +181,38 @@ class BasePostScriptGlyphHintValues(BasePostScriptHintValues):
 			for n in v:
 				new.append((int(round(n[0])), int(round(n[1]))))
 			setattr(self, name, new)
+
+	# math operations for psHint object
+	# Note: math operations can change integers to floats.
+	def __add__(self, other):
+		assert isinstance(other, BasePostScriptHintValues)
+		copied = self.copy()
+		self._processMathOne(copied, other, add)
+		return copied
+
+	def __sub__(self, other):
+		assert isinstance(other, BasePostScriptHintValues)
+		copied = self.copy()
+		self._processMathOne(copied, other, sub)
+		return copied
+
+	def __mul__(self, factor):
+		#if isinstance(factor, tuple):
+		#	factor = factor[0]
+		copiedInfo = self.copy()
+		self._processMathTwo(copiedInfo, factor, mul)
+		return copiedInfo
+
+	__rmul__ = __mul__
+
+	def __div__(self, factor):
+		#if isinstance(factor, tuple):
+		#	factor = factor[0]
+		copiedInfo = self.copy()
+		self._processMathTwo(copiedInfo, factor, div)
+		return copiedInfo
+
+	__rdiv__ = __div__
 
 	def _processMathOne(self, copied, other, funct):
 		for name, values in self._attributeNames.items():
@@ -297,6 +296,131 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 	def __repr__(self):
 		return "<PostScript Font Hints Values>"
 
+	# route attribute calls to info object
+
+	def _bluesToPairs(self, values):
+		values.sort()
+		finalValues = []
+		for value in values:
+			if not finalValues:
+				finalValues.append([])
+			finalValues[-1].append(value)
+			if len(finalValues[-1]) == 2:
+				finalValues.append()
+		return finalValues
+
+	def _bluesFromPairs(self, values):
+		finalValues = []
+		for value1, value2 in values:
+			finalValues.append(value1)
+			finalValues.append(value2)
+		finalValues.sort()
+		return finalValues
+
+	def _get_blueValues(self):
+		values = self.getParent().info.postscriptBlueValues
+		values = self._bluesToPairs(values)
+		return values
+
+	def _set_blueValues(self, values):
+		if values is None:
+			values = []
+		values = self._bluesFromPairs(values)
+		self.getParent().info.postscriptBlueValues = values
+
+	blueValues = property(_get_blueValues, _set_blueValues)
+
+	def _get_otherBlues(self):
+		values = self.getParent().info.postscriptOtherBlues
+		values = self._bluesToPairs(values)
+		return values
+
+	def _set_otherBlues(self, values):
+		if values is None:
+			values = []
+		values = self._bluesFromPairs(values)
+		self.getParent().info.postscriptOtherBlues = values
+
+	otherBlues = property(_get_otherBlues, _set_otherBlues)
+
+	def _get_familyBlues(self):
+		values = self.getParent().info.postscriptFamilyBlues
+		values = self._bluesToPairs(values)
+		return values
+
+	def _set_familyBlues(self, values):
+		if values is None:
+			values = []
+		values = self._bluesFromPairs(values)
+		self.getParent().info.postscriptFamilyBlues = values
+
+	familyBlues = property(_get_familyBlues, _set_familyBlues)
+
+	def _get_familyOtherBlues(self):
+		values = self.getParent().info.postscriptFamilyOtherBlues
+		values = self._bluesToPairs(values)
+		return values
+
+	def _set_familyOtherBlues(self, values):
+		if values is None:
+			values = []
+		values = self._bluesFromPairs(values)
+		self.getParent().info.postscriptFamilyOtherBlues = values
+
+	familyOtherBlues = property(_get_familyOtherBlues, _set_familyOtherBlues)
+
+	def _get_vStems(self):
+		return self.getParent().info.postscriptStemSnapV
+
+	def _set_vStems(self, value):
+		if value is None:
+			value = []
+		self.getParent().info.postscriptStemSnapV = list(value)
+
+	vStems = property(_get_vStems, _set_vStems)
+
+	def _get_hStems(self):
+		return self.getParent().info.postscriptStemSnapH
+
+	def _set_hStems(self, value):
+		if value is None:
+			value = []
+		self.getParent().info.postscriptStemSnapH = list(value)
+
+	hStems = property(_get_hStems, _set_hStems)
+
+	def _get_blueScale(self):
+		return self.getParent().info.postscriptBlueScale
+
+	def _set_blueScale(self, value):
+		self.getParent().info.postscriptBlueScale = value
+
+	blueScale = property(_get_blueScale, _set_blueScale)
+
+	def _get_blueShift(self):
+		return self.getParent().info.postscriptBlueShift
+
+	def _set_blueShift(self, value):
+		self.getParent().info.postscriptBlueShift = value
+
+	blueShift = property(_get_blueShift, _set_blueShift)
+
+	def _get_blueFuzz(self):
+		return self.getParent().info.postscriptBlueFuzz
+
+	def _set_blueFuzz(self, value):
+		self.getParent().info.postscriptBlueFuzz = value
+
+	blueFuzz = property(_get_blueFuzz, _set_blueFuzz)
+
+	def _get_forceBold(self):
+		return self.getParent().info.postscriptForceBold
+
+	def _set_forceBold(self, value):
+		self.getParent().info.postscriptForceBold = value
+
+	forceBold = property(_get_forceBold, _set_forceBold)
+
 	def round(self):
 		"""Round the values to reasonable values.
 			- blueScale is not rounded, it is a float
@@ -337,87 +461,6 @@ class BasePostScriptFontHintValues(BasePostScriptHintValues):
 				for n in v:
 					new.append([int(round(m)) for m in n])
 				setattr(self, name, new)
-	
-	
-	def _processMathOne(self, copied, other, funct):
-		for name, values in self._attributeNames.items():
-			a = None
-			b = None
-			v = None
-			if hasattr(copied, name):
-				a = getattr(copied, name)
-			if hasattr(other, name):
-				b = getattr(other, name)
-			if name in ['blueFuzz', 'blueScale', 'blueShift', 'forceBold']:
-				# process single values
-				if a is not None and b is not None:
-					v = funct(a, b)
-				elif a is not None and b is None:
-					v = a
-				elif b is not None and a is None:
-					v = b
-				if v is not None:
-					setattr(copied, name, v)
-			elif name in ['hStems', 'vStems']:
-				if a is not None and b is not None:
-					if len(a) != len(b):
-						# can't do math with non matching zones
-						continue
-					l = len(a)
-					v = [funct(a[i], b[i]) for i in range(l)]
-				if v is not None:
-					setattr(copied, name, v)
-			else:
-				if a is not None and b is not None:
-					if len(a) != len(b):
-						# can't do math with non matching zones
-						continue
-					l = len(a)
-					for i in range(l):
-						if v is None:
-							v = []
-						ai = a[i]
-						bi = b[i]
-						l2 = min(len(ai), len(bi))
-						v2 = [funct(ai[j], bi[j]) for j in range(l2)]
-						v.append(v2)
-				if v is not None:
-					setattr(copied, name, v)
-
-	def _processMathTwo(self, copied, factor, funct):
-		for name, values in self._attributeNames.items():
-			a = None
-			b = None
-			v = None
-			if hasattr(copied, name):
-				a = getattr(copied, name)
-			splitFactor = factor
-			isVertical = self._attributeNames[name]['isVertical']
-			if isinstance(factor, tuple):
-				if isVertical:
-					splitFactor = factor[1]
-				else:
-					splitFactor = factor[0]
-			if name in ['blueFuzz', 'blueScale', 'blueShift', 'forceBold']:
-				# process single values
-				if a is not None:
-					v = funct(a, splitFactor)
-				if v is not None:
-					setattr(copied, name, v)
-			elif name in ['hStems', 'vStems']:
-				if a is not None:
-					v = [funct(a[i], splitFactor) for i in range(len(a))]
-				if v is not None:
-					setattr(copied, name, v)
-			else:
-				if a is not None:
-					for i in range(len(a)):
-						if v is None:
-							v = []
-						v2 = [funct(a[i][j], splitFactor) for j in range(len(a[i]))]
-						v.append(v2)
-				if v is not None:
-					setattr(copied, name, v)
 
 
 
@@ -2913,9 +2956,10 @@ class BaseInfo(RBaseObject):
 		# setting a known attribute
 		if attr in self._infoAttributes or attr in self._environmentAttributes:
 			# lightly test the validity of the value
-			isValidValue = ufoLib.validateFontInfoVersion2ValueForAttribute(attr, value)
-			if not isValidValue:
-				raise RoboFabError("Invalid value (%s) for attribute (%s)." % (repr(value), attr))
+			if value is not None:
+				isValidValue = ufoLib.validateFontInfoVersion2ValueForAttribute(attr, value)
+				if not isValidValue:
+					raise RoboFabError("Invalid value (%s) for attribute (%s)." % (repr(value), attr))
 			# use the environment specific info attr set
 			# method if it is defined.
 			if hasattr(self, "_environmentSetAttr"):

@@ -368,7 +368,7 @@ class RFont(BaseFont):
 		return reverseMap
 		
 
-	def save(self, destDir=None, doProgress=False, saveNow=False):
+	def save(self, destDir=None, doProgress=False):
 		"""Save the Font in UFO format."""
 		# XXX note that when doing "save as" by specifying the destDir argument
 		# _all_ glyphs get loaded into memory. This could be optimized by either

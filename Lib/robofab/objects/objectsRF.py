@@ -175,17 +175,17 @@ class RFont(BaseFont):
 			if classes is not None:
 				del fontLib["org.robofab.opentype.classes"]
 				features.append(classes)
-			features = fontLib.get("org.robofab.opentype.features")
-			if features is not None:
+			splitFeatures = fontLib.get("org.robofab.opentype.features")
+			if splitFeatures is not None:
 				order = fontLib.get("org.robofab.opentype.featureorder")
 				if order is None:
-					order = features.keys()
+					order = splitFeatures.keys()
 					order.sort()
 				else:
 					del fontLib["org.robofab.opentype.featureorder"]
 				del fontLib["org.robofab.opentype.features"]
 				for tag in order:
-					oneFeature = features.get(tag)
+					oneFeature = splitFeatures.get(tag)
 					if oneFeature is not None:
 						features.append(oneFeature)
 			features = "\n".join(features)

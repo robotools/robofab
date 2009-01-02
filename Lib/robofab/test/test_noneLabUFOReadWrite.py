@@ -154,11 +154,8 @@ class ReadUFOFormatVersion2TestCase(unittest.TestCase):
 class WriteUFOFormatVersion1TestCase(unittest.TestCase):
 
 	def setUpFont(self):
-#		self.dstDir = tempfile.mktemp()
-#		os.mkdir(self.dstDir)
-		p = "/Users/tal/Desktop/ufos"
-		count = len(os.listdir(p))
-		self.dstDir = os.path.join(p, str(count) + ".ufo")
+		self.dstDir = tempfile.mktemp()
+		os.mkdir(self.dstDir)
 		self.font = OpenFont(ufoPath2)
 		self.font.save(self.dstDir, formatVersion=1)
 

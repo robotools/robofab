@@ -14,8 +14,7 @@ ufoPath1 = os.path.dirname(ufoPath1)
 ufoPath1 = os.path.join(ufoPath1, "TestData", "TestFont1 (UFO1).ufo")
 ufoPath2 = ufoPath1.replace("TestFont1 (UFO1).ufo", "TestFont1 (UFO2).ufo")
 
-# robofab should remove these from the lib
-# after a load.
+# robofab should remove these from the lib after a load.
 removeFromFormatVersion1Lib = [
 	"org.robofab.opentype.classes",
 	"org.robofab.opentype.features",

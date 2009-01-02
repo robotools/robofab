@@ -12,8 +12,7 @@
 	<key>org.robofab.opentype.features</key>
 	<dict>
 		<key>liga</key>
-		<string>
-feature liga {
+		<string>feature liga {
     sub A A by b;
 } liga;
 </string>

@@ -424,11 +424,11 @@ class RFont(BaseFont):
 			elif formatVersion == 1:
 				classes, features = splitFeaturesForFontLab(features)
 				if classes:
-					fontLib["org.robofab.opentype.classes"] = classes
+					fontLib["org.robofab.opentype.classes"] = classes.strip() + "\n"
 				if features:
 					featureDict = {}
 					for featureName, featureText in features:
-						featureDict[featureName] = featureText
+						featureDict[featureName] = featureText.strip() + "\n"
 					fontLib["org.robofab.opentype.features"] = featureDict
 					fontLib["org.robofab.opentype.featureorder"] = [featureName for featureName, featureText in features]
 			if bar:

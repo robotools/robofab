@@ -434,6 +434,8 @@ class RFont(BaseFont):
 		self._object = font
 		self._lib = {}
 		self._supportHints = True
+		self.psHints = PostScriptFontHintValues(self)
+		self.psHints.setParent(self)
 
 	def keys(self):
 		keys = {}
@@ -475,10 +477,12 @@ class RFont(BaseFont):
 	#		return -1
 	
 
-	def _get_psHints(self):
-		return PostScriptFontHintValues(self)
-
-	psHints = property(_get_psHints, doc="font level postscript hint data")
+#	def _get_psHints(self):
+#		h = PostScriptFontHintValues(self)
+#		h.setParent(self)
+#		return h
+#
+#	psHints = property(_get_psHints, doc="font level postscript hint data")
 
 	def _get_info(self):
 		return RInfo(self._object)
@@ -945,6 +949,9 @@ class RFont(BaseFont):
 		# try writing
 		try:
 			writer = ufoLib.UFOWriter(path, formatVersion=formatVersion)
+			## We make a shallow copy if lib, since we add some stuff for export
+			## that doesn't need to be retained in memory.
+			fontLib = dict(self.lib)
 			# write the font info
 			if doInfo:
 				global _IN_UFO_EXPORT
@@ -964,19 +971,18 @@ class RFont(BaseFont):
 				if bar:
 					bar.tick()
 			# write the features
-			if doFeatures and formatVersion > 1:
-				writer.writeFeatures(self._openTypeFeatureText())
+			if doFeatures:
+				if formatVersion == 2:
+					writer.writeFeatures(self._openTypeFeatureText())
+				else:
+					self._writeOpenTypeFeaturesToLib(fontLib)
 				if bar:
 					bar.tick()
 			# write the lib
 			if doLib:
-				## We make a shallow copy if lib, since we add some stuff for export
-				## that doesn't need to be retained in memory.
-				fontLib = dict(self.lib)
 				## Always export the postscript font hint values to the lib in format version 1
 				if formatVersion == 1:
-					psh = PostScriptFontHintValues(self)
-					d = psh.asDict()
+					d = self.psHints.asDict()
 					fontLib[postScriptHintDataLibKey] = d
 				## Export the glyph order to the lib
 				glyphOrder = [nakedGlyph.name for nakedGlyph in self.naked().glyphs]
@@ -1030,13 +1036,13 @@ class RFont(BaseFont):
 	def _writeOpenTypeFeaturesToLib(self, fontLib):
 		# this should only be used for UFO format version 1
 		flFont = self.naked()
-		fontLib["org.robofab.opentype.classes"] = _normalizeLineEndings(flFont.ot_classes)
+		fontLib["org.robofab.opentype.classes"] = _normalizeLineEndings(flFont.ot_classes).rstrip() + "\n"
 		if flFont.features:
 			features = {}
 			order = []
 			for feature in flFont.features:
 				order.append(feature.tag)
-				features[feature.tag] = _normalizeLineEndings(feature.value)
+				features[feature.tag] = _normalizeLineEndings(feature.value).rstrip() + "\n"
 			fontLib["org.robofab.opentype.features"] = features
 			fontLib["org.robofab.opentype.featureorder"] = order
 

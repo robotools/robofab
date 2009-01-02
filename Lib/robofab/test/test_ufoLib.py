@@ -8,6 +8,16 @@ from robofab.ufoLib import UFOReader, UFOWriter, UFOLibError, \
 from robofab.test.testSupport import fontInfoVersion1, fontInfoVersion2, expectedFontInfo1To2Conversion, expectedFontInfo2To1Conversion
 
 
+# the format version 1 lib.plist contains some data
+# that these tests shouldn't be concerned about.
+removeFromFormatVersion1Lib = [
+	"org.robofab.opentype.classes",
+	"org.robofab.opentype.features",
+	"org.robofab.opentype.featureorder",
+	"org.robofab.postScriptHintData"
+]
+
+
 class TestInfoObject(object): pass
 
 
@@ -1610,6 +1620,14 @@ class ConversionFunctionsTestCase(unittest.TestCase):
 		self.assertEqual(data1, data2)
 		data1 = readPlist(libPath1)
 		data2 = readPlist(libPath2)
+		if "UFO1" in libPath1:
+			for key in removeFromFormatVersion1Lib:
+				if key in data1:
+					del data1[key]
+		if "UFO1" in libPath2:
+			for key in removeFromFormatVersion1Lib:
+				if key in data2:
+					del data2[key]
 		self.assertEqual(data1, data2)
 		data1 = readPlist(glyphsPath1_contents)
 		data2 = readPlist(glyphsPath2_contents)

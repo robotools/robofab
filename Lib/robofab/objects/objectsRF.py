@@ -193,11 +193,9 @@ class RFont(BaseFont):
 			features = reader.readFeatures()
 		self.features = features # XXX this needs a proper location
 		# hint data
-		## remove hints from the lib if the format version is 2.
-		## the migration from version 1 will happen in the hint data object.
-		if reader.formatVersion == 2 and postScriptHintDataLibKey in fontLib:
-			del fontLib[postScriptHintDataLibKey]
 		self.psHints = PostScriptFontHintValues(self)
+		if postScriptHintDataLibKey in fontLib:
+			del fontLib[postScriptHintDataLibKey]
 		# lib
 		self.lib.update(fontLib)
 		# glyphs
@@ -423,7 +421,7 @@ class RFont(BaseFont):
 				features = ""
 			if formatVersion == 2:
 				writer.writeFeatures(features)
-			else:
+			elif formatVersion == 1:
 				classes, features = splitFeaturesForFontLab(features)
 				if classes:
 					fontLib["org.robofab.opentype.classes"] = classes

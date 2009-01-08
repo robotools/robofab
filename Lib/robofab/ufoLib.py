@@ -965,6 +965,9 @@ _widthName1To2 = {
 	"Ultra-expanded"  : 9
 }
 _widthName2To1 = _flipDict(_widthName1To2)
+# FontLab's default width value is "Normal".
+# Many format version 1 UFOs will have this.
+_widthName1To2["Normal"] = 5
 
 _msCharSet1To2 = {
 	0	: 1,

@@ -1028,6 +1028,11 @@ def convertFontInfoValueForAttributeFromVersion2ToVersion1(attr, value):
 def _convertFontInfoDataVersion1ToVersion2(data):
 	converted = {}
 	for attr, value in data.items():
+		# FontLab gives -1 for the weightValue
+		# for fonts wil no defined value. Many
+		# format version 1 UFOs will have this.
+		if attr == "weightValue" and value == -1:
+			continue
 		newAttr, newValue = convertFontInfoValueForAttributeFromVersion1ToVersion2(attr, value)
 		# skip if the attribute is not part of version 2
 		if newAttr not in fontInfoAttributesVersion2:

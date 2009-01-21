@@ -3021,6 +3021,22 @@ class BaseInfo(RBaseObject):
 		# def _environmentGetAttr(self, attr):
 		# 	pass
 
+class BaseFeatures(RBaseObject):
+
+	def __init__(self):
+		RBaseObject.__init__(self)
+		self._text = ""
+
+	def _get_text(self):
+		return self._text
+
+	def _set_text(self, value):
+		assert isinstance(value, basestring)
+		self._text = value
+
+	text = property(_get_text, _set_text, doc="raw feature text.")
+
+
 class BaseGroups(dict):
 	
 	"""Base class for all RFont.groups objects"""

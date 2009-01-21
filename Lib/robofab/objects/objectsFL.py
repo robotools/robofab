@@ -5,7 +5,7 @@ from FL import *
 from robofab.tools.toolsFL import GlyphIndexTable,\
 		AllFonts, NewGlyph
 from robofab.objects.objectsBase import BaseFont, BaseGlyph, BaseContour, BaseSegment,\
-		BasePoint, BaseBPoint, BaseAnchor, BaseGuide, BaseComponent, BaseKerning, BaseInfo, BaseGroups, BaseLib,\
+		BasePoint, BaseBPoint, BaseAnchor, BaseGuide, BaseComponent, BaseKerning, BaseInfo, BaseFeatures, BaseGroups, BaseLib,\
 		roundPt, addPt, _box,\
 		MOVE, LINE, CORNER, CURVE, QCURVE, OFFCURVE,\
 		relativeBCPIn, relativeBCPOut, absoluteBCPIn, absoluteBCPOut,\
@@ -19,6 +19,8 @@ from StringIO import StringIO
 from robofab import ufoLib
 from warnings import warn
 import datetime
+from robofab.tools.fontlabFeatureSplitter import splitFeaturesForFontLab
+
 
 try:
 	set
@@ -488,7 +490,12 @@ class RFont(BaseFont):
 		return RInfo(self._object)
 	
 	info = property(_get_info, doc="font info object")
-	
+
+	def _get_features(self):
+		return RFeatures(self._object)
+
+	features = property(_get_features, doc="features object")
+
 	def _get_kerning(self):
 		kerning = {}
 		f = self._object
@@ -973,7 +980,7 @@ class RFont(BaseFont):
 			# write the features
 			if doFeatures:
 				if formatVersion == 2:
-					writer.writeFeatures(self._openTypeFeatureText())
+					writer.writeFeatures(self.features.text)
 				else:
 					self._writeOpenTypeFeaturesToLib(fontLib)
 				if bar:
@@ -1024,15 +1031,6 @@ class RFont(BaseFont):
 		if bar:
 			bar.close()
 
-	def _openTypeFeatureText(self):
-		naked = self.naked()
-		features = []
-		if naked.ot_classes:
-			features.append(_normalizeLineEndings(naked.ot_classes))
-		for feature in naked.features:
-			features.append(_normalizeLineEndings(feature.value))
-		return "".join(features)
-
 	def _writeOpenTypeFeaturesToLib(self, fontLib):
 		# this should only be used for UFO format version 1
 		flFont = self.naked()
@@ -1051,7 +1049,6 @@ class RFont(BaseFont):
 		"""read a .ufo into the font"""
 		from robofab.pens.flPen import FLPointPen
 		from robofab.interface.all.dialogs import ProgressBar
-		from robofab.tools.fontlabFeatureSplitter import splitFeaturesForFontLab
 		# start up the reader
 		reader = ufoLib.UFOReader(path)
 		glyphSet = reader.getGlyphSet()
@@ -1098,13 +1095,7 @@ class RFont(BaseFont):
 					self._readOpenTypeFeaturesFromLib(fontLib)
 				else:
 					featureText = reader.readFeatures()
-					classes, features = splitFeaturesForFontLab(featureText)
-					naked = self.naked()
-					naked.ot_classes = classes
-					naked.features.clean()
-					for featureName, featureText in features:
-						f = Feature(featureName, featureText)
-						naked.features.append(f)
+					self.features.text = featureText
 				if bar:
 					bar.tick()
 			else:
@@ -2998,4 +2989,33 @@ class RInfo(BaseInfo):
 	def _set_postscriptWindowsCharacterSet(self, value):
 		value = _postscriptWindowsCharacterSet_toFL[value]
 		self._object.ms_charset = value
+
+
+class RFeatures(BaseFeatures):
+
+	_title = "FLFeatures"
+
+	def __init__(self, font):
+		super(RFeatures, self).__init__()
+		self._object = font
+
+	def _get_text(self):
+		naked = self._object
+		features = []
+		if naked.ot_classes:
+			features.append(_normalizeLineEndings(naked.ot_classes))
+		for feature in naked.features:
+			features.append(_normalizeLineEndings(feature.value))
+		return "".join(features)
+
+	def _set_text(self, value):
+		classes, features = splitFeaturesForFontLab(value)
+		naked = self._object
+		naked.ot_classes = classes
+		naked.features.clean()
+		for featureName, featureText in features:
+			f = Feature(featureName, featureText)
+			naked.features.append(f)
+
+	text = property(_get_text, _set_text, doc="raw feature text.")
 

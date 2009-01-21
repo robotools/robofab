@@ -1,7 +1,7 @@
 """UFO for GlifLib"""
 
 from robofab import RoboFabError, RoboFabWarning
-from robofab.objects.objectsBase import BaseFont, BaseKerning, BaseGroups, BaseInfo, BaseLib,\
+from robofab.objects.objectsBase import BaseFont, BaseKerning, BaseGroups, BaseInfo, BaseFeatures, BaseLib,\
 		BaseGlyph, BaseContour, BaseSegment, BasePoint, BaseBPoint, BaseAnchor, BaseGuide, BaseComponent, \
 		relativeBCPIn, relativeBCPOut, absoluteBCPIn, absoluteBCPOut, _box,\
 		_interpolate, _interpolatePt, roundPt, addPt,\
@@ -128,6 +128,8 @@ class RFont(BaseFont):
 		self.kerning.setParent(self)
 		self.info = RInfo()
 		self.info.setParent(self)
+		self.features = RFeatures()
+		self.features.setParent(self)
 		self.groups = RGroups()
 		self.groups.setParent(self)
 		self.lib = RLib()
@@ -191,7 +193,7 @@ class RFont(BaseFont):
 			features = "\n".join(features)
 		else:
 			features = reader.readFeatures()
-		self.features = features # XXX this needs a proper location
+		self.features.text = features
 		# hint data
 		self.psHints = PostScriptFontHintValues(self)
 		if postScriptHintDataLibKey in fontLib:
@@ -416,7 +418,7 @@ class RFont(BaseFont):
 			# features
 			if bar:
 				bar.label("Saving features...")
-			features = self.features # XXX need real location
+			features = self.features.text
 			if features is None:
 				features = ""
 			if formatVersion == 2:
@@ -1191,4 +1193,9 @@ class RLib(BaseLib):
 		
 class RInfo(BaseInfo):
 	
-	_title = "RoboFabFonInfo"
+	_title = "RoboFabFontInfo"
+
+class RFeatures(BaseFeatures):
+
+	_title = "RoboFabFeatures"
+

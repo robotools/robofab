@@ -54,7 +54,7 @@ class ReadUFOFormatVersion1TestCase(unittest.TestCase):
 		expectedGroups = reader.readGroups()
 		results["groups"] = expectedGroups == groups
 		# features
-		features = self.font.features
+		features = self.font.features.text
 		f = open(os.path.join(ufoPath2, "features.fea"), "r")
 		expectedFeatures = f.read()
 		f.close()
@@ -123,7 +123,7 @@ class ReadUFOFormatVersion2TestCase(unittest.TestCase):
 		expectedGroups = reader.readGroups()
 		results["groups"] = expectedGroups == groups
 		# features
-		features = self.font.features
+		features = self.font.features.text
 		expectedFeatures = reader.readFeatures()
 		results["features"] = expectedFeatures == features
 		# lib

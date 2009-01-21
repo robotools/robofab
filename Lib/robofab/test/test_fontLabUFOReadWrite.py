@@ -69,7 +69,7 @@ class ReadUFOFormatVersion1TestCase(unittest.TestCase):
 			expectedGroups = reader.readGroups()
 			results["groups"] = expectedGroups == groups
 		if doFeatures:
-			features = self.font._openTypeFeatureText()
+			features = self.font.features.text
 			expectedFeatures = expectedFormatVersion1Features
 			# FontLab likes to add lines to the features, so skip blank lines.
 			features = [line for line in features.splitlines() if line]
@@ -184,7 +184,7 @@ class ReadUFOFormatVersion2TestCase(unittest.TestCase):
 			expectedGroups = reader.readGroups()
 			results["groups"] = expectedGroups == groups
 		if doFeatures:
-			features = self.font._openTypeFeatureText()
+			features = self.font.features.text
 			expectedFeatures = reader.readFeatures()
 			results["features"] = expectedFeatures == features
 		if doLib:

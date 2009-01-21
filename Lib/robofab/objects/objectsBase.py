@@ -640,7 +640,7 @@ class BaseFont(RBaseObject):
 		
 	def __repr__(self):
 		try:
-			name = self.info.fullName
+			name = self.info.postscriptFullName
 		except AttributeError:
 			name = "unnamed_font"
 		return "<RFont font for %s>" %(name)
@@ -778,7 +778,7 @@ class BaseFont(RBaseObject):
 			try:
 				accent = self[accentName]
 			except IndexError:
-				errors["glyph '%s' is missing in font %s"%(accentName, self.fullName)] =  1
+				errors["glyph '%s' is missing in font %s"%(accentName, self.postscriptFullName)] =  1
 				continue
 			localAnchors = {}
 			foundAnchor = None
@@ -801,7 +801,7 @@ class BaseFont(RBaseObject):
 				try:
 					baseX, baseY = anchors[foundAnchor[1:]]
 				except KeyError:
-					errors["anchor '%s' not found in glyph '%s' of font %s"%(foundAnchor[1:], baseName, self.info.fullName)]=1
+					errors["anchor '%s' not found in glyph '%s' of font %s"%(foundAnchor[1:], baseName, self.info.postscriptFullName)]=1
 					continue
 				#calculate the accent componet offset values
 				xShift = baseX - accentAnchorX
@@ -880,12 +880,12 @@ class BaseFont(RBaseObject):
 				fatalError = True
 				if not errors.has_key('Missing Glyphs'):
 					errors['Missing Glyphs'] = []
-				errors['Missing Glyphs'].append('Interpolation Error: %s not in %s'%(glyphName, minFont.info.fullName))
+				errors['Missing Glyphs'].append('Interpolation Error: %s not in %s'%(glyphName, minFont.info.postscriptFullName))
 			if glyphName not in maxGlyphNames:
 				fatalError = True
 				if not errors.has_key('Missing Glyphs'):
 					errors['Missing Glyphs'] = []
-				errors['Missing Glyphs'].append('Interpolation Error: %s not in %s'%(glyphName, maxFont.info.fullName))
+				errors['Missing Glyphs'].append('Interpolation Error: %s not in %s'%(glyphName, maxFont.info.postscriptFullName))
 			# if no major problems, proceed.
 			if not fatalError:
 				# remove the glyph since FontLab has a problem with
@@ -957,7 +957,7 @@ class BaseGlyph(RBaseObject):
 		fontParent = self.getParent()
 		if fontParent is not None:
 			try:
-				font = fontParent.info.fullName
+				font = fontParent.info.postscriptFullName
 			except AttributeError:
 				pass
 		try:
@@ -1823,7 +1823,7 @@ class BaseContour(RBaseObject):
 			fontParent = glyphParent.getParent()
 			if fontParent is not None:
 				try:
-					font = fontParent.info.fullName
+					font = fontParent.info.postscriptFullName
 				except AttributeError: pass
 		try:
 			idx = `self.index`
@@ -2230,7 +2230,7 @@ class BaseSegment(RBaseObject):
 				fontParent = glyphParent.getParent()
 				if fontParent is not None:
 					try:
-						font = fontParent.info.fullName
+						font = fontParent.info.postscriptFullName
 					except AttributeError: pass
 		try:
 			idx = `self.index`
@@ -2366,7 +2366,7 @@ class BasePoint(RBaseObject):
 					fontParent = glyphParent.getParent()
 					if fontParent is not None:
 						try:
-							font = fontParent.info.fullName
+							font = fontParent.info.postscriptFullName
 						except AttributeError: pass
 		return "<RPoint for %s.%s[%s][%s]>"%(font, glyph, contourIndex, segmentIndex)
 	
@@ -2479,7 +2479,7 @@ class BaseBPoint(RBaseObject):
 					fontParent = glyphParent.getParent()
 					if fontParent is not None:
 						try:
-							font = fontParent.info.fullName
+							font = fontParent.info.postscriptFullName
 						except AttributeError: pass
 		return "<RBPoint for %s.%s[%s][%s][%s]>"%(font, glyph, contourIndex, segmentIndex, `self.index`)
 
@@ -2715,7 +2715,7 @@ class BaseComponent(RBaseObject):
 			fontParent = glyphParent.getParent()
 			if fontParent is not None:
 				try:
-					font = fontParent.info.fullName
+					font = fontParent.info.postscriptFullName
 				except AttributeError: pass
 		return "<RComponent for %s.%s.components[%s]>"%(font, glyph, `self.index`)
 		
@@ -2831,7 +2831,7 @@ class BaseAnchor(RBaseObject):
 			fontParent = glyphParent.getParent()
 			if fontParent is not None:
 				try:
-					font = fontParent.info.fullName
+					font = fontParent.info.postscriptFullName
 				except AttributeError: pass
 		return "<RAnchor for %s.%s.anchors[%s]>"%(font, glyph, `self.index`)
 
@@ -3033,7 +3033,7 @@ class BaseGroups(dict):
 		fontParent = self.getParent()
 		if fontParent is not None:
 			try:
-				font = fontParent.info.fullName
+				font = fontParent.info.postscriptFullName
 			except AttributeError: pass
 		return "<RGroups for %s>"%font
 
@@ -3077,7 +3077,7 @@ class BaseLib(dict):
 		if parentObject is not None:
 			#do we have a font?
 			try:
-				parent = parentObject.info.fullName
+				parent = parentObject.info.postscriptFullName
 			except AttributeError:
 				#or do we have a glyph?
 				try:
@@ -3122,7 +3122,7 @@ class BaseKerning(RBaseObject):
 		fontParent = self.getParent()
 		if fontParent is not None:
 			try:
-				font = fontParent.info.fullName
+				font = fontParent.info.postscriptFullName
 			except AttributeError: pass
 		return "<RKerning for %s>"%font
 			

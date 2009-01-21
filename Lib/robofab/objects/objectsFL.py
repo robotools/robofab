@@ -2273,7 +2273,7 @@ class RGuide(BaseGuide):
 		if parentObject is not None:
 			# do we have a font?
 			try:
-				parent = parentObject.info.fullName
+				parent = parentObject.info.postscriptFullName
 			except AttributeError:
 				# or do we have a glyph?
 				try:

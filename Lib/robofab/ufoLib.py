@@ -649,7 +649,7 @@ def _fontInfoVersion2StyleMapStyleNameValidator(value):
 	return value in options
 
 def _fontInfoVersion2OpenTypeHeadCreatedValidator(value):
-	# format: 0000-00-00 00:00:00
+	# format: 0000/00/00 00:00:00
 	if not isinstance(value, (str, unicode)):
 		return False
 	# basic formatting
@@ -658,12 +658,12 @@ def _fontInfoVersion2OpenTypeHeadCreatedValidator(value):
 	if value.count(" ") != 1:
 		return False
 	date, time = value.split(" ")
-	if date.count("-") != 2:
+	if date.count("/") != 2:
 		return False
 	if time.count(":") != 2:
 		return False
 	# date
-	year, month, day = date.split("-")
+	year, month, day = date.split("/")
 	if len(year) != 4:
 		return False
 	if len(month) != 2:

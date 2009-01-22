@@ -707,9 +707,7 @@ def _fontInfoVersion2OpenTypeHeadCreatedValidator(value):
 def _fontInfoVersion2OpenTypeOS2WeightClassValidator(value):
 	if not isinstance(value, int):
 		return False
-	if value < 100:
-		return False
-	if value > 900:
+	if value < 0:
 		return False
 	return True
 

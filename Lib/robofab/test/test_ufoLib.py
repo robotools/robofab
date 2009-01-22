@@ -393,7 +393,7 @@ class ReadFontInfoVersion2TestCase(unittest.TestCase):
 		reader = UFOReader(self.dstDir)
 		self.assertRaises(UFOLibError, reader.readInfo, info=TestInfoObject())
 		## out of range
-		info["openTypeOS2WeightClass"] = 50
+		info["openTypeOS2WeightClass"] = -50
 		self._writeInfoToPlist(info)
 		reader = UFOReader(self.dstDir)
 		self.assertRaises(UFOLibError, reader.readInfo, info=TestInfoObject())
@@ -1169,7 +1169,7 @@ class WriteFontInfoVersion2TestCase(unittest.TestCase):
 		writer = UFOWriter(self.dstDir)
 		self.assertRaises(UFOLibError, writer.writeInfo, info=infoObject)
 		## out of range
-		infoObject.openTypeOS2WeightClass = 50
+		infoObject.openTypeOS2WeightClass = -50
 		writer = UFOWriter(self.dstDir)
 		self.assertRaises(UFOLibError, writer.writeInfo, info=infoObject)
 		# openTypeOS2Selection

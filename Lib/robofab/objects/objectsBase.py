@@ -3005,9 +3005,10 @@ class BaseInfo(RBaseObject):
 				value = self._environmentGetAttr(attr)
 			# fallback to super
 			else:
-				if not hasattr(self, attr):
+				try:
+					value = super(BaseInfo, self).__getattribute__(attr)
+				except AttributeError:
 					return None
-				value = super(BaseInfo, self).__getattribute__(attr)
 			if needValueConversionTo1:
 				oldAttr, value = ufoLib.convertFontInfoValueForAttributeFromVersion2ToVersion1(attr, value)
 			return value

@@ -21,7 +21,7 @@
 	<key>note</key>
 	<string>A note.</string>
 	<key>openTypeHeadCreated</key>
-	<string>2000-01-01 00:00:00</string>
+	<string>2000/01/01 00:00:00</string>
 	<key>openTypeHeadFlags</key>
 	<array>
 		<integer>0</integer>

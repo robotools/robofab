@@ -109,7 +109,7 @@ fontInfoVersion2 = {
 	"ascender"							 : 750,
 	"italicAngle"						 : -12.5,
 	"note"								 : "A note.",
-	"openTypeHeadCreated"				 : "2000-01-01 00:00:00",
+	"openTypeHeadCreated"				 : "2000/01/01 00:00:00",
 	"openTypeHeadLowestRecPPEM"			 : 10,
 	"openTypeHeadFlags"					 : [0, 1],
 	"openTypeHheaAscender"				 : 750,

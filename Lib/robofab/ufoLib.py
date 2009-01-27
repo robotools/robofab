@@ -633,7 +633,7 @@ def _fontInfoTypeValidator(value, typ):
 	return isinstance(value, typ)
 
 def _fontInfoVersion2IntListValidator(values, validValues):
-	if not isinstance(values, list):
+	if not isinstance(values, (list, tuple)):
 		return False
 	valuesSet = set(values)
 	validValuesSet = set(validValues)
@@ -721,7 +721,7 @@ def _fontInfoVersion2OpenTypeOS2WidthClassValidator(value):
 	return True
 
 def _fontInfoVersion2OpenTypeOS2PanoseValidator(values):
-	if not isinstance(values, list):
+	if not isinstance(values, (list, tuple)):
 		return False
 	if len(values) != 10:
 		return False
@@ -732,7 +732,7 @@ def _fontInfoVersion2OpenTypeOS2PanoseValidator(values):
 	return True
 
 def _fontInfoVersion2OpenTypeOS2FamilyClassValidator(values):
-	if not isinstance(values, list):
+	if not isinstance(values, (list, tuple)):
 		return False
 	if len(values) != 2:
 		return False
@@ -747,7 +747,7 @@ def _fontInfoVersion2OpenTypeOS2FamilyClassValidator(values):
 	return True
 
 def _fontInfoVersion2PostscriptBluesValidator(values):
-	if not isinstance(values, list):
+	if not isinstance(values, (list, tuple)):
 		return False
 	if len(values) > 14:
 		return False
@@ -759,7 +759,7 @@ def _fontInfoVersion2PostscriptBluesValidator(values):
 	return True
 
 def _fontInfoVersion2PostscriptOtherBluesValidator(values):
-	if not isinstance(values, list):
+	if not isinstance(values, (list, tuple)):
 		return False
 	if len(values) > 10:
 		return False
@@ -771,7 +771,7 @@ def _fontInfoVersion2PostscriptOtherBluesValidator(values):
 	return True
 
 def _fontInfoVersion2PostscriptStemsValidator(values):
-	if not isinstance(values, list):
+	if not isinstance(values, (list, tuple)):
 		return False
 	if len(values) > 12:
 		return False

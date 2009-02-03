@@ -692,6 +692,9 @@ class BaseFont(RBaseObject):
 	def __getitem__(self, glyphName):
 		return self.getGlyph(glyphName)
 
+	def __contains__(self, glyphName):
+		return self.has_key(glyphName)
+
 	def _hasChanged(self):
 		#mark the object as changed
 		self.setChanged(True)

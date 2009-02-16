@@ -2963,14 +2963,13 @@ class RInfo(BaseInfo):
 
 	def _get_openTypeOS2FamilyClass(self):
 		value = self._object.ttinfo.os2_s_family_class
-		classID = None
-		for i in range(1, 15):
-			if value & (i * 256):
-				classID = i
+		for classID in range(15):
+			classValue = classID * 256
+			if classValue > value:
+				classID -= 1
+				classValue = classID * 256
 				break
-		if classID is None:
-			classID = 0
-		subclassID = value - (classID * 256)
+		subclassID = value - classValue
 		return [classID, subclassID]
 
 	def _set_openTypeOS2FamilyClass(self, values):

@@ -1008,11 +1008,20 @@ def convertFontInfoValueForAttributeFromVersion1ToVersion2(attr, value):
 			value = int(value)
 	if value is not None:
 		if attr == "fontStyle":
-			value = _fontStyle1To2.get(value)
+			v = _fontStyle1To2.get(value)
+			if v is None:
+				raise UFOLibError("Cannot convert value (%s) for attribute %s." % (repr(value), attr))
+			value = v
 		elif attr == "widthName":
-			value = _widthName1To2.get(value)
+			v = _widthName1To2.get(value)
+			if v is None:
+				raise UFOLibError("Cannot convert value (%s) for attribute %s." % (repr(value), attr))
+			value = v
 		elif attr == "msCharSet":
-			value = _msCharSet1To2.get(value)
+			v = _msCharSet1To2.get(value)
+			if v is None:
+				raise UFOLibError("Cannot convert value (%s) for attribute %s." % (repr(value), attr))
+			value = v
 	attr = _fontInfoAttributesVersion1To2.get(attr, attr)
 	return attr, value
 

@@ -971,6 +971,8 @@ _widthName1To2["Normal"] = 5
 # FontLab has an "All" width value. In UFO 1
 # move this up to "Normal".
 _widthName1To2["All"] = 5
+# "medium" appears in a lot of UFO 1 files.
+_widthName1To2["medium"] = 5
 
 _msCharSet1To2 = {
 	0	: 1,

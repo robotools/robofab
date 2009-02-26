@@ -754,7 +754,7 @@ def _fontInfoVersion2PostscriptBluesValidator(values):
 	if len(values) % 2:
 		return False
 	for value in values:
-		if not isinstance(value, int):
+		if not isinstance(value, (int, float)):
 			return False
 	return True
 
@@ -766,7 +766,7 @@ def _fontInfoVersion2PostscriptOtherBluesValidator(values):
 	if len(values) % 2:
 		return False
 	for value in values:
-		if not isinstance(value, int):
+		if not isinstance(value, (int, float)):
 			return False
 	return True
 
@@ -776,7 +776,7 @@ def _fontInfoVersion2PostscriptStemsValidator(values):
 	if len(values) > 12:
 		return False
 	for value in values:
-		if not isinstance(value, int):
+		if not isinstance(value, (int, float)):
 			return False
 	return True
 
@@ -807,22 +807,22 @@ _fontInfoAttributesVersion2ValueData = {
 	"year"									: dict(type=int),
 	"copyright"								: dict(type=(str, unicode)),
 	"trademark"								: dict(type=(str, unicode)),
-	"unitsPerEm"							: dict(type=int),
-	"descender"								: dict(type=int),
-	"xHeight"								: dict(type=int),
-	"capHeight"								: dict(type=int),
-	"ascender"								: dict(type=int),
+	"unitsPerEm"							: dict(type=(int, float)),
+	"descender"								: dict(type=(int, float)),
+	"xHeight"								: dict(type=(int, float)),
+	"capHeight"								: dict(type=(int, float)),
+	"ascender"								: dict(type=(int, float)),
 	"italicAngle"							: dict(type=(float, int)),
 	"note"									: dict(type=(str, unicode)),
 	"openTypeHeadCreated"					: dict(type=(str, unicode), valueValidator=_fontInfoVersion2OpenTypeHeadCreatedValidator),
-	"openTypeHeadLowestRecPPEM"				: dict(type=int),
+	"openTypeHeadLowestRecPPEM"				: dict(type=(int, float)),
 	"openTypeHeadFlags"						: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeHeadFlagsOptions),
-	"openTypeHheaAscender"					: dict(type=int),
-	"openTypeHheaDescender"					: dict(type=int),
-	"openTypeHheaLineGap"					: dict(type=int),
+	"openTypeHheaAscender"					: dict(type=(int, float)),
+	"openTypeHheaDescender"					: dict(type=(int, float)),
+	"openTypeHheaLineGap"					: dict(type=(int, float)),
 	"openTypeHheaCaretSlopeRise"			: dict(type=int),
 	"openTypeHheaCaretSlopeRun"				: dict(type=int),
-	"openTypeHheaCaretOffset"				: dict(type=int),
+	"openTypeHheaCaretOffset"				: dict(type=(int, float)),
 	"openTypeNameDesigner"					: dict(type=(str, unicode)),
 	"openTypeNameDesignerURL"				: dict(type=(str, unicode)),
 	"openTypeNameManufacturer"				: dict(type=(str, unicode)),
@@ -846,34 +846,34 @@ _fontInfoAttributesVersion2ValueData = {
 	"openTypeOS2FamilyClass"				: dict(type="integerList", valueValidator=_fontInfoVersion2OpenTypeOS2FamilyClassValidator),
 	"openTypeOS2UnicodeRanges"				: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2UnicodeRangesOptions),
 	"openTypeOS2CodePageRanges"				: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2CodePageRangesOptions),
-	"openTypeOS2TypoAscender"				: dict(type=int),
-	"openTypeOS2TypoDescender"				: dict(type=int),
-	"openTypeOS2TypoLineGap"				: dict(type=int),
-	"openTypeOS2WinAscent"					: dict(type=int),
-	"openTypeOS2WinDescent"					: dict(type=int),
+	"openTypeOS2TypoAscender"				: dict(type=(int, float)),
+	"openTypeOS2TypoDescender"				: dict(type=(int, float)),
+	"openTypeOS2TypoLineGap"				: dict(type=(int, float)),
+	"openTypeOS2WinAscent"					: dict(type=(int, float)),
+	"openTypeOS2WinDescent"					: dict(type=(int, float)),
 	"openTypeOS2Type"						: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2TypeOptions),
-	"openTypeOS2SubscriptXSize"				: dict(type=int),
-	"openTypeOS2SubscriptYSize"				: dict(type=int),
-	"openTypeOS2SubscriptXOffset"			: dict(type=int),
-	"openTypeOS2SubscriptYOffset"			: dict(type=int),
-	"openTypeOS2SuperscriptXSize"			: dict(type=int),
-	"openTypeOS2SuperscriptYSize"			: dict(type=int),
-	"openTypeOS2SuperscriptXOffset"			: dict(type=int),
-	"openTypeOS2SuperscriptYOffset"			: dict(type=int),
-	"openTypeOS2StrikeoutSize"				: dict(type=int),
-	"openTypeOS2StrikeoutPosition"			: dict(type=int),
-	"openTypeVheaVertTypoAscender"			: dict(type=int),
-	"openTypeVheaVertTypoDescender"			: dict(type=int),
-	"openTypeVheaVertTypoLineGap"			: dict(type=int),
+	"openTypeOS2SubscriptXSize"				: dict(type=(int, float)),
+	"openTypeOS2SubscriptYSize"				: dict(type=(int, float)),
+	"openTypeOS2SubscriptXOffset"			: dict(type=(int, float)),
+	"openTypeOS2SubscriptYOffset"			: dict(type=(int, float)),
+	"openTypeOS2SuperscriptXSize"			: dict(type=(int, float)),
+	"openTypeOS2SuperscriptYSize"			: dict(type=(int, float)),
+	"openTypeOS2SuperscriptXOffset"			: dict(type=(int, float)),
+	"openTypeOS2SuperscriptYOffset"			: dict(type=(int, float)),
+	"openTypeOS2StrikeoutSize"				: dict(type=(int, float)),
+	"openTypeOS2StrikeoutPosition"			: dict(type=(int, float)),
+	"openTypeVheaVertTypoAscender"			: dict(type=(int, float)),
+	"openTypeVheaVertTypoDescender"			: dict(type=(int, float)),
+	"openTypeVheaVertTypoLineGap"			: dict(type=(int, float)),
 	"openTypeVheaCaretSlopeRise"			: dict(type=int),
 	"openTypeVheaCaretSlopeRun"				: dict(type=int),
-	"openTypeVheaCaretOffset"				: dict(type=int),
+	"openTypeVheaCaretOffset"				: dict(type=(int, float)),
 	"postscriptFontName"					: dict(type=(str, unicode)),
 	"postscriptFullName"					: dict(type=(str, unicode)),
 	"postscriptSlantAngle"					: dict(type=(float, int)),
 	"postscriptUniqueID"					: dict(type=int),
-	"postscriptUnderlineThickness"			: dict(type=int),
-	"postscriptUnderlinePosition"			: dict(type=int),
+	"postscriptUnderlineThickness"			: dict(type=(int, float)),
+	"postscriptUnderlinePosition"			: dict(type=(int, float)),
 	"postscriptIsFixedPitch"				: dict(type=bool),
 	"postscriptBlueValues"					: dict(type="integerList", valueValidator=_fontInfoVersion2PostscriptBluesValidator),
 	"postscriptOtherBlues"					: dict(type="integerList", valueValidator=_fontInfoVersion2PostscriptOtherBluesValidator),
@@ -881,12 +881,12 @@ _fontInfoAttributesVersion2ValueData = {
 	"postscriptFamilyOtherBlues"			: dict(type="integerList", valueValidator=_fontInfoVersion2PostscriptOtherBluesValidator),
 	"postscriptStemSnapH"					: dict(type="integerList", valueValidator=_fontInfoVersion2PostscriptStemsValidator),
 	"postscriptStemSnapV"					: dict(type="integerList", valueValidator=_fontInfoVersion2PostscriptStemsValidator),
-	"postscriptBlueFuzz"					: dict(type=int),
-	"postscriptBlueShift"					: dict(type=int),
+	"postscriptBlueFuzz"					: dict(type=(int, float)),
+	"postscriptBlueShift"					: dict(type=(int, float)),
 	"postscriptBlueScale"					: dict(type=(float, int)),
 	"postscriptForceBold"					: dict(type=bool),
-	"postscriptDefaultWidthX"				: dict(type=int),
-	"postscriptNominalWidthX"				: dict(type=int),
+	"postscriptDefaultWidthX"				: dict(type=(int, float)),
+	"postscriptNominalWidthX"				: dict(type=(int, float)),
 	"postscriptWeightName"					: dict(type=(str, unicode)),
 	"postscriptDefaultCharacter"			: dict(type=(str, unicode)),
 	"postscriptWindowsCharacterSet"			: dict(type=int, valueValidator=_fontInfoVersion2PostscriptWindowsCharacterSetValidator),

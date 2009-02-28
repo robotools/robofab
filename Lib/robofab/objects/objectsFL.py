@@ -2654,6 +2654,15 @@ _openTypeOS2WidthClass_fromFL = {
 }
 _openTypeOS2WidthClass_toFL = _flipDict(_openTypeOS2WidthClass_fromFL)
 
+_postscriptHintAttributes = set((
+	"postscriptBlueValues",
+	"postscriptOtherBlues",
+	"postscriptFamilyBlues",
+	"postscriptFamilyOtherBlues",
+	"postscriptStemSnapH",
+	"postscriptStemSnapV",
+))
+
 
 class RInfo(BaseInfo):
 
@@ -2797,6 +2806,9 @@ class RInfo(BaseInfo):
 			value = int(round(value))
 		elif not isinstance(value, valueType):
 			value = valueType(value)
+		# handle postscript hint bug in FL
+		if attr in _postscriptHintAttributes:
+			value = self._handlePSHintBug(attr, value)
 		# handle special cases
 		if specialGetSet:
 			attr = "_set_%s" % attr
@@ -2890,27 +2902,27 @@ class RInfo(BaseInfo):
 		value = _styleMapStyleName_toFL[value]
 		self._object.font_style = value
 
-	# openTypeHeadCreated
-
-	# fontlab epoch: 1969-12-31 19:00:00
-
-	def _get_openTypeHeadCreated(self):
-		value = self._object.ttinfo.head_creation
-		epoch = datetime.datetime(1969, 12, 31, 19, 0, 0)
-		delta = datetime.timedelta(seconds=value[0])
-		t = epoch - delta
-		string = "%s-%s-%s %s:%s:%s" % (str(t.year).zfill(4), str(t.month).zfill(2), str(t.day).zfill(2), str(t.hour).zfill(2), str(t.minute).zfill(2), str(t.second).zfill(2))
-		return string
-
-	def _set_openTypeHeadCreated(self, value):
-		date, time = value.split(" ")
-		year, month, day = [int(i) for i in date.split("-")]
-		hour, minute, second = [int(i) for i in time.split(":")]
-		value = datetime.datetime(year, month, day, hour, minute, second)
-		epoch = datetime.datetime(1969, 12, 31, 19, 0, 0)
-		delta = epoch - value
-		seconds = delta.seconds
-		self._object.ttinfo.head_creation[0] = seconds
+#	# openTypeHeadCreated
+#
+#	# fontlab epoch: 1969-12-31 19:00:00
+#
+#	def _get_openTypeHeadCreated(self):
+#		value = self._object.ttinfo.head_creation
+#		epoch = datetime.datetime(1969, 12, 31, 19, 0, 0)
+#		delta = datetime.timedelta(seconds=value[0])
+#		t = epoch - delta
+#		string = "%s-%s-%s %s:%s:%s" % (str(t.year).zfill(4), str(t.month).zfill(2), str(t.day).zfill(2), str(t.hour).zfill(2), str(t.minute).zfill(2), str(t.second).zfill(2))
+#		return string
+#
+#	def _set_openTypeHeadCreated(self, value):
+#		date, time = value.split(" ")
+#		year, month, day = [int(i) for i in date.split("-")]
+#		hour, minute, second = [int(i) for i in time.split(":")]
+#		value = datetime.datetime(year, month, day, hour, minute, second)
+#		epoch = datetime.datetime(1969, 12, 31, 19, 0, 0)
+#		delta = epoch - value
+#		seconds = delta.seconds
+#		self._object.ttinfo.head_creation[0] = seconds
 
 	# openTypeOS2WeightClass
 
@@ -2988,6 +3000,35 @@ class RInfo(BaseInfo):
 	def _set_postscriptWindowsCharacterSet(self, value):
 		value = _postscriptWindowsCharacterSet_toFL[value]
 		self._object.ms_charset = value
+
+	# -----------------
+	# FL bug workaround
+	# -----------------
+
+	def _handlePSHintBug(self, attribute, values):
+		"""Function to handle problems with FontLab not allowing the max number of
+		alignment zones to be set to the max number.
+		Input:  the name of the zones and the values to be set
+		Output: a warning when there are too many values to be set
+				and the max values which FontLab will allow.
+		"""
+		originalValues = values
+		truncatedLength = None
+		if attribute in ("postscriptStemSnapH", "postscriptStemSnapV"):
+			if len(values) > 10:
+				values = values[:10]
+				truncatedLength = 10
+		elif attribute in ("postscriptBlueValues", "postscriptFamilyBlues"):
+			if len(values) > 12:
+				values = values[:12]
+				truncatedLength = 12
+		elif attribute in ("postscriptOtherBlues", "postscriptFamilyOtherBlues"):
+			if len(values) > 8:
+				values = values[:8]
+				truncatedLength = 8
+		if truncatedLength is not None:
+			 print "* * * WARNING: FontLab will only accept %d %s items maximum from Python. Dropping values: %s." % (truncatedLength, attribute, str(originalValues[truncatedLength:]))
+		return values
 
 
 class RFeatures(BaseFeatures):

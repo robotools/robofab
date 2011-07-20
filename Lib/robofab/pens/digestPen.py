@@ -40,16 +40,19 @@ class DigestPointPen(AbstractPointPen):
 	def getDigest(self):
 		return tuple(self._data)
 	
-	def getDigestPointsOnly(self):
-		"""Return a tuple with all coordinates of all points, 
+	def getDigestPointsOnly(self, needSort=True):
+		""" Return a tuple with all coordinates of all points, 
 			but without smooth info or drawing instructions.
 			For instance if you want to compare 2 glyphs in shape,
 			but not interpolatability.
 			"""
 		points = []
+		from types import TupleType
 		for item in self._data:
-			points.append(item[0])
-		points.sort()
+			if type(item) == TupleType:
+				points.append(item[0])
+		if needSort:
+			points.sort()
 		return tuple(points)
 
 
@@ -66,3 +69,38 @@ class DigestPointStructurePen(DigestPointPen):
 	def addComponent(self, baseGlyphName, transformation):
 		self._data.append(baseGlyphName)
 
+if __name__ == "__main__":
+	"""
+	
+	beginPath
+	((112, 651), 'line', False, None)
+	((112, 55), 'line', False, None)
+	((218, 55), 'line', False, None)
+	((218, 651), 'line', False, None)
+	endPath
+	
+	"""
+	# a test
+	
+	from robofab.objects.objectsRF import RGlyph
+	
+	g = RGlyph()
+	p = g.getPen()
+	p.moveTo((112, 651))
+	p.lineTo((112, 55))
+	p.lineTo((218, 55))
+	p.lineTo((218, 651))
+	p.closePath()
+	
+	print g, len(g)
+	
+	digestPen = DigestPointPen()
+	g.drawPoints(digestPen)
+
+	print
+	print "getDigest", digestPen.getDigest()
+	
+	print
+	print "getDigestPointsOnly", digestPen.getDigestPointsOnly()
+	
+	

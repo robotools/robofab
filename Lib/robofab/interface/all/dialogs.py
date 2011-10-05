@@ -21,10 +21,10 @@
     it is likely that these versions will change and need to be updated.
     
     # this calls the new dialogs infrastructure:
-    from robofab.interface.all import Message
+    from robofab.interface.all.dialogs import Message
     
     # this calls the old original legacy dialogs infrastructure:
-    from robofab.interface.all.dialogs import Message
+    from robofab.interface.all.dialogs_legacy import Message
 
 """
 

@@ -1,7 +1,7 @@
 
 """
 
-Dialogs. Not just for FontLab any more.
+Dialogs.
 Cross-platform and cross-application compatible. Some of them anyway.
 (Not all dialogs work on PCs outside of FontLab. Some dialogs are for FontLab only. Sorry.)
 

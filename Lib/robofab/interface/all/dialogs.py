@@ -114,26 +114,20 @@ platformApplicationSupport = [
     ('mac',     'fontlab',      (2,3,5),    "dialogs_fontlab_legacy1"),
     # because FontLab 5.01 and earlier on 2.3.5 can run EasyDialogs
     # |         |               |           |
-    ('mac',     'fontlab',      (2,5,4),    "dialogs_fontlab_legacy1"),
+    #('mac',     'fontlab',      (2,5,4),    "dialogs_fontlab_legacy1"),
+    ('mac',     'fontlab',      (2,5,4),    "dialogs_fontlab_legacy2"),
     # because FontLab 5.1 on mac 10.6 should theoretically be able to run cocoa dialogs,
     # but they are very unreliable. So until we know what's going on, FL5.1 on 10.6
     # is going to have to live with DialogKit dialogs. 
     # |         |               |           |
-    #('mac',     'fontlab',      (2,5,5),    "dialogs_fontlab_legacy2"),
-    ('mac',     'fontlab',      None,    "dialogs_fontlab_legacy2"),
+    ('mac',     'fontlab',      None,       "dialogs_fontlab_legacy2"),
     # because FontLab 5.1 on mac, 10.7+ should run cocoa / vanilla
     # |         |               |           |
     ('mac',     None,           None,       "dialogs_mac_vanilla"),
     # perhaps nonelab scripts can run vanilla as well?
     # |         |               |           |
-    ('mac',     'robofont',     None,       "dialogs_mac_vanilla"),
-    # because robofont can run vanilla
-    # |         |               |           |
-    ('mac',     'glyphs',       None,       "dialogs_mac_vanilla"),
-    # because glyphs can run vanilla
-    # |         |               |           |
-    ('linux',   'fontforge',    None,       None),
-    # no idea what fontforge runs. 
+    ('win',     None,           None,       "dialogs_legacy"),
+    # older windows stuff might be able to use the legacy dialogs
 ]
 
 platformModule = None

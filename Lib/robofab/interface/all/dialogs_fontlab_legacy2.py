@@ -17,6 +17,11 @@ from FL import *
 from Foundation import NSObject
 from AppKit import *
 
+# is this the magic that will make this work in FL 5.1
+# however, what are the side effects?
+NSApplication.sharedApplication()
+
+
 
 __all__ = [
 #    "AskString",
@@ -59,17 +64,11 @@ class BaseMessageDialog(NSObject):
         for buttonTitle, value in buttonTitlesValues:
             alert.addButtonWithTitle_(buttonTitle)
         self._value = None
-        print "alert", alert
         code = alert.runModal()
-        print "are we waiting?", code
         self._translateValue(code)
         return self
 
     def _translateValue(self, code):
-        print "_translateValue", self._buttonTitlesValues, code
-        print "NSAlertFirstButtonReturn", NSAlertFirstButtonReturn
-        print "NSAlertSecondButtonReturn", NSAlertSecondButtonReturn
-        print "NSAlertThirdButtonReturn", NSAlertThirdButtonReturn
         if code == NSAlertFirstButtonReturn:
             value = 1
         elif code == NSAlertSecondButtonReturn:
@@ -79,14 +78,6 @@ class BaseMessageDialog(NSObject):
         else:
             value = code - NSAlertThirdButtonReturn + 3
         self._value = self._buttonTitlesValues[value-1][1]
-
-    #def alertDidEnd_returnCode_contextInfo_(self, alert, code, context):
-    #    alert.window().close()
-    #    self._translateValue(code)
-    #    if self._resultCallback is not None:
-    #        self._resultCallback(self._value)
-
-    #alertDidEnd_returnCode_contextInfo_ = selector(alertDidEnd_returnCode_contextInfo_, signature="v@:@i@")
 
     def windowWillClose_(self, notification):
         self.autorelease()

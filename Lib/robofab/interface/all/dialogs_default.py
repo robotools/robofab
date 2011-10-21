@@ -47,7 +47,7 @@ def Message(message, title='RoboFab'):
     raise NotImplementedError
 
 def OneList(list, message="Select an item:", title='RoboFab'):
-    raise NotImplementedError
+    raise PendingDeprecationWarning
     
 def PutFile(message=None, defaultName=None):
     raise NotImplementedError
@@ -62,10 +62,10 @@ def SelectGlyph(font, message="Select a glyph:", title='RoboFab'):
     raise NotImplementedError
 
 def TwoChecks(title_1="One",  title_2="Two", value1=1, value2=1, title='RoboFab'):
-    raise NotImplementedError
+    raise PendingDeprecationWarning
 
 def TwoFields(title_1="One:", value_1="0", title_2="Two:", value_2="0", title='RoboFab'):
-    raise NotImplementedError
+    raise PendingDeprecationWarning
 
 class ProgressBar(object):
     pass

@@ -21,7 +21,7 @@ __all__ = [
     "SelectGlyph",
 #    "TwoChecks",
 #    "TwoFields",
-#    "ProgressBar",
+    "ProgressBar",
 ]
 
 class _ModalWindow(vanilla.Window):
@@ -43,6 +43,7 @@ class _ModalWindow(vanilla.Window):
        super(_ModalWindow, self).windowWillClose_(notification)
        NSApp().stopModal()
 
+
 class _baseWindowController(object):
     
     def setUpBaseWindowBehavior(self):
@@ -63,6 +64,7 @@ class _baseWindowController(object):
     
     def get(self):
         raise NotImplementedError
+
         
 class _AskStringController(_baseWindowController):
 
@@ -114,9 +116,6 @@ class _listController(_baseWindowController):
         return None
 
     
-
-# start with all the defaults. 
-
 def AskString(prompt, value='', title='RoboFab'):
     w = _AskStringController(prompt, value, title)
     return w.get()
@@ -193,6 +192,37 @@ def TwoChecks(title_1="One",  title_2="Two", value1=1, value2=1, title='RoboFab'
 def TwoFields(title_1="One:", value_1="0", title_2="Two:", value_2="0", title='RoboFab'):
     raise NotImplementedError
 
+
 class ProgressBar(object):
-    pass
+    def __init__(self, title="RoboFab...", ticks=None, label=""):
+        self.w = vanilla.Window((250, 60), title)
+        if ticks is None:
+            isIndeterminate = True
+            ticks = 0
+        else:
+            isIndeterminate = False
+        self.w.progress = vanilla.ProgressBar((15, 15, -15, 12), maxValue=ticks, isIndeterminate=isIndeterminate, sizeStyle="small")
+        self.w.text = vanilla.TextBox((15, 32, -15, 14), label, sizeStyle="small")
+        self.w.progress.start()
+        self.w.center()
+        self.w.open()
+    
+    def close(self):
+        self.w.progress.stop()
+        self.w.close()
+        
+    def getCurrentTick(self):
+        return self.w.progress.get()
+    
+    def label(self, label):
+        self.w.text.set(label)
+        self.w.text._nsObject.display()
+    
+    def tick(self, tickValue=None):
+        if tickValue is None:
+            self.w.progress.increment()
+        else:
+            self.w.progress.set(tickValue)
+            
+        
 

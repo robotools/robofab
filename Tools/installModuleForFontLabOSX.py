@@ -15,6 +15,9 @@
             move or rename the folder that contains robofab. But it also makes
             it possible for multiple fontlabs to point to a single install of robofab. 
         5.  Logs are kept.
+        6.  SAVE YOUR WORK IN RUNNING FONTLAB APPLICATIONS BEFORE RUNNING.
+            This script will instruct FontLab to quit at the end of the installation.
+            Unsaved work will be lost.
     
     Notes
     In its current form OSX might have permission restrictions for writing in site-packages.

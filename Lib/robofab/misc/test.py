@@ -8,8 +8,8 @@ from fontTools.pens.basePen import BasePen
 from fontTools.misc import arrayTools
 from fontTools.misc import bezierTools
 
-import arrayTools as noNumpyArrayTools
-import bezierTools as noNumpyBezierTools
+import robofab.misc.arrayTools as noNumpyArrayTools
+import robofab.misc.bezierTools as noNumpyBezierTools
 
 
 def drawMoveTo(pen, maxBox):

@@ -15,7 +15,7 @@ __all__ = [
     "solveCubic",
 ]
 
-from arrayTools import calcBounds
+from robofab.misc.arrayTools import calcBounds
 
 epsilon = 1e-12
 

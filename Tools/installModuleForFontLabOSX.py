@@ -49,7 +49,8 @@ shortTimeStamp = strftime("%d_%b_%Y_%H_%M_%S", localtime())
 
 import tempfile
 from AppKit import *
-from LaunchServices import LSCopyApplicationURLsForURL, kLSRolesEditor
+
+  
 
 
 installerCode = """# this is a generated installer script for FontLab
@@ -106,7 +107,7 @@ if len(sp)==1:
     log("pathFilePath: " + pathFilePath)
     writePathFile(pathFilePath, %(modulePaths)s)
     # if there's nothing else we can quit.
-    log("Done. Quitting.")
+    log("Finished installing. Quitting.")
     sys.exit(0)
 else:
     # trouble - print detailed debug info
@@ -114,6 +115,7 @@ else:
     log("we have trouble finding site-packages. Please check your installation.")
     for s in sp:
         log(s)
+    log("Stopped installing.")
     # leave the app open after problem?
 
 """
@@ -126,6 +128,22 @@ def writeFLW(path, code):
     f.close()
 
 def findFontLabCandidates():
+    """ This tries to catch all applications that can open a .vfb file.
+        That should include a good number of FontLab applications.
+        In order to find out, we need LaunchServices. Should LaunchServices
+        itself not be available, return the 2 most common FontLab.app names
+        and hope for the best.
+        
+    """
+    try:
+        from LaunchServices import LSCopyApplicationURLsForURL, kLSRolesEditor
+        canLaunch = True
+        log(logMainPath, "LaunchServices available.")
+    except ImportError:
+        canLaunch = False
+        log(logMainPath, "LaunchServices unavailable.")
+    if not canLaunch:
+        return ["FontLab Studio 5 OSX.app", "FontLab Studio.app"]
     # make a bogus VFB
     dummyPath = tempfile.mkstemp(suffix=".vfb")[1]
     # find VFB editors
@@ -152,7 +170,8 @@ def log(path, entry, verbose=True):
 
 
 # build the installer program for FontLab
-root = os.getcwd()
+root = os.path.dirname(__file__)
+
 # folder for logs
 logRootPath = os.path.join(root, "installation logs")
 if not os.path.exists(logRootPath):
@@ -167,30 +186,38 @@ modulePaths = []
 modulePaths.append(os.path.join(os.path.dirname(root), "Lib"))
 moduleName = "RoboFab"
 
+# find as many FontLab.app names as wel can
 fontLabNames = findFontLabCandidates()
 
 for appName in fontLabNames:
-    print
-    log(logMainPath, "calling application: "+appName)
-    safeAppName = os.path.splitext(appName)[0].replace(" ", "").encode("ascii")
-    log(logMainPath, "safe AppName: "+safeAppName)
-    flInstallerPath = os.path.join(root, "temp_FontLab_TestInstaller_for_%s.flw"%safeAppName)
-    appLogPath = os.path.join(logRootPath, "%s_log_%s.txt"%(safeAppName, shortTimeStamp))
-    log(logMainPath, "appLogPath: "+appLogPath)
-    log(logMainPath, "modulePaths: "+str(modulePaths))
+    problem = None
+    try:
+        print
+        log(logMainPath, "calling application: "+appName)
+        safeAppName = os.path.splitext(appName)[0].replace(" ", "").encode("ascii")
+        log(logMainPath, "safe AppName: "+safeAppName)
+        flInstallerPath = os.path.join(root, "temp_FontLab_TestInstaller_for_%s.flw"%safeAppName)
+        appLogPath = os.path.join(logRootPath, "%s_log_%s.txt"%(safeAppName, shortTimeStamp))
+        log(logMainPath, "appLogPath: "+appLogPath)
+        log(logMainPath, "modulePaths: "+str(modulePaths))
     
-    # prepare the program
-    values = {'appName':appName, 'modulePaths':modulePaths,
-        'moduleName':moduleName,
-        'timeStamp': longTimeStamp,
-        'appLogPath': appLogPath,
-        'safeAppName': safeAppName,
-        }
-    code = installerCode%values
-    writeFLW(flInstallerPath, code)
-    # run the program
-    ws = NSWorkspace.sharedWorkspace().openFile_withApplication_(flInstallerPath, appName)
-
+        # prepare the program
+        values = {'appName':appName, 'modulePaths':modulePaths,
+            'moduleName':moduleName,
+            'timeStamp': longTimeStamp,
+            'appLogPath': appLogPath,
+            'safeAppName': safeAppName,
+            }
+        code = installerCode%values
+        writeFLW(flInstallerPath, code)
+        # run the program
+        ws = NSWorkspace.sharedWorkspace().openFile_withApplication_(flInstallerPath, appName)
+    except:
+        problem = True
+    finally:
+        if problem:
+            log(logMainPath, "Looks like we had a problem.")
+            
 # cleanup
 if not verbose:
     os.remove(flInstallerPath)

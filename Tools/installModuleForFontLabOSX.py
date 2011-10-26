@@ -46,15 +46,15 @@ from time import localtime, strftime, sleep
 
 longTimeStamp = strftime("%a, %d %b %Y %H:%M:%S", localtime())
 shortTimeStamp = strftime("%d_%b_%Y_%H_%M_%S", localtime())
+scriptVersion = "1.0"
 
 import tempfile
 from AppKit import *
 
-  
 
-
-installerCode = """# this is a generated installer script for FontLab
-# generated on %(timeStamp)s
+installerCode = """# This is a automatically generated installer script for FontLab
+# Generated on %(timeStamp)s
+# scriptVersion: %(scriptVersion)s
 
 import sys, os, time
 
@@ -93,11 +93,21 @@ def makePTHFileName():
 
 log("-" * 50)
 log("hello, this is application %(appName)s")
+log("Running script version %(scriptVersion)s")
 print "I will log to", "%(appLogPath)s"
 from FL import *
 log("FontLab version "+fl.version)
 log("I have a path for the new module %(modulePaths)s")
 
+try:
+    import robofab
+    log("Hey, I can already load robofab, I'm going to stop. ")
+    log("robofab.__file__ :" + robofab.__file__.encode('ascii'))
+    log("Stopped installing.")
+    sys.exit(0)
+except ImportError:
+    log("I can't load robofab, good thing we're installing it.")
+    
 sp = findSitePackages()
 print "And my sitepackages is here", sp
 if len(sp)==1:
@@ -179,8 +189,9 @@ if not os.path.exists(logRootPath):
 # path for log for this script
 logMainPath = os.path.join(logRootPath, "installer_log_%s.txt"%shortTimeStamp)
     
-log(logMainPath, "start install")
+log(logMainPath, "Start install")
 log(logMainPath, longTimeStamp)
+log(logMainPath, "Running script version %s"%scriptVersion)
 
 modulePaths = []
 modulePaths.append(os.path.join(os.path.dirname(root), "Lib"))
@@ -198,7 +209,7 @@ for appName in fontLabNames:
         log(logMainPath, "safe AppName: "+safeAppName)
         flInstallerPath = os.path.join(root, "temp_FontLab_TestInstaller_for_%s.flw"%safeAppName)
         appLogPath = os.path.join(logRootPath, "%s_log_%s.txt"%(safeAppName, shortTimeStamp))
-        log(logMainPath, "appLogPath: "+appLogPath)
+        log(logMainPath, "applications will log to: "+appLogPath)
         log(logMainPath, "modulePaths: "+str(modulePaths))
     
         # prepare the program
@@ -207,6 +218,7 @@ for appName in fontLabNames:
             'timeStamp': longTimeStamp,
             'appLogPath': appLogPath,
             'safeAppName': safeAppName,
+            'scriptVersion': scriptVersion,
             }
         code = installerCode%values
         writeFLW(flInstallerPath, code)

@@ -11,7 +11,7 @@ from robofab.objects.objectsBase import BaseFont, BaseKerning, BaseGroups, BaseI
 import os
 
 
-__all__ = [ "CurrentFont", 
+__all__ = [	"CurrentFont", 
 		"CurrentGlyph", 'OpenFont',
 		'RFont', 'RGlyph', 'RContour',
 		'RPoint', 'RBPoint', 'RAnchor',
@@ -58,7 +58,7 @@ def AllFonts():
 	
 
 class PostScriptFontHintValues(BasePostScriptFontHintValues):
-	""" Font level PostScript hints object for objectsRF usage.
+	"""	Font level PostScript hints object for objectsRF usage.
 		If there are values in the lib, use those.
 		If there are no values in the lib, use defaults.
 		
@@ -89,7 +89,7 @@ def getPostScriptHintDataFromLib(aFont, fontLib):
 	return psh
 	
 class PostScriptGlyphHintValues(BasePostScriptGlyphHintValues):
-	""" Glyph level PostScript hints object for objectsRF usage.
+	"""	Glyph level PostScript hints object for objectsRF usage.
 		If there are values in the lib, use those.
 		If there are no values in the lib, be empty.
 		
@@ -100,7 +100,6 @@ class PostScriptGlyphHintValues(BasePostScriptGlyphHintValues):
 		if aGlyph is not None:
 			self.setParent(aGlyph)
 			self._loadFromLib(aGlyph.lib)
-			# remove the data from lib?
 		if data is not None:
 			self.fromDict(data)
 			
@@ -123,7 +122,7 @@ class RFont(BaseFont):
 		self._object = {}
 		
 		self._glyphSet = None
-		self._scheduledForDeletion = [] # this is a place for storing glyphs that need to be removed when the font is saved
+		self._scheduledForDeletion = []	# this is a place for storing glyphs that need to be removed when the font is saved
 		
 		self.kerning = RKerning()
 		self.kerning.setParent(self)
@@ -208,7 +207,7 @@ class RFont(BaseFont):
 	def _loadGlyph(self, glyphName):
 		"""Load a single glyph from the glyphSet, on request."""
 		from robofab.pens.rfUFOPen import RFUFOPointPen
-		g =	 RGlyph()
+		g =  RGlyph()
 		g.name = glyphName
 		pen = RFUFOPointPen(g)
 		self._glyphSet.readGlyph(glyphName=glyphName, glyphObject=g, pointPen=pen)
@@ -438,22 +437,15 @@ class RFont(BaseFont):
 				bar.tick()
 			# lib
 			if formatVersion == 1:
-				hintsDict = self.psHints.asDict()
-				print "hintsDict", hintsDict
-				if hintsDict:
-					print "saving them hints"
-					fontLib[postScriptHintDataLibKey] = hintsDict
+				fontLib[postScriptHintDataLibKey] = self.psHints.asDict()
 			if bar:
 				bar.label("Saving lib...")
-			print "@"*20
-			print "Lib"
-			print fontLib
-			print writer
 			writer.writeLib(fontLib)
 			if bar:
 				bar.tick()
 			# glyphs
 			glyphNameToFileNameFunc = self.getGlyphNameToFileNameFunc()
+
 			glyphSet = writer.getGlyphSet(glyphNameToFileNameFunc)
 			if len(self._scheduledForDeletion) != 0:
 				if bar:
@@ -977,7 +969,7 @@ class RSegment(BaseSegment):
 			p = self.points.pop(-1)
 			self.points = [p]
 			onCurve.type = pointType
-			self.smooth = False 
+			self.smooth = False	
 		# we are converting to a quad curve where just about anything is legal
 		elif pointType == QCURVE:
 			onCurve.type = pointType
@@ -1011,7 +1003,7 @@ class RBPoint(BaseBPoint):
 		self._anchorPoint.setChanged(value)
 	
 	def _setNextChanged(self, value):
-		self._nextOnCurve.setChanged(value) 
+		self._nextOnCurve.setChanged(value)	
 		
 	def _get__parentSegment(self):
 		return self.getParent()

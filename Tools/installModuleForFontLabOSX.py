@@ -42,6 +42,7 @@
 """
 
 import os
+import platform
 from time import localtime, strftime, sleep
 
 longTimeStamp = strftime("%a, %d %b %Y %H:%M:%S", localtime())
@@ -56,7 +57,7 @@ installerCode = """# This is a automatically generated installer script for Font
 # Generated on %(timeStamp)s
 # scriptVersion: %(scriptVersion)s
 
-import sys, os, time
+import sys, os, time, platform
 
 def log(entry, verbose=True):
     \"\"\"Write stuff into log files\"\"\"
@@ -92,8 +93,9 @@ def makePTHFileName():
     return name
 
 log("-" * 50)
-log("hello, this is application %(appName)s")
-log("Running script version %(scriptVersion)s")
+log("hello, this is application: %(appName)s")
+log("Running script version: %(scriptVersion)s")
+log("Platform:"+platform.platform())
 print "I will log to", "%(appLogPath)s"
 from FL import *
 log("FontLab version "+fl.version)
@@ -191,7 +193,9 @@ logMainPath = os.path.join(logRootPath, "installer_log_%s.txt"%shortTimeStamp)
     
 log(logMainPath, "Start install")
 log(logMainPath, longTimeStamp)
-log(logMainPath, "Running script version %s"%scriptVersion)
+log(logMainPath, "Running script version: %s"%scriptVersion)
+log(logMainPath, "Platform: "+platform.platform())
+
 
 modulePaths = []
 modulePaths.append(os.path.join(os.path.dirname(root), "Lib"))
@@ -211,6 +215,7 @@ for appName in fontLabNames:
         appLogPath = os.path.join(logRootPath, "%s_log_%s.txt"%(safeAppName, shortTimeStamp))
         log(logMainPath, "applications will log to: "+appLogPath)
         log(logMainPath, "modulePaths: "+str(modulePaths))
+        log(logMainPath, "script: "+flInstallerPath)
     
         # prepare the program
         values = {'appName':appName, 'modulePaths':modulePaths,

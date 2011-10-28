@@ -18,9 +18,15 @@
         6.  SAVE YOUR WORK IN RUNNING FONTLAB APPLICATIONS BEFORE RUNNING.
             This script will instruct FontLab to quit at the end of the installation.
             Unsaved work will be lost.
+            
+    Usage:
+        cd <folder where this file is>
+        sudo python installModuleForFontLabOSX.py
+            
     
     Notes
-    In its current form OSX might have permission restrictions for writing in site-packages.
+        In its current form OSX might have permission restrictions for writing in site-packages.
+        This does not download or install dependencies such as FontTools.
 
     This script assumes is here:
         robofab/
@@ -37,7 +43,7 @@
         - FontLab windows version
         - sniff for other useful modules, link those too
         - run this script as part of a .pkg
-                        
+        
     
 """
 
@@ -62,7 +68,12 @@ import sys, os, time, platform
 def log(entry, verbose=True):
     \"\"\"Write stuff into log files\"\"\"
     path = "%(appLogPath)s"
-    f = open(path, 'a')
+    try:
+        f = open(path, 'a')
+    except IOError:
+        print "Error writing to log."
+        print entry
+        return
     if type(entry) != str:
         entry = str(entry)
     f.write("\\n"+entry)
@@ -84,9 +95,22 @@ def findSitePackages():
 def writePathFile(pathFilePath, modulePaths):
     \"\"\"Write the *.pth file to site-packages.\"\"\"
     print "writing the modulePaths path to", pathFilePath
-    f = open(pathFilePath, 'w')
-    f.write(\"\\n\".join(modulePaths))
-    f.close()
+    try:
+        f = open(pathFilePath, 'w')
+        f.write(\"\\n\".join(modulePaths))
+        f.close()
+    except IOError:
+        import traceback
+        cla, exc, trbk = sys.exc_info()
+        excName = cla.__name__
+        try:
+         excArgs = exc.__dict__["args"]
+        except KeyError:
+         excArgs = "<no args>"
+        excTb = traceback.format_tb(trbk, 2)
+        log(excName)
+        #log(excArgs)
+        log(excTb)
 
 def makePTHFileName():
     name = "%(moduleName)s_for_%(safeAppName)s" + ".pth"
@@ -101,12 +125,13 @@ from FL import *
 log("FontLab version "+fl.version)
 log("I have a path for the new module %(modulePaths)s")
 
+installedAlready = False
 try:
     import robofab
     log("Hey, I can already load robofab, I'm going to stop. ")
     log("robofab.__file__ :" + robofab.__file__.encode('ascii'))
     log("Stopped installing.")
-    sys.exit(0)
+    installedAlready = True
 except ImportError:
     log("I can't load robofab, good thing we're installing it.")
     
@@ -114,12 +139,20 @@ sp = findSitePackages()
 print "And my sitepackages is here", sp
 if len(sp)==1:
     # we're probably good
-    log("we have found one site-packges at " + sp[0])
+    log("we have found one site-packages at " + sp[0])
     pathFilePath = os.path.join(sp[0], makePTHFileName())
     log("pathFilePath: " + pathFilePath)
-    writePathFile(pathFilePath, %(modulePaths)s)
-    # if there's nothing else we can quit.
-    log("Finished installing. Quitting.")
+    if os.path.exists(pathFilePath)==True:
+        log("\tAlready .pth at this location!")
+    else:
+        if installedAlready:
+            log("\tSo we've already been installed some other way?")
+    if not installedAlready:
+        writePathFile(pathFilePath, %(modulePaths)s)
+        # if there's nothing else we can quit.
+        log("Finished installing. Quitting.")
+    else:
+        log("Skipping the actual install. Quitting.")
     sys.exit(0)
 else:
     # trouble - print detailed debug info
@@ -172,7 +205,12 @@ def findFontLabCandidates():
 
 def log(path, entry, verbose=True):
     """Write stuff into log files"""
-    f = open(path, 'a')
+    try:
+        f = open(path, 'a')
+    except IOError:
+        print "Error writing to log."
+        print entry
+        return
     if type(entry) != str:
         entry = str(entry)
     f.write("\n"+entry)
@@ -182,7 +220,8 @@ def log(path, entry, verbose=True):
 
 
 # build the installer program for FontLab
-root = os.path.dirname(__file__)
+root = os.path.abspath(os.path.dirname(__file__))
+
 
 # folder for logs
 logRootPath = os.path.join(root, "installation logs")
@@ -195,6 +234,7 @@ log(logMainPath, "Start install")
 log(logMainPath, longTimeStamp)
 log(logMainPath, "Running script version: %s"%scriptVersion)
 log(logMainPath, "Platform: "+platform.platform())
+log(logMainPath, "root: "+root)
 
 
 modulePaths = []
@@ -208,6 +248,10 @@ for appName in fontLabNames:
     problem = None
     try:
         print
+        log(logMainPath, "------")
+        appBootTimeStamp = strftime("%a, %d %b %Y %H:%M:%S", localtime())
+        log(logMainPath, appBootTimeStamp)
+        
         log(logMainPath, "calling application: "+appName)
         safeAppName = os.path.splitext(appName)[0].replace(" ", "").encode("ascii")
         log(logMainPath, "safe AppName: "+safeAppName)

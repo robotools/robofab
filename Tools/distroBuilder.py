@@ -84,7 +84,7 @@ def copyStuffToBuildFolder(revision=None, distroRoot=None, only=None, makeZipNam
 
 	if "vanilla" in only:
 		# vanilla to the robofab distro build
-		srcDir = os.path.normpath(dialogKitPath)
+		srcDir = os.path.normpath(vanillaPath)
 		dstDir = os.path.normpath(os.path.join(distroRoot, "Vanilla"))
 		cmd = 'rm -rf "%s"'%(dstDir)
 		os.popen(cmd)

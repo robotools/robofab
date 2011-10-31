@@ -189,7 +189,7 @@ class GetFileOrFolderPanel(BasePutGetPanel):
     openPanelDidEnd_returnCode_contextInfo_ = objc.selector(openPanelDidEnd_returnCode_contextInfo_, signature="v@:@ii")
 
 
-def Message(messageText="", title='RoboFab', informativeText=""):
+def Message(messageText="", title='noLongerUsed', informativeText=""):
     """Legacy robofab dialog compatible wrapper."""
     #def _message(messageText="", informativeText="", alertStyle=NSInformationalAlertStyle, parentWindow=None, resultCallback=None):
     resultCallback = None
@@ -203,7 +203,7 @@ def Message(messageText="", title='RoboFab', informativeText=""):
     if resultCallback is None:
         return 1
 
-def AskYesNoCancel(messageText, informativeText=""):
+def AskYesNoCancel(messageText, title='noLongerUsed', default=None, informativeText=""):
     """Legacy robofab dialog compatible wrapper."""
     parentWindow = None
     alert = BaseMessageDialog.alloc().initWithMessageText_informativeText_alertStyle_buttonTitlesValues_window_resultCallback_(

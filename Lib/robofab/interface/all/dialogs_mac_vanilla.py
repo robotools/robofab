@@ -121,6 +121,7 @@ def AskString(prompt, value='', title='RoboFab'):
     return w.get()
     
 def AskYesNoCancel(prompt, title='RoboFab', default=0, informativeText=""):
+    import vanilla.dialogs
     return vanilla.dialogs.askYesNoCancel(messageText=prompt, informativeText=informativeText)
 
 def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):
@@ -224,5 +225,3 @@ class ProgressBar(object):
         else:
             self.w.progress.set(tickValue)
             
-        
-

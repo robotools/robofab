@@ -7,9 +7,6 @@
     
 """
 
-
-print "dialogs_fontlab_legacy loading!"
-
 from FL import *
 from dialogKit import ModalDialog, Button, TextBox, EditText
 

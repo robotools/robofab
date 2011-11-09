@@ -24,7 +24,7 @@ __all__ = [
     #"SelectGlyph",
     #"TwoChecks",
     #"TwoFields",
-    #"ProgressBar",
+    "ProgressBar",
 ]
 
 
@@ -77,7 +77,7 @@ def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):
     raise NotImplementedError
 
 def GetFile(message=None):
-    strFilter = "All Files	(*.*)|*.*|"
+    strFilter = "All Files  (*.*)|*.*|"
     defaultExt = ""
     # using fontlab's internal file dialogs
     return fl.GetFileName(1, defaultExt, message, strFilter)
@@ -131,6 +131,25 @@ def TwoChecks(title_1="One",  title_2="Two", value1=1, value2=1, title='RoboFab'
 def TwoFields(title_1="One:", value_1="0", title_2="Two:", value_2="0", title='RoboFab'):
     raise NotImplementedError
 
+
 class ProgressBar(object):
-    pass
+
+    def __init__(self, title="RoboFab...", ticks=0, label=""):
+        self._tickValue = 1
+        fl.BeginProgress(title, ticks)
+
+    def getCurrentTick(self):
+        return self._tickValue
+
+    def tick(self, tickValue=None):
+        if not tickValue:
+            tickValue = self._tickValue
+        fl.TickProgress(tickValue)
+        self._tickValue = tickValue + 1
+
+    def label(self, label):
+        pass
+
+    def close(self):
+        fl.EndProgress()
 

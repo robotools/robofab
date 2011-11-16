@@ -37,7 +37,7 @@ __all__ = [
 #    "SelectGlyph",
 #    "TwoChecks",
 #    "TwoFields",
-#    "ProgressBar",
+    "ProgressBar",
 ]
 
 
@@ -334,5 +334,24 @@ def TwoFields(title_1="One:", value_1="0", title_2="Two:", value_2="0", title='R
     raise NotImplementedError
 
 class ProgressBar(object):
-    pass
+
+    def __init__(self, title="RoboFab...", ticks=0, label=""):
+        self._tickValue = 1
+        fl.BeginProgress(title, ticks)
+
+    def getCurrentTick(self):
+        return self._tickValue
+
+    def tick(self, tickValue=None):
+        if not tickValue:
+            tickValue = self._tickValue
+        fl.TickProgress(tickValue)
+        self._tickValue = tickValue + 1
+
+    def label(self, label):
+        pass
+
+    def close(self):
+        fl.EndProgress()
+
 

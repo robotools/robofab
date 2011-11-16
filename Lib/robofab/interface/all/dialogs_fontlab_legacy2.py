@@ -29,6 +29,7 @@ __all__ = [
 #    "FindGlyph",
     "GetFile",
     "GetFolder",
+	"GetFileOrFolder",
     "Message",
 #    "OneList",
     "PutFile",
@@ -275,8 +276,12 @@ def GetFileOrFolder(messageText=None, title=None, directory=None, fileName=None,
     basePanel.canChooseDirectories = True
     basePanel.canChooseFiles = True
     basePanel.run()
-    if resultCallback is None:
-        return basePanel._result
+    if not allowsMultipleSelection:
+        # compatibly return only one as we expect
+        return str(list(basePanel._result)[0])
+    else:
+        # return more if we explicitly expect
+        return [str(n) for n in list(basePanel._result)]
 
 def PutFile(messageText=None, title=None, directory=None, fileName=None, canCreateDirectories=True, fileTypes=None):
     parentWindow = None

@@ -171,8 +171,10 @@ class DialogRunner(object):
     print 'No more tests.'
             
     def makeTestFont(self, number):
-        from robofab.world import NewFont
-        f = NewFont("TestFamily", "weight%d"%number)
+        from robofab.objects.objectsRF import RFont as _RFont
+        f = _RFont()
+        f.info.familyName = "TestFamily"
+        f.info.styleName = "weight%d"%number
         f.info.postscriptFullName = "%s %s"%(f.info.familyName, f.info.styleName)
         # make some glyphs
         for name in ['A', 'B', 'C']:

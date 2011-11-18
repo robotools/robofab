@@ -15,6 +15,7 @@ __all__ = [
     "FindGlyph",
     "GetFile",
     "GetFolder",
+    "GetFileOrFolder", 
     "Message",
     "OneList",
     "PutFile",
@@ -28,10 +29,10 @@ __all__ = [
 
 # start with all the defaults. 
 
-def AskString(prompt, value='', title='RoboFab'):
+def AskString(message, value='', title='RoboFab'):
     raise NotImplementedError
 
-def AskYesNoCancel(prompt, title='RoboFab', default=0):
+def AskYesNoCancel(message, title='RoboFab', default=0):
     raise NotImplementedError
 
 def FindGlyph(font, message="Search for a glyph:", title='RoboFab'):
@@ -43,13 +44,16 @@ def GetFile(message=None):
 def GetFolder(message=None):
     raise NotImplementedError
 
+def GetFileOrFolder(message=None):
+    raise NotImplementedError
+
 def Message(message, title='RoboFab'):
     raise NotImplementedError
 
 def OneList(list, message="Select an item:", title='RoboFab'):
     raise PendingDeprecationWarning
     
-def PutFile(message=None, defaultName=None):
+def PutFile(message=None, fileName=None):
     raise NotImplementedError
 
 def SearchList(list, message="Select an item:", title='RoboFab'):

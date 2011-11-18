@@ -12,6 +12,7 @@ __all__ = [
     "AskYesNoCancel",
     "FindGlyph",
     "GetFile",
+    "GetFileOrFolder", 
     "GetFolder",
     "Message",
     "OneList",
@@ -68,10 +69,10 @@ class _baseWindowController(object):
         
 class _AskStringController(_baseWindowController):
 
-    def __init__(self, prompt, value, title):
+    def __init__(self, message, value, title):
         self.w = _ModalWindow((370, 110), title)
 
-        self.w.infoText = vanilla.TextBox((15, 10, -15, 22), prompt)
+        self.w.infoText = vanilla.TextBox((15, 10, -15, 22), message)
         self.w.input = vanilla.EditText((15, 40, -15, 22))
         self.w.input.set(value)
 
@@ -88,7 +89,7 @@ class _listController(_baseWindowController):
         
         self.items = items 
         
-        self.w = _ModalWindow((250, 300), title)
+        self.w = _ModalWindow((350, 300), title)
         y = 10
         self.w.infoText = vanilla.TextBox((15, y, -15, 22), message)
         y += 25
@@ -116,13 +117,32 @@ class _listController(_baseWindowController):
         return None
 
     
-def AskString(prompt, value='', title='RoboFab'):
-    w = _AskStringController(prompt, value, title)
+def AskString(message, value='', title='RoboFab'):
+    """
+        AskString Dialog
+        
+        message      the string
+        value       a default value
+        title       a title of the window (may not be supported everywhere)
+    """
+    w = _AskStringController(message, value, title)
     return w.get()
     
-def AskYesNoCancel(prompt, title='RoboFab', default=0, informativeText=""):
+def AskYesNoCancel(message, title='RoboFab', default=0, informativeText=""):
+    """
+        AskYesNoCancel Dialog
+        
+        message              the string
+        title*              a title of the window
+                            (may not be supported everywhere)
+        default*            index number of which button should be default
+                            (i.e. respond to return)
+        informativeText*    A string with secundary information
+
+        * may not be supported everywhere
+    """
     import vanilla.dialogs
-    return vanilla.dialogs.askYesNoCancel(messageText=prompt, informativeText=informativeText)
+    return vanilla.dialogs.askYesNoCancel(messageText=message, informativeText=informativeText)
 
 def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):
     items = aFont.keys()
@@ -133,8 +153,8 @@ def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):
         return aFont[glyphName]
     return None
 
-def GetFile(message=None, allowsMultipleSelection=False):
-    result = vanilla.dialogs.getFile(messageText=message, allowsMultipleSelection=allowsMultipleSelection)
+def GetFile(message=None, title=None, directory=None, fileName=None, allowsMultipleSelection=False, fileTypes=None):
+    result = vanilla.dialogs.getFile(messageText=message, title=title, directory=directory, fileName=fileName, allowsMultipleSelection=allowsMultipleSelection, fileTypes=fileTypes)
     if result is None:
         return None
     if not allowsMultipleSelection:
@@ -142,8 +162,17 @@ def GetFile(message=None, allowsMultipleSelection=False):
     else:
         return [str(n) for n in list(result)]
 
-def GetFolder(message=None, allowsMultipleSelection=False):
-    result = vanilla.dialogs.getFolder(messageText=message, allowsMultipleSelection=allowsMultipleSelection)
+def GetFolder(message=None, title=None, directory=None, allowsMultipleSelection=False):
+    result = vanilla.dialogs.getFolder(messageText=message, title=title, directory=directory, allowsMultipleSelection=allowsMultipleSelection)
+    if result is None:
+        return None
+    if not allowsMultipleSelection:
+        return str(list(result)[0])
+    else:
+        return [str(n) for n in list(result)]
+
+def GetFileOrFolder(message=None, title=None, directory=None, fileName=None, allowsMultipleSelection=False, fileTypes=None):
+    result = vanilla.dialogs.getFileOrFolder(messageText=message, title=title, directory=directory, fileName=fileName, allowsMultipleSelection=allowsMultipleSelection, fileTypes=fileTypes)
     if result is None:
         return None
     if not allowsMultipleSelection:
@@ -157,16 +186,19 @@ def Message(message, title='RoboFab', informativeText=""):
 def OneList(list, message="Select an item:", title='RoboFab'):
     raise NotImplementedError
     
-def PutFile(message=None, defaultName=None):
-    return vanilla.dialogs.putFile(messageText=message, fileName=defaultName)
+def PutFile(message=None, fileName=None):
+    return vanilla.dialogs.putFile(messageText=message, fileName=fileName)
 
 def SearchList(list, message="Select an item:", title='RoboFab'):    
     w = _listController(list, message, title, showSearch=True)
     return w.get()
 
-def SelectFont(message="Select a font:", title='RoboFab'):
-    from robofab.world import AllFonts
-    fonts = AllFonts()
+def SelectFont(message="Select a font:", title='RoboFab', allFonts=None):
+    if allFonts is None:
+        from robofab.world import AllFonts
+        fonts = AllFonts()
+    else:
+        fonts = allFonts
     
     data = dict()
     for font in fonts:
@@ -225,3 +257,6 @@ class ProgressBar(object):
         else:
             self.w.progress.set(tickValue)
             
+
+if __name__ == "__main__":
+    pass

@@ -22,7 +22,7 @@ for moduleName, data in %(moduleData)s.items():
     print "---", moduleName, data
     try:
         print "---", __import__(moduleName, globals(), locals(), [], -1)
-        resultData.append("found:\t"+,moduleName)
+        resultData.append("found:\t"+moduleName)
     except ImportError:
         resultData.append("mustLoad:\t"+moduleName)
 

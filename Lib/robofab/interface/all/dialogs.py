@@ -173,7 +173,7 @@ elif platformApplicationModuleName == "dialogs_fontlab_legacy2":
         if __verbose__:
             print "loaded robofab.interface.all.dialogs_fontlab_legacy2"
         if platform == "mac":
-            from robofab.interface.all.dialogs_fontlab_legacy2 import AskString
+            from robofab.interface.all.dialogs_fontlab_legacy1 import AskString
     except ImportError:
         print "can't import", platformApplicationModuleName
 

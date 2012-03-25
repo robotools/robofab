@@ -114,8 +114,6 @@ platformApplicationSupport = [
     ('mac',     'fontlab',      (2,3,5),    "dialogs_fontlab_legacy1"),
     # because FontLab 5.01 and earlier on 2.3.5 can run EasyDialogs
     # |         |               |           |
-    #('mac',     'fontlab',      (2,5,4),    "dialogs_fontlab_legacy1"),
-    ('mac',     'fontlab',      (2,5,4),    "dialogs_fontlab_legacy2"),
     # because FontLab 5.1 on mac 10.6 should theoretically be able to run cocoa dialogs,
     # but they are very unreliable. So until we know what's going on, FL5.1 on 10.6
     # is going to have to live with DialogKit dialogs. 
@@ -173,8 +171,12 @@ elif platformApplicationModuleName == "dialogs_fontlab_legacy2":
         if __verbose__:
             print "loaded robofab.interface.all.dialogs_fontlab_legacy2"
         if platform == "mac":
-            #from robofab.interface.all.dialogs_fontlab_legacy1 import AskString
-            from robofab.interface.all.dialogs_legacy import AskString
+            #   
+            #
+            #
+            #
+            #
+            from robofab.interface.all.dialogs_legacy import AskString, TwoChecks, TwoFields, SelectGlyph, FindGlyph, OneList, SearchList, SelectFont, SelectGlyph
     except ImportError:
         print "can't import", platformApplicationModuleName
 
@@ -217,6 +219,42 @@ __all__ = [
 
     
 def test():
+    """ This is a test that prints the available functions and where they're imported from.
+        The report can be useful for debugging.
+
+        For instance:
+
+        from robofab.interface.all.dialogs import test
+        test()
+        
+        testing RoboFab Dialogs:
+            python version: (2, 7, 1)
+            platform: mac
+            application: None
+            applicationVersion: None
+            platformVersion: 10.7
+            looking for module: dialogs_mac_vanilla
+                did we find it? True
+
+        Available dialogs and source:
+            AskString       robofab.interface.all.dialogs_mac_vanilla
+            AskYesNoCancel  robofab.interface.all.dialogs_mac_vanilla
+            FindGlyph       robofab.interface.all.dialogs_mac_vanilla
+            GetFile         robofab.interface.all.dialogs_mac_vanilla
+            GetFolder       robofab.interface.all.dialogs_mac_vanilla
+            GetFileOrFolder robofab.interface.all.dialogs_mac_vanilla
+            Message         robofab.interface.all.dialogs_mac_vanilla
+            OneList         robofab.interface.all.dialogs_mac_vanilla
+            PutFile         robofab.interface.all.dialogs_mac_vanilla
+            SearchList      robofab.interface.all.dialogs_mac_vanilla
+            SelectFont      robofab.interface.all.dialogs_mac_vanilla
+            SelectGlyph     robofab.interface.all.dialogs_mac_vanilla
+            TwoChecks       robofab.interface.all.dialogs_default
+            TwoFields       robofab.interface.all.dialogs_default
+            ProgressBar     robofab.interface.all.dialogs_mac_vanilla
+
+    """
+
     print
     print "testing RoboFab Dialogs:"
     print "\tpython version:", pyVersion

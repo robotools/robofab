@@ -4,24 +4,24 @@
     This might work in future versions of FontLab as well. 
     This is basically a butchered version of vanilla.dialogs.
     No direct import of, or dependency on Vanilla
+    
+    March 7 2012
+    It seems only the dialogs that deal with the file system
+    need to be replaced, the other dialogs still work. 
+    As we're not entirely sure whether it is worth to maintain
+    these dialogs, let's fix the imports in dialogs.py.
+    
+    This is the phenolic aldehyde version of dialogs.
 
 """
 
 #__import__("FL")
 from FL import *
-#from dialogKit import ModalDialog
-
-#import objc
-#from objc import selector
 
 from Foundation import NSObject
 from AppKit import *
 
-# is this the magic that will make this work in FL 5.1
-# however, what are the side effects?
 NSApplication.sharedApplication()
-
-
 
 __all__ = [
 #    "AskString",
@@ -317,45 +317,6 @@ def PutFile(message=None, title=None, directory=None, fileName=None, canCreateDi
     return str(basePanel._result)
 
 
-
-
-
-
-
-
-
-# we seem to have problems importing from here.
-# so let's see what happens if we make the robofab compatible wrappers here as well.
-
-# start with all the defaults. 
-
-#def AskString(message, value='', title='RoboFab'):
-#    raise NotImplementedError
-
-def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):
-    raise NotImplementedError
-
-def OneList(list, message="Select an item:", title='RoboFab'):
-    raise NotImplementedError
-    
-#def PutFile(message=None, fileName=None):
-#    raise NotImplementedError
-
-def SearchList(list, message="Select an item:", title='RoboFab'):
-    raise NotImplementedError
-
-def SelectFont(message="Select a font:", title='RoboFab'):
-    raise NotImplementedError
-
-def SelectGlyph(font, message="Select a glyph:", title='RoboFab'):
-    raise NotImplementedError
-
-def TwoChecks(title_1="One",  title_2="Two", value1=1, value2=1, title='RoboFab'):
-    raise NotImplementedError
-
-def TwoFields(title_1="One:", value_1="0", title_2="Two:", value_2="0", title='RoboFab'):
-    raise NotImplementedError
-
 class ProgressBar(object):
 
     def __init__(self, title="RoboFab...", ticks=0, label=""):
@@ -377,4 +338,36 @@ class ProgressBar(object):
     def close(self):
         fl.EndProgress()
 
+
+# we seem to have problems importing from here.
+# so let's see what happens if we make the robofab compatible wrappers here as well.
+
+# start with all the defaults. 
+
+#def AskString(message, value='', title='RoboFab'):
+#    raise NotImplementedError
+
+#def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):
+#    raise NotImplementedError
+
+#def OneList(list, message="Select an item:", title='RoboFab'):
+#    raise NotImplementedError
+    
+#def PutFile(message=None, fileName=None):
+#    raise NotImplementedError
+
+#def SearchList(list, message="Select an item:", title='RoboFab'):
+#    raise NotImplementedError
+
+#def SelectFont(message="Select a font:", title='RoboFab'):
+#    raise NotImplementedError
+
+#def SelectGlyph(font, message="Select a glyph:", title='RoboFab'):
+#    raise NotImplementedError
+
+#def TwoChecks(title_1="One",  title_2="Two", value1=1, value2=1, title='RoboFab'):
+#    raise NotImplementedError
+
+#def TwoFields(title_1="One:", value_1="0", title_2="Two:", value_2="0", title='RoboFab'):
+#    raise NotImplementedError
 

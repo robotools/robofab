@@ -792,7 +792,7 @@ def _fontInfoVersion2PostscriptWindowsCharacterSetValidator(value):
 # fontinfo.plist.
 
 _fontInfoVersion2OpenTypeHeadFlagsOptions = range(0, 14)
-_fontInfoVersion2OpenTypeOS2SelectionOptions = [1, 2, 3, 4]
+_fontInfoVersion2OpenTypeOS2SelectionOptions = [1, 2, 3, 4, 7, 8, 9]
 _fontInfoVersion2OpenTypeOS2UnicodeRangesOptions = range(0, 128)
 _fontInfoVersion2OpenTypeOS2CodePageRangesOptions = range(0, 64)
 _fontInfoVersion2OpenTypeOS2TypeOptions = [0, 1, 2, 3, 8, 9]

@@ -29,6 +29,7 @@ class ThresholdPointPen(AbstractPointPen):
 	def __init__(self, otherPointPen, threshold=10):
 		self.threshold = threshold
 		self._lastPt = None
+		self._offCurveBuffer = []
 		self.otherPointPen = otherPointPen
 		
 	def beginPath(self):
@@ -42,16 +43,36 @@ class ThresholdPointPen(AbstractPointPen):
 
 	def addPoint(self, pt, segmentType=None, smooth=False, name=None, **kwargs):
 		"""Add a point to the current sub path."""
-		if self._lastPt is not None:
-			if distance(pt, self._lastPt) >= self.threshold:
-				# distance is bigger than the threshold value
-				self.otherPointPen.addPoint(pt, segmentType, smooth, name)	# how to add kwargs?
-				self._lastPt = pt
-			# else we ignore this point
-		else:
+		if segmentType in ['curve', 'qcurve']:
+			# it's an offcurve, let's buffer them until we get another oncurve
+			# and we know what to do with them
+			self._offCurveBuffer.append((pt, segmentType, smooth, name, kwargs))
+			return
+		
+		elif segmentType == "move":
+			# start of an open contour
 			self.otherPointPen.addPoint(pt, segmentType, smooth, name)	# how to add kwargs?
 			self._lastPt = pt
-				
+			self._offCurveBuffer = []
+
+		elif segmentType == "line":
+			if self._lastPt is None:
+				self.otherPointPen.addPoint(pt, segmentType, smooth, name)	# how to add kwargs?
+				self._lastPt = pt
+			elif distance(pt, self._lastPt) >= self.threshold:
+				# we're oncurve and far enough from the last oncurve
+				if self._offCurveBuffer:
+					# empty any buffered offcurves
+					for buf_pt, buf_segmentType, buf_smooth, buf_name, buf_kwargs in self._offCurveBuffer:
+						self.otherPointPen.addPoint(buf_pt, buf_segmentType, buf_smooth, buf_name)	# how to add kwargs?
+					self._offCurveBuffer = []
+				# finally add the oncurve.
+				self.otherPointPen.addPoint(pt, segmentType, smooth, name)	# how to add kwargs?
+				self._lastPt = pt
+			else:
+				# we're too short, so we're not going to make it.
+				# we need to clear out the offcurve buffer. 
+				self._offCurveBuffer = []
 
 	def addComponent(self, baseGlyphName, transformation):
 		"""Add a sub glyph. Note: this way components are not filtered."""
@@ -348,11 +369,39 @@ if __name__ == "__main__":
 	#pp.addPoint((100, 100))
 	#pp.endPath()
 
-	tpp = ThresholdPointPen(pp)
+	tpp = ThresholdPointPen(pp, threshold=20)
 	tpp.beginPath()
 	#segmentType=None, smooth=False, name=None
-	tpp.addPoint((100, 100), segmentType="line", smooth=True, name="hello")
-	tpp.addPoint((100, 102), segmentType="line", smooth=True, name="hello")
-	tpp.addPoint((200, 200), segmentType="line", smooth=True, name="hello")
+	tpp.addPoint((100, 100), segmentType="line", smooth=True)
+	# section that should be too small
+	tpp.addPoint((100, 102), segmentType="line", smooth=True)
+	tpp.addPoint((200, 200), segmentType="line", smooth=True)
+	# curve section with final point that's far enough, but with offcurves that are under the threshold
+	tpp.addPoint((200, 205), segmentType="curve", smooth=True)
+	tpp.addPoint((300, 295), segmentType="curve", smooth=True)
+	tpp.addPoint((300, 300), segmentType="line", smooth=True)
+	# curve section with final point that is not far enough
+	tpp.addPoint((550, 350), segmentType="curve", smooth=True)
+	tpp.addPoint((360, 760), segmentType="curve", smooth=True)
+	tpp.addPoint((310, 310), segmentType="line", smooth=True)
+
+	tpp.addPoint((400, 400), segmentType="line", smooth=True)
+	tpp.addPoint((100, 100), segmentType="line", smooth=True)
+	tpp.endPath()
+
+	# couple of single points with names
+	tpp.beginPath()
+	tpp.addPoint((500, 500), segmentType="move", smooth=True, name="named point")
+	tpp.addPoint((600, 500), segmentType="move", smooth=True, name="named point")
+	tpp.addPoint((601, 501), segmentType="move", smooth=True, name="named point")
+	tpp.endPath()
+
+	# open path
+	tpp.beginPath()
+	tpp.addPoint((500, 500), segmentType="move", smooth=True)
+	tpp.addPoint((501, 500), segmentType="line", smooth=True)
+	tpp.addPoint((101, 500), segmentType="line", smooth=True)
+	tpp.addPoint((101, 100), segmentType="line", smooth=True)
+	tpp.addPoint((498, 498), segmentType="line", smooth=True)
 	tpp.endPath()
 	

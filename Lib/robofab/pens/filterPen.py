@@ -1,9 +1,6 @@
 """A couple of point pens to filter contours in various ways."""
 
-
 from fontTools.pens.basePen import AbstractPen, BasePen
-
-
 
 from robofab.pens.pointPen import AbstractPointPen
 from robofab.objects.objectsRF import RGlyph as _RGlyph
@@ -11,13 +8,54 @@ from robofab.objects.objectsBase import _interpolatePt
 
 import math
 
-
 #
 #	 threshold filtering
 #
 
 def distance(pt1, pt2):
-	return math.sqrt((pt1[0]-pt2[0])**2 + (pt1[1]-pt2[1])**2)
+	return math.hypot(pt1[0]-pt2[0], pt1[1]-pt2[1])
+
+class ThresholdPointPen(AbstractPointPen):
+	
+	"""
+		Rewrite of the ThresholdPen as a PointPen
+		so that we can preserve named points and other arguments.
+		This pen will add components from the original glyph, but
+		but it won't filter those components.
+		
+		"move", "line", "curve" or "qcurve"
+	
+	"""
+	def __init__(self, otherPointPen, threshold=10):
+		self.threshold = threshold
+		self._lastPt = None
+		self.otherPointPen = otherPointPen
+		
+	def beginPath(self):
+		"""Start a new sub path."""
+		self.otherPointPen.beginPath()
+		self._lastPt = None
+
+	def endPath(self):
+		"""End the current sub path."""
+		self.otherPointPen.endPath()
+
+	def addPoint(self, pt, segmentType=None, smooth=False, name=None, **kwargs):
+		"""Add a point to the current sub path."""
+		if self._lastPt is not None:
+			if distance(pt, self._lastPt) >= self.threshold:
+				# distance is bigger than the threshold value
+				self.otherPointPen.addPoint(pt, segmentType, smooth, name)	# how to add kwargs?
+				self._lastPt = pt
+			# else we ignore this point
+		else:
+			self.otherPointPen.addPoint(pt, segmentType, smooth, name)	# how to add kwargs?
+			self._lastPt = pt
+				
+
+	def addComponent(self, baseGlyphName, transformation):
+		"""Add a sub glyph. Note: this way components are not filtered."""
+		self.otherPointPen.addComponent(baseGlyphName, transformation)
 
 
 class ThresholdPen(AbstractPen):
@@ -59,6 +97,7 @@ class ThresholdPen(AbstractPen):
 
 
 def thresholdGlyph(aGlyph, threshold=10):
+	""" Convenience function that handles the filtering. """
 	from robofab.pens.adapterPens import PointToSegmentPen
 	new = _RGlyph()
 	filterpen = ThresholdPen(new.getPen(), threshold)
@@ -68,6 +107,19 @@ def thresholdGlyph(aGlyph, threshold=10):
 	aGlyph.appendGlyph(new)
 	aGlyph.update()
 	return aGlyph
+
+def thresholdGlyphPointPen(aGlyph, threshold=10):
+	""" Same a thresholdGlyph, but using the ThresholdPointPen, which should respect anchors."""
+	from robofab.pens.adapterPens import PointToSegmentPen
+	new = _RGlyph()
+	wrappedPen = new.getPointPen()
+	filterpen = ThresholdPointPen(wrappedPen, threshold)
+	aGlyph.drawPoints(filterpen)
+	aGlyph.clear()
+	new.drawPoints(aGlyph.getPointPen())
+	aGlyph.update()
+	return aGlyph
+
 	
 #
 # Curve flattening
@@ -184,7 +236,7 @@ class FlattenPen(BasePen):
 		
 	def addComponent(self, glyphName, transformation):
 		self.otherPen.addComponent(glyphName, transformation)
-
+		
 
 def flattenGlyph(aGlyph, threshold=10, segmentLines=True):
 
@@ -287,3 +339,20 @@ def halftoneGlyph(aGlyph, invert=False):
 		pen.lineTo((x-size, y-size))
 		pen.closePath()
 		aGlyph.update()
+
+
+if __name__ == "__main__":
+	from robofab.pens.pointPen import PrintingPointPen
+	pp = PrintingPointPen()
+	#pp.beginPath()
+	#pp.addPoint((100, 100))
+	#pp.endPath()
+
+	tpp = ThresholdPointPen(pp)
+	tpp.beginPath()
+	#segmentType=None, smooth=False, name=None
+	tpp.addPoint((100, 100), segmentType="line", smooth=True, name="hello")
+	tpp.addPoint((100, 102), segmentType="line", smooth=True, name="hello")
+	tpp.addPoint((200, 200), segmentType="line", smooth=True, name="hello")
+	tpp.endPath()
+	

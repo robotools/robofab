@@ -109,9 +109,9 @@ downloadPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
 </div>
 <div class="content">
 <h1>Download RoboFab</h1>
-<p>This page lists the current and (some) older distributions of RoboFab. These distributions contain packages from other developers. License info for these packages is contained in the distribution.</p>
-<p><a href="http://code.robofab.com">The code.robofac.com Trac site</a></p>
-<p><a href="http://robofab.com">Back to the RoboFab site</a></p>
+<p>This page lists the current and (some) older distributions of RoboFab. These distributions contain packages from other developers. License info for these packages is contained in the distribution. This page is automatically generated.</p>
+<p><a href="http://code.robofab.com" target="_new">The code.robofac.com Trac site</a></p>
+<p><a href="http://robofab.com" target="_new">Back to the RoboFab site</a></p>
 
 <h2>Current distribution</h2>
 <ul>%s</ul>
@@ -149,7 +149,7 @@ def buildDownloadPage(folder, new=None):
             oldZips.append(name)
     newZips.sort()
     oldZips.sort()
-    oldZips.reverse()
+    oldZips.reverse()[:200]
     newLinks = "\n\t".join(["<li><a href=\"%s\">%s</a></li>"%(n,n) for n in newZips])
     oldLinks = "\n\t".join(["<li><a href=\"%s\">%s</a></li>"%(n,n) for n in oldZips])
     html = downloadPageTemplate%(newLinks, oldLinks, timeStamp)

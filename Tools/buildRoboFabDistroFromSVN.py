@@ -119,8 +119,8 @@ downloadPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
 <h2>Old distributions</h2>
 <ul>%s</ul>
 
-
-<p>This page was generated on %s</p>
+<h2>Generated</h2>
+<p>%s</p>
 
 </div>
 </body>

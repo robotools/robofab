@@ -20,11 +20,11 @@ def getRevision(url):
     for l in lines:
         if l.find("Revision:")==0:
             rev = l.split(' ')[-1]
-            print "svn rev:", rev
+            #print "svn rev:", rev
             return rev
     return "svn: no revision found"
     
-def checkoutPackage(url, stagingFolder):
+def checkoutPackage(url, stagingFolder, verbose=True):
     """ checkoutPackage"""
     cwd = os.getcwd()
     if not os.path.exists(stagingFolder):
@@ -32,14 +32,17 @@ def checkoutPackage(url, stagingFolder):
     os.chdir(stagingFolder)
     cmd = "svn export \"%s\" . --force"%(url)
     d = os.popen(cmd)
-    print d.read()
+    if verbose:
+        print d.read()
+    else:
+        d.read()
     d.close()
     #d = os.popen("svnversion")
     #revision = d.read()
     #os.chdir(cwd)
     #return revision.strip()
 
-def buildProducts(products, buildFolder=None, deleteBuilds=False):
+def buildProducts(products, buildFolder=None, deleteBuilds=False, verbose=True):
     """ Build the different distro products.
         - checkout a clean version from svn
         - add svn revision number to folder
@@ -50,31 +53,42 @@ def buildProducts(products, buildFolder=None, deleteBuilds=False):
     filenames = []  # collect filenames of the new zips
     if buildFolder is None:
         buildFolder = os.path.join(os.path.dirname(__file__), "build")
-        print "\tNo build folder specified, using", buildFolder
+        if verbose:
+            print "\tNo build folder specified, using", buildFolder
         
     for productName, packages in products.items():
         cwd = os.getcwd()
-        print cwd
+        if verbose:
+            print "cwd", cwd
         stagingFolder = os.path.join(buildFolder, productName%"temp")
         for url, name in packages:
-            checkoutPackage(url, os.path.join(stagingFolder, name))
+            checkoutPackage(url, os.path.join(stagingFolder, name), verbose)
             versions[name] = getRevision(url)
         finalFolder = os.path.join(buildFolder, productName%versions.get('RoboFab', "?"))
         filenames.append(os.path.basename(finalFolder))
-        print "\t\txxx", finalFolder
         d = os.popen("mv \"%s\" \"%s\""%(stagingFolder, finalFolder))
-        print d.read()
+        if verbose:
+            print d.read()
+        else:
+            d.read()
         os.chdir(finalFolder)
         d = os.popen("zip -r \"%s\" *"%finalFolder)
-        print d.read()
+        if verbose:
+            print d.read()
+        else:
+            d.read()
         cleanup.append(finalFolder)
         d.close()
 
     if deleteBuilds:
         for path in cleanup:
-            print "cleaning", path
+            if verbose:
+                print "cleaning", path
             d = os.popen("rm -r \"%s\""%(path))
-            print d.read()
+            if verbose:
+                print d.read()
+            else:
+                d.read()
     return filenames
             
 downloadPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"

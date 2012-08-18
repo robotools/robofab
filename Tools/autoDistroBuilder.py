@@ -1,4 +1,12 @@
+import sys
 
+if len(sys.argv) == 2:
+    # we're called as a shellscript
+    # assume the path is the second argument
+    testBuildFolder = sys.argv[1]
+else:
+    testBuildFolder = "/Users/erik/Develop/svn.robofab.com/randomOtherDifferentDirectory"
+    
 
 """
 
@@ -26,12 +34,10 @@ robofabProducts = {
     ],
 }
 
-testBuildFolder = "/Users/erik/Develop/svn.robofab.com/randomOtherDifferentDirectory"
-print buildProducts
-filenames = buildProducts(robofabProducts, buildFolder=testBuildFolder, deleteBuilds=True)
+filenames = buildProducts(robofabProducts, buildFolder=testBuildFolder, deleteBuilds=True, verbose=False)
 
-print "writing html"
+#print "writing html"
 buildDownloadPage(testBuildFolder, new=filenames)
 
-print "filenames", filenames
-print "done"
+#print "filenames", filenames
+#print "done"

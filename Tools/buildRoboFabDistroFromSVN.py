@@ -149,7 +149,8 @@ def buildDownloadPage(folder, new=None):
             oldZips.append(name)
     newZips.sort()
     oldZips.sort()
-    oldZips.reverse()[:200]
+    oldZips.reverse()
+    oldZips = oldZips[:200]
     newLinks = "\n\t".join(["<li><a href=\"%s\">%s</a></li>"%(n,n) for n in newZips])
     oldLinks = "\n\t".join(["<li><a href=\"%s\">%s</a></li>"%(n,n) for n in oldZips])
     html = downloadPageTemplate%(newLinks, oldLinks, timeStamp)

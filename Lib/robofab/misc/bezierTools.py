@@ -73,6 +73,12 @@ def splitLine(pt1, pt2, where, isHorizontal):
     line was successfully split, or a list containing the original
     line.
 
+        >>> printSegments(splitLine((0, 0), (100, 200), 50, False))
+        ((0, 0), (50.0, 100.0))
+        ((50.0, 100.0), (100, 200))
+        >>> printSegments(splitLine((0, 0), (100, 200), 50, True))
+        ((0, 0), (25.0, 50.0))
+        ((25.0, 50.0), (100, 200))
         >>> printSegments(splitLine((0, 0), (100, 100), 50, True))
         ((0, 0), (50.0, 50.0))
         ((50.0, 50.0), (100, 100))
@@ -99,7 +105,7 @@ def splitLine(pt1, pt2, where, isHorizontal):
     if ax == 0:
         return [(pt1, pt2)]
         
-    t = float(where - (bx, by)[isHorizontal]) / ax
+    t = float(where - (bx, by)[isHorizontal]) / ax1
     if 0 <= t < 1:
         midPt = ax * t + bx, ay * t + by
         return [(pt1, midPt), (midPt, pt2)]
@@ -184,7 +190,7 @@ def splitQuadraticAtT(pt1, pt2, pt3, *ts):
 def splitCubicAtT(pt1, pt2, pt3, pt4, *ts):
     """Split the cubic curve between pt1, pt2, pt3 and pt4 at one or more
     values of t. Return a list of curve segments.
-
+        
         >>> printSegments(splitCubicAtT((0, 0), (25, 100), (75, 100), (100, 0), 0.5))
         ((0.0, 0.0), (12.5, 50.0), (31.25, 75.0), (50.0, 75.0))
         ((50.0, 75.0), (68.75, 75.0), (87.5, 50.0), (100.0, 0.0))

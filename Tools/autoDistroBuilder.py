@@ -34,10 +34,10 @@ robofabProducts = {
     ],
 }
 
-filenames = buildProducts(robofabProducts, buildFolder=testBuildFolder, deleteBuilds=True, verbose=False)
+filenames, revision = buildProducts(robofabProducts, buildFolder=testBuildFolder, deleteBuilds=True, verbose=False)
 
 #print "writing html"
-buildDownloadPage(testBuildFolder, new=filenames)
+buildDownloadPage(testBuildFolder, new=filenames, changeSet=revision)
 
 #print "filenames", filenames
 #print "done"

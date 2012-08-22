@@ -89,7 +89,7 @@ def buildProducts(products, buildFolder=None, deleteBuilds=False, verbose=True):
                 print d.read()
             else:
                 d.read()
-    return filenames
+    return filenames, versions.get("RoboFab")
             
 downloadPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
@@ -110,7 +110,7 @@ downloadPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
 <div class="content">
 <h1>Download RoboFab</h1>
 <p>This page lists the current and (some) older distributions of RoboFab. These distributions contain packages from other developers. License info for these packages is contained in the distribution. This page is automatically generated.</p>
-<p><a href="http://code.robofab.com" target="_new">The code.robofac.com Trac site</a></p>
+<p><a href="http://code.robofab.com/changeset/%s">Changeset for revision %s on code.robofab.com.</a></p>
 <p><a href="http://robofab.com" target="_new">Back to the RoboFab site</a></p>
 
 <h2>Current distribution</h2>
@@ -127,7 +127,7 @@ downloadPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
 </html>
 """
 
-def buildDownloadPage(folder, new=None):
+def buildDownloadPage(folder, new=None, changeSet=None):
     """ Build a new download page for the zips available in folder/."""
     if new is None:
         new = []
@@ -153,7 +153,7 @@ def buildDownloadPage(folder, new=None):
     oldZips = oldZips[:200]
     newLinks = "\n\t".join(["<li><a href=\"%s\">%s</a></li>"%(n,n) for n in newZips])
     oldLinks = "\n\t".join(["<li><a href=\"%s\">%s</a></li>"%(n,n) for n in oldZips])
-    html = downloadPageTemplate%(newLinks, oldLinks, timeStamp)
+    html = downloadPageTemplate%(changeSet, changeSet, newLinks, oldLinks, timeStamp)
     
     f = open(htmlPath, 'w')
     f.write(html)
@@ -176,6 +176,4 @@ if __name__ == "__main__":
             ("http://svn.robofab.com/trunk", "RoboFab"),
         ],
     }
-    buildProducts(robofabProducts)
-    
-    
+    newProducts, revision = buildProducts(robofabProducts)

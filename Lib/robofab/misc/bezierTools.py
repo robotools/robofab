@@ -102,7 +102,7 @@ def splitLine(pt1, pt2, where, isHorizontal):
     
     ax1 = (ax, ay)[isHorizontal]
     
-    if ax == 0:
+    if ax1 == 0:
         return [(pt1, pt2)]
         
     t = float(where - (bx, by)[isHorizontal]) / ax1

@@ -1028,7 +1028,7 @@ class RFont(BaseFont):
 					fontLib[postScriptHintDataLibKey] = d
 				## Export the glyph order to the lib
 				glyphOrder = [nakedGlyph.name for nakedGlyph in self.naked().glyphs]
-				fontLib["org.robofab.glyphOrder"] = glyphOrder
+				fontLib["public.glyphOrder"] = glyphOrder
 				## export the features
 				if doFeatures and formatVersion == 1:
 					self._writeOpenTypeFeaturesToLib(fontLib)
@@ -1173,7 +1173,11 @@ class RFont(BaseFont):
 			bar.close()
 
 	def _getGlyphOrderFromLib(self, fontLib, glyphSet):
-		glyphOrder = fontLib.get("org.robofab.glyphOrder")
+		key = "public.glyphOrder"  
+		glyphOrder = fontLib.get(key)
+		if glyphOrder is None:
+			key = "org.robofab.glyphOrder"
+		glyphOrder = fontLib.get(key)
 		if glyphOrder is not None:
 			# no need to keep track if the glyph order in lib once the font is loaded.
 			del fontLib["org.robofab.glyphOrder"]

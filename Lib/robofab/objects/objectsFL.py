@@ -1180,7 +1180,7 @@ class RFont(BaseFont):
 		glyphOrder = fontLib.get(key)
 		if glyphOrder is not None:
 			# no need to keep track if the glyph order in lib once the font is loaded.
-			del fontLib["org.robofab.glyphOrder"]
+			del fontLib[key]
 			glyphNames = []
 			done = {}
 			for glyphName in glyphOrder:

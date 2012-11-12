@@ -1,4 +1,4 @@
-from robofab.pens.filterPen import FlattenPen
+from robofab.pens.filterPen import flattenGlyph
 from robofab.objects.objectsRF import RGlyph as _RGlyph
 import math
 
@@ -41,10 +41,7 @@ def sectlines((a1, a2), (p1, p2), (b1, b2), (q1, q2)):
 	
 def _makeFlat(aGlyph, segmentLength = 10):
 	"""Helper function to flatten the glyph with a given approximate segment length."""
-	new = _RGlyph()
-	filterpen = FlattenPen(aGlyph, new.getPen(), segmentLength)
-	aGlyph.draw(filterpen)
-	return new
+	return flattenGlyph(aGlyph, segmentLength)
 
 def intersect(aGlyph,  startPt, endPt, segmentLength=10):
 	"""Find the intersections between a glyph and a straight line."""
@@ -109,4 +106,3 @@ if __name__ == "__main__":
 	g = makeTestGlyph()
 	print intersect(g, (-10, 200), (650, 150))
 	print intersect(g, (100, 100), (600, 600))
-	

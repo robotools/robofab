@@ -113,8 +113,11 @@ class FileNameTests(unittest.TestCase):
 		
 
 	def testShortFileNameScheme(self):
+		print "testShortFileNameScheme"
 		self.assertEqual(glyphNameToShortFileName("a", None), "a.glif")
 		self.assertEqual(glyphNameToShortFileName("A", None), "A_.glif")
+		self.assertEqual(glyphNameToShortFileName("aE", None), "aE_.glif")
+		self.assertEqual(glyphNameToShortFileName("AE", None), "A_E_.glif")
 		self.assertEqual(glyphNameToShortFileName("a.alt", None), "a_alt.glif")
 		self.assertEqual(glyphNameToShortFileName("A.alt", None), "A__alt.glif")
 		self.assertEqual(glyphNameToShortFileName("a.alt#swash", None), "a_alt_swash.glif")
@@ -128,7 +131,16 @@ class FileNameTests(unittest.TestCase):
 		self.assertEqual(glyphNameToShortFileName("F#weight0.800_width0.425", None), "F__weight0_800_width0_425.glif")
 		self.assertEqual(glyphNameToShortFileName("F#weight0.83245511_width0.425693567", None), "F__weight0_8324551c9a4143c.glif")
 		self.assertEqual(len(glyphNameToShortFileName("F#weight0.83245511_width0.425693567", None)), 31)
-
+		
+	def testShortFileNameScheme_clashes(self):
+		# test for the condition in code.robofab.com ticket #5
+		name1 = glyphNameToShortFileName('Adieresis', None)
+		name2 = glyphNameToShortFileName('a_dieresis', None)
+		self.assertNotEqual(name1, name2)
+		name1 = glyphNameToShortFileName('AE', None)
+		name2 = glyphNameToShortFileName('aE', None)
+		self.assertNotEqual(name1, name2)
+		
 
 if __name__ == "__main__":
 	from robofab.test.testSupport import runTests

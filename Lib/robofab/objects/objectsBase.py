@@ -27,6 +27,10 @@ from robofab import RoboFabError
 from robofab.misc.arrayTools import updateBounds, pointInRect, unionRect, sectRect
 from fontTools.pens.basePen import AbstractPen
 
+try:
+	set
+except NameError:
+	from sets import Set as set
 
 #constants for dealing with segments, points and bPoints
 MOVE = 'move'
@@ -805,13 +809,12 @@ class BaseFont(RBaseObject):
 		"""Traditional interpolation method. Interpolates by factor between minFont and maxFont.
 		suppressError will supress all tracebacks and analyze only will not perform the interpolation
 		but it will analyze all glyphs and return a dict of problems."""
-		from sets import Set
 		errors = {}
 		if not isinstance(factor, tuple):
 			factor = factor, factor
 		minGlyphNames = minFont.keys()
 		maxGlyphNames = maxFont.keys()
-		allGlyphNames = list(Set(minGlyphNames) | Set(maxGlyphNames))
+		allGlyphNames = list(set(minGlyphNames) | set(maxGlyphNames))
 		if doProgress:
 			from robofab.interface.all.dialogs import ProgressBar
 			progress = ProgressBar('Interpolating...', len(allGlyphNames))
@@ -1066,7 +1069,6 @@ class BaseGlyph(RBaseObject):
 	
 	def _mathAnchorCompare(self, selfMathAnchors, otherMathAnchors):
 		# collect compatible anchors
-		from sets import Set
 		selfAnchors = {}
 		for pt, name in selfMathAnchors:
 			if not selfAnchors.has_key(name):
@@ -1077,7 +1079,7 @@ class BaseGlyph(RBaseObject):
 			if not otherAnchors.has_key(name):
 				otherAnchors[name] = []
 			otherAnchors[name].append(pt)
-		compatAnchors = Set(selfAnchors.keys()) & Set(otherAnchors.keys())
+		compatAnchors = set(selfAnchors.keys()) & set(otherAnchors.keys())
 		finalSelfAnchors = {}
 		finalOtherAnchors = {}
 		for name in compatAnchors:
@@ -1100,7 +1102,6 @@ class BaseGlyph(RBaseObject):
 	
 	def _mathComponentCompare(self, selfMathComponents, otherMathComponents):
 		# collect compatible components
-		from sets import Set
 		selfComponents = {}
 		for baseName, transformation in selfMathComponents:
 			if not selfComponents.has_key(baseName):
@@ -1111,7 +1112,7 @@ class BaseGlyph(RBaseObject):
 			if not otherComponents.has_key(baseName):
 				otherComponents[baseName] = []
 			otherComponents[baseName].append(transformation)
-		compatComponents = Set(selfComponents.keys()) & Set(otherComponents.keys())
+		compatComponents = set(selfComponents.keys()) & set(otherComponents.keys())
 		finalSelfComponents = {}
 		finalOtherComponents = {}
 		for baseName in compatComponents:
@@ -3228,13 +3229,12 @@ class BaseKerning(RBaseObject):
 		"""interpolate the kerning between sourceDictOne
 		and sourceDictTwo. clearExisting will clear existing
 		kerning first."""
-		from sets import Set
 		if isinstance(value, tuple):
 			# in case the value is a x, y tuple: use the x only.
 			value = value[0]
 		if clearExisting:
 			self.clear()
-		pairs = Set(sourceDictOne.keys()) | Set(sourceDictTwo.keys())
+		pairs = set(sourceDictOne.keys()) | set(sourceDictTwo.keys())
 		for pair in pairs:
 			s1 = sourceDictOne.get(pair, 0)
 			s2 = sourceDictTwo.get(pair, 0)
@@ -3407,17 +3407,15 @@ class BaseKerning(RBaseObject):
 			return kerning
 
 	def __add__(self, other):
-		from sets import Set
 		new = self.__class__()
-		k = Set(self.keys()) | Set(other.keys())
+		k = set(self.keys()) | set(other.keys())
 		for key in k:
 			new[key] = self.get(key, 0) + other.get(key, 0)
 		return new
 	
 	def __sub__(self, other):
-		from sets import Set
 		new = self.__class__()
-		k = Set(self.keys()) | Set(other.keys())
+		k = set(self.keys()) | set(other.keys())
 		for key in k:
 			new[key] = self.get(key, 0) - other.get(key, 0)
 		return new

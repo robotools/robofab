@@ -715,7 +715,7 @@ class BaseFont(RBaseObject):
 
 	def round(self):
 		"""round all of the points in all of the glyphs"""
-		for glyph in self.glyphs:
+		for glyph in self:
 			glyph.round()
 	
 	def autoUnicodes(self):

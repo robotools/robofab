@@ -22,7 +22,7 @@ http://code.robofab.com
 
 RoboFab License Agreement
 
-Copyright (c) 2005-2012, The RoboFab Developers:
+Copyright (c) 2003-2013, The RoboFab Developers:
 	Erik van Blokland
 	Tal Leming
 	Just van Rossum
@@ -82,5 +82,5 @@ class RoboFabError(Exception): pass
 class RoboFabWarning(Warning): pass
 
 
-numberVersion = (1, 2, "release", 0)
-version = "1.2.0"
+numberVersion = (1, 2, "release", 1)
+version = "1.2.1"

@@ -1,6 +1,6 @@
 RoboFab License Agreement
 
-Copyright (c) 2005-2012, The RoboFab Developers:
+Copyright (c) 2003-2013, The RoboFab Developers:
 	Erik van Blokland
 	Tal Leming
 	Just van Rossum

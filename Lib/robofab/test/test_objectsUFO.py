@@ -118,6 +118,23 @@ class GlyphsMethodsTestCase(ContourMethodsTestCase):
 			glyph.drawPoints(digestPen)
 			digest2 = digestPen.getDigest()
 			self.assertEqual(digest1, digest2, "%r not the same for gl.draw() and gl.drawPoints()" % glyph.name)
+	
+	def testComponentTransformations(self):
+		from robofab.objects.objectsRF import RComponent
+		name = "baseGlyphName"
+		c = RComponent(name, transform=(1,0,0,1,0,0))
+		# get values
+		assert c.baseGlyph == "baseGlyphName"
+		assert c.transformation == c.transformation
+		assert c.scale == (1,1)
+		assert c.offset == (0,0)
+		# set values
+		c.offset = (12,34)
+		assert c.transformation == (1, 0, 0, 1, 12, 34)
+		c.offset = (0,0)
+		assert c.transformation == (1,0,0,1,0,0)
+		c.scale = (12,34)
+		assert c.transformation == (12, 0, 0, 34, 0, 0)
 
 
 class SaveTestCase(ContourMethodsTestCase):

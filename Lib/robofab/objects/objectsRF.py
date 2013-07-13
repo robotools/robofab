@@ -1113,12 +1113,18 @@ class RComponent(BaseComponent):
 	
 	_title = "RoboFabComponent"
 	
-	def __init__(self, baseGlyphName=None, offset=(0,0), scale=(1,1)):
+	def __init__(self, baseGlyphName=None, offset=(0,0), scale=(1,1), transform=None):
 		BaseComponent.__init__(self)
 		self.selected = False
 		self._baseGlyph = baseGlyphName
 		self._offset = offset
 		self._scale = scale
+		if transform is None:
+			xx, yy = scale
+			dx, dy = offset
+			self.transformation = (xx, 0, 0, yy, dx, dy)
+		else:
+			self.transformation = transform
 		
 	def _get_index(self):
 		if self.getParent() is None: return None
@@ -1137,26 +1143,49 @@ class RComponent(BaseComponent):
 	baseGlyph = property(_get_baseGlyph, _set_baseGlyph, doc="")
 
 	def _get_offset(self):
-		return self._offset
+		""" Get the offset component of the transformation.="""
+		(xx, xy, yx, yy, dx, dy) = self._transformation
+		return dx, dy
 	
 	def _set_offset(self, value):
-		self._offset = value
+		""" Set the offset component of the transformation."""
+		(xx, xy, yx, yy, dx, dy) = self._transformation
+		self._transformation = (xx, xy, yx, yy, value[0], value[1])
 		self._hasChanged()
 		
 	offset = property(_get_offset, _set_offset, doc="the offset of the component")
 
 	def _get_scale(self):
-		return self._scale
+		""" Return the scale components of the transformation."""
+		(xx, xy, yx, yy, dx, dy) = self._transformation
+		return xx, yy
 	
-	def _set_scale(self, (x, y)):
-		self._scale = (x, y)
+	def _set_scale(self, (xScale, yScale)):
+		""" Set the scale component of the transformation.
+			Note: setting this value effectively makes the xy and yx values meaningless.
+			We're assuming that if you're setting the xy and yx values, you will use
+			the transformation attribute rather than the scale and offset attributes.
+		"""
+		(xx, xy, yx, yy, dx, dy) = self._transformation
+		self._transformation = (xScale, xy, yx, yScale, dx, dy)
 		self._hasChanged()
 		
 	scale = property(_get_scale, _set_scale, doc="the scale of the component")
+	
+	def _get_transformation(self):
+		return self._transformation
+	
+	def _set_transformation(self, transformation):
+		assert len(transformation)==6, "Transformation matrix must have 6 values"
+		self._transformation = transformation
+	
+	transformation = property(_get_transformation, _set_transformation, doc="the transformation matrix of the component")
 		
 	def move(self, (x, y)):
 		"""Move the component"""
-		self.offset = (self.offset[0] + x, self.offset[1] + y)
+		(xx, xy, yx, yy, dx, dy) = self._transformation
+		self._transformation = (xx, xy, yx, yy, dx+x, dy+y)
+		self._hasChanged()
 	
 	def decompose(self):
 		"""Decompose the component"""
@@ -1171,12 +1200,10 @@ class RComponent(BaseComponent):
 			# to nothing.
 			if parentFont is not None and parentFont.has_key(baseGlyphName):
 				from robofab.pens.adapterPens import TransformPointPen
-				oX, oY = self.offset
-				sX, sY = self.scale
 				baseGlyph = parentFont[baseGlyphName]
 				for contour in baseGlyph.contours:
 					pointPen = parentGlyph.getPointPen()
-					transPen = TransformPointPen(pointPen, (sX, 0, 0, sY, oX, oY))
+					transPen = TransformPointPen(pointPen, self._transformation)
 					contour.drawPoints(transPen)
 			parentGlyph.components.remove(self)
 	

@@ -11,7 +11,7 @@
 
 from robofab.glifLib import GlyphSet
 from robofab.world import CurrentFont, CurrentGlyph
-from robofab.interface.all.dialogs import Message, GetFolder
+from robofab.interface.all.dialogs import Message
 import os
 
 
@@ -21,7 +21,6 @@ todo = None
 
 ufoPath = f.path.replace(".vfb", ".ufo")
 if not os.path.exists(ufoPath):
-	from robofab.interface.all.dialogs import Message
 	Message("No UFO found for this font. I'm looking for \"%s\"."%(os.path.basename(ufoPath) ))
 
 if g is not None:
@@ -35,7 +34,6 @@ if todo:
 		doGroups=False, doLib=False, doFeatures=False, glyphs=todo)
 		
 else:
-	from robofab.interface.all.dialogs import Message
 	Message("No glyphs selected for export.")
 	
 print 'done'

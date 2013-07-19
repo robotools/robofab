@@ -6,6 +6,7 @@
 """
 
 from robofab.world import CurrentFont
+from robofab.robofab.interface.all.dialogs import PutFile
 
 f = CurrentFont()
 if f.path is None:

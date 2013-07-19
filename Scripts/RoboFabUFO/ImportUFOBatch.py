@@ -8,7 +8,6 @@
 	
 """
 from robofab.world import NewFont
-from robofab.interface.mac.getFileOrFolder import GetFileOrFolder
 
 from robofab.interface.all.dialogs import GetFolder
 import os

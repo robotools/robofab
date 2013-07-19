@@ -11,7 +11,7 @@
 
 from robofab.glifLib import GlyphSet
 from robofab.world import CurrentFont, CurrentGlyph
-from robofab.interface.all.dialogs import Message, GetFolder
+from robofab.interface.all.dialogs import Message, GetFileOrFolder
 from robofab.tools.glyphNameSchemes import glyphNameToShortFileName
 import os
 
@@ -23,7 +23,7 @@ f.save()
 ufoPath = None
 ufoPath = f.path.replace(".vfb", ".ufo")
 if not os.path.exists(ufoPath):
-	ufoPath = GetFolder("Select a UFO to save the GLIF in:")
+	ufoPath = GetFileOrFolder("Select a UFO to save the GLIF in:")
 	if ufoPath.find(".ufo") == -1:
 		Message("You need to select an UFO. Quitting.")
 		ufoPath = None

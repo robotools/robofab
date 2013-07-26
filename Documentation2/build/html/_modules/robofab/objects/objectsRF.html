@@ -1,0 +1,1323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.objects.objectsRF &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.objects.objectsRF</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;UFO for GlifLib&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">robofab</span> <span class="kn">import</span> <span class="n">RoboFabError</span><span class="p">,</span> <span class="n">RoboFabWarning</span>
+<span class="kn">from</span> <span class="nn">robofab.objects.objectsBase</span> <span class="kn">import</span> <span class="n">BaseFont</span><span class="p">,</span> <span class="n">BaseKerning</span><span class="p">,</span> <span class="n">BaseGroups</span><span class="p">,</span> <span class="n">BaseInfo</span><span class="p">,</span> <span class="n">BaseFeatures</span><span class="p">,</span> <span class="n">BaseLib</span><span class="p">,</span>\
+		<span class="n">BaseGlyph</span><span class="p">,</span> <span class="n">BaseContour</span><span class="p">,</span> <span class="n">BaseSegment</span><span class="p">,</span> <span class="n">BasePoint</span><span class="p">,</span> <span class="n">BaseBPoint</span><span class="p">,</span> <span class="n">BaseAnchor</span><span class="p">,</span> <span class="n">BaseGuide</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">,</span> \
+		<span class="n">relativeBCPIn</span><span class="p">,</span> <span class="n">relativeBCPOut</span><span class="p">,</span> <span class="n">absoluteBCPIn</span><span class="p">,</span> <span class="n">absoluteBCPOut</span><span class="p">,</span> <span class="n">_box</span><span class="p">,</span>\
+		<span class="n">_interpolate</span><span class="p">,</span> <span class="n">_interpolatePt</span><span class="p">,</span> <span class="n">roundPt</span><span class="p">,</span> <span class="n">addPt</span><span class="p">,</span>\
+		<span class="n">MOVE</span><span class="p">,</span> <span class="n">LINE</span><span class="p">,</span> <span class="n">CORNER</span><span class="p">,</span> <span class="n">CURVE</span><span class="p">,</span> <span class="n">QCURVE</span><span class="p">,</span> <span class="n">OFFCURVE</span><span class="p">,</span>\
+		<span class="n">BasePostScriptFontHintValues</span><span class="p">,</span> <span class="n">postScriptHintDataLibKey</span><span class="p">,</span> <span class="n">BasePostScriptGlyphHintValues</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>	<span class="s">&quot;CurrentFont&quot;</span><span class="p">,</span> 
+		<span class="s">&quot;CurrentGlyph&quot;</span><span class="p">,</span> <span class="s">&#39;OpenFont&#39;</span><span class="p">,</span>
+		<span class="s">&#39;RFont&#39;</span><span class="p">,</span> <span class="s">&#39;RGlyph&#39;</span><span class="p">,</span> <span class="s">&#39;RContour&#39;</span><span class="p">,</span>
+		<span class="s">&#39;RPoint&#39;</span><span class="p">,</span> <span class="s">&#39;RBPoint&#39;</span><span class="p">,</span> <span class="s">&#39;RAnchor&#39;</span><span class="p">,</span>
+		<span class="s">&#39;RComponent&#39;</span>
+		<span class="p">]</span>
+
+
+
+<span class="k">def</span> <span class="nf">CurrentFont</span><span class="p">():</span>
+	<span class="k">return</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">CurrentGlyph</span><span class="p">():</span>
+	<span class="k">return</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="OpenFont"><a class="viewcode-back" href="../../../objects/objectsRF.html#robofab.objects.objectsRF.OpenFont">[docs]</a><span class="k">def</span> <span class="nf">OpenFont</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Open a font from a path. If path is not given, present the user with a dialog.&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">note</span><span class="p">:</span>
+		<span class="n">note</span> <span class="o">=</span> <span class="s">&#39;select a .ufo directory&#39;</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+		<span class="kn">from</span> <span class="nn">robofab.interface.all.dialogs</span> <span class="kn">import</span> <span class="n">GetFolder</span>
+		<span class="n">path</span> <span class="o">=</span> <span class="n">GetFolder</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">RFont</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+			<span class="kn">from</span> <span class="nn">robofab.interface.all.dialogs</span> <span class="kn">import</span> <span class="n">Message</span>
+			<span class="n">Message</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> is not a valid .UFO font. But considering it&#39;s all XML, why don&#39;t  you have a look inside with a simple text editor.&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">None</span>
+		</div>
+<span class="k">def</span> <span class="nf">NewFont</span><span class="p">(</span><span class="n">familyName</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">styleName</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Make a new font&quot;&quot;&quot;</span>
+	<span class="n">new</span> <span class="o">=</span> <span class="n">RFont</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">familyName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">new</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">familyName</span> <span class="o">=</span> <span class="n">familyName</span>
+	<span class="k">if</span> <span class="n">styleName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">new</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">styleName</span> <span class="o">=</span> <span class="n">styleName</span>
+	<span class="k">return</span> <span class="n">new</span>
+	
+<span class="k">def</span> <span class="nf">AllFonts</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;AllFonts can&#39;t work in plain python usage. It&#39;s really up to some sort of application</span>
+<span class="sd">	to keep track of which fonts are open.&quot;&quot;&quot;</span>
+	<span class="k">raise</span> <span class="ne">NotImplementedError</span>
+	
+
+<span class="k">class</span> <span class="nc">PostScriptFontHintValues</span><span class="p">(</span><span class="n">BasePostScriptFontHintValues</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;	Font level PostScript hints object for objectsRF usage.</span>
+<span class="sd">		If there are values in the lib, use those.</span>
+<span class="sd">		If there are no values in the lib, use defaults.</span>
+<span class="sd">		</span>
+<span class="sd">		The psHints attribute for objectsRF.RFont is basically just the</span>
+<span class="sd">		data read from the Lib. When the object saves to UFO, the </span>
+<span class="sd">		hints are written back to the lib, which is then saved.</span>
+<span class="sd">		</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aFont</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">aFont</span><span class="p">)</span>
+		<span class="n">BasePostScriptFontHintValues</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">aFont</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="c"># in version 1, this data was stored in the lib</span>
+			<span class="c"># if it is still there, guess that it is correct</span>
+			<span class="c"># move it to font info and remove it from the lib.</span>
+			<span class="n">libData</span> <span class="o">=</span> <span class="n">aFont</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">postScriptHintDataLibKey</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">libData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fromDict</span><span class="p">(</span><span class="n">libData</span><span class="p">)</span>
+				<span class="k">del</span> <span class="n">libData</span><span class="p">[</span><span class="n">postScriptHintDataLibKey</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fromDict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">getPostScriptHintDataFromLib</span><span class="p">(</span><span class="n">aFont</span><span class="p">,</span> <span class="n">fontLib</span><span class="p">):</span>
+	<span class="n">hintData</span> <span class="o">=</span> <span class="n">fontLib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">postScriptHintDataLibKey</span><span class="p">)</span>
+	<span class="n">psh</span> <span class="o">=</span> <span class="n">PostScriptFontHintValues</span><span class="p">(</span><span class="n">aFont</span><span class="p">)</span>
+	<span class="n">psh</span><span class="o">.</span><span class="n">fromDict</span><span class="p">(</span><span class="n">hintData</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">psh</span>
+	
+<span class="k">class</span> <span class="nc">PostScriptGlyphHintValues</span><span class="p">(</span><span class="n">BasePostScriptGlyphHintValues</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;	Glyph level PostScript hints object for objectsRF usage.</span>
+<span class="sd">		If there are values in the lib, use those.</span>
+<span class="sd">		If there are no values in the lib, be empty.</span>
+<span class="sd">		</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aGlyph</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="c"># read the data from the glyph.lib, it won&#39;t be anywhere else</span>
+		<span class="n">BasePostScriptGlyphHintValues</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">aGlyph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">aGlyph</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_loadFromLib</span><span class="p">(</span><span class="n">aGlyph</span><span class="o">.</span><span class="n">lib</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fromDict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+			
+			
+<div class="viewcode-block" id="RFont"><a class="viewcode-back" href="../../../objects/objectsRF.html#robofab.objects.objectsRF.RFont">[docs]</a><span class="k">class</span> <span class="nc">RFont</span><span class="p">(</span><span class="n">BaseFont</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;UFO font object which reads and writes glif, and keeps the data in memory in between.</span>
+<span class="sd">	Bahviour:</span>
+<span class="sd">		- comparable to Font</span>
+<span class="sd">		- comparable to GlyphSet so that it can be passed to Glif widgets</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabFont&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="n">BaseFont</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_object</span> <span class="o">=</span> <span class="p">{}</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span> <span class="o">=</span> <span class="p">[]</span>	<span class="c"># this is a place for storing glyphs that need to be removed when the font is saved</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">kerning</span> <span class="o">=</span> <span class="n">RKerning</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kerning</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">RInfo</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">RFeatures</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">RGroups</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lib</span> <span class="o">=</span> <span class="n">RLib</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_loadData</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">psHints</span> <span class="o">=</span> <span class="n">PostScriptFontHintValues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">psHints</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		
+	<span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Set a glyph at key.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span> <span class="o">=</span> <span class="n">glyph</span>
+	
+	<span class="k">def</span> <span class="nf">__cmp__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Compare this font with another, compare if they refer to the same file.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s">&#39;_path&#39;</span><span class="p">):</span>
+			<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">_path</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">_path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> 
+			<span class="k">return</span> <span class="mi">0</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+	
+	<span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="mi">0</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_loadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">robofab.ufoLib</span> <span class="kn">import</span> <span class="n">UFOReader</span>
+		<span class="n">reader</span> <span class="o">=</span> <span class="n">UFOReader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+		<span class="n">fontLib</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">readLib</span><span class="p">()</span>
+		<span class="c"># info</span>
+		<span class="n">reader</span><span class="o">.</span><span class="n">readInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
+		<span class="c"># kerning</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kerning</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">readKerning</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kerning</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+		<span class="c"># groups</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">readGroups</span><span class="p">())</span>
+		<span class="c"># features</span>
+		<span class="k">if</span> <span class="n">reader</span><span class="o">.</span><span class="n">formatVersion</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="c"># migrate features from the lib</span>
+			<span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">classes</span> <span class="o">=</span> <span class="n">fontLib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;org.robofab.opentype.classes&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="k">del</span> <span class="n">fontLib</span><span class="p">[</span><span class="s">&quot;org.robofab.opentype.classes&quot;</span><span class="p">]</span>
+				<span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
+			<span class="n">splitFeatures</span> <span class="o">=</span> <span class="n">fontLib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;org.robofab.opentype.features&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">splitFeatures</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">order</span> <span class="o">=</span> <span class="n">fontLib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;org.robofab.opentype.featureorder&quot;</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">order</span> <span class="o">=</span> <span class="n">splitFeatures</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+					<span class="n">order</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">del</span> <span class="n">fontLib</span><span class="p">[</span><span class="s">&quot;org.robofab.opentype.featureorder&quot;</span><span class="p">]</span>
+				<span class="k">del</span> <span class="n">fontLib</span><span class="p">[</span><span class="s">&quot;org.robofab.opentype.features&quot;</span><span class="p">]</span>
+				<span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+					<span class="n">oneFeature</span> <span class="o">=</span> <span class="n">splitFeatures</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+					<span class="k">if</span> <span class="n">oneFeature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+						<span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oneFeature</span><span class="p">)</span>
+			<span class="n">features</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">features</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">readFeatures</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">features</span>
+		<span class="c"># hint data</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">psHints</span> <span class="o">=</span> <span class="n">PostScriptFontHintValues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">postScriptHintDataLibKey</span> <span class="ow">in</span> <span class="n">fontLib</span><span class="p">:</span>
+			<span class="k">del</span> <span class="n">fontLib</span><span class="p">[</span><span class="n">postScriptHintDataLibKey</span><span class="p">]</span>
+		<span class="c"># lib</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fontLib</span><span class="p">)</span>
+		<span class="c"># glyphs</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">getGlyphSet</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasNotChanged</span><span class="p">(</span><span class="n">doGlyphs</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">_loadGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Load a single glyph from the glyphSet, on request.&quot;&quot;&quot;</span>
+		<span class="kn">from</span> <span class="nn">robofab.pens.rfUFOPen</span> <span class="kn">import</span> <span class="n">RFUFOPointPen</span>
+		<span class="n">g</span> <span class="o">=</span>  <span class="n">RGlyph</span><span class="p">()</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">glyphName</span>
+		<span class="n">pen</span> <span class="o">=</span> <span class="n">RFUFOPointPen</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span><span class="o">.</span><span class="n">readGlyph</span><span class="p">(</span><span class="n">glyphName</span><span class="o">=</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">glyphObject</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">pointPen</span><span class="o">=</span><span class="n">pen</span><span class="p">)</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">psHints</span><span class="o">.</span><span class="n">_loadFromLib</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">lib</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span><span class="o">.</span><span class="n">_hasNotChanged</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">g</span>
+		
+	<span class="c">#def _prepareSaveDir(self, dir):</span>
+	<span class="c">#	path = os.path.join(dir, &#39;glyphs&#39;)</span>
+	<span class="c">#	if not os.path.exists(path):</span>
+	<span class="c">#		os.makedirs(path)</span>
+
+	<span class="k">def</span> <span class="nf">_hasNotChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doGlyphs</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="c">#set the changed state of the font</span>
+		<span class="k">if</span> <span class="n">doGlyphs</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">_hasNotChanged</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+	
+	<span class="c">#</span>
+	<span class="c"># attributes</span>
+	<span class="c">#</span>
+	
+	<span class="k">def</span> <span class="nf">_get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+	
+	<span class="n">path</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_path</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;path of the font&quot;</span><span class="p">)</span>
+		
+	<span class="c">#</span>
+	<span class="c"># methods for imitating GlyphSet?</span>
+	<span class="c">#</span>
+			
+	<span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c"># the keys are the superset of self._objects.keys() and</span>
+		<span class="c"># self._glyphSet.keys(), minus self._scheduledForDeletion</span>
+		<span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+		<span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+			<span class="n">d</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+				<span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">):</span>
+		<span class="c"># XXX ditto, see above.</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">hasGlyph</span> <span class="o">=</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span> <span class="ow">or</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">hasGlyph</span> <span class="o">=</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span>
+		<span class="k">return</span> <span class="n">hasGlyph</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span>
+	
+	<span class="n">__contains__</span> <span class="o">=</span> <span class="n">has_key</span>
+	
+	<span class="k">def</span> <span class="nf">getWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">glyphName</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span><span class="o">.</span><span class="n">width</span>
+		<span class="k">raise</span> <span class="ne">IndexError</span>		<span class="c"># or return None?</span>
+		
+<div class="viewcode-block" id="RFont.getReverseComponentMapping"><a class="viewcode-back" href="../../../objects/objectsRF.html#robofab.objects.objectsRF.RFont.getReverseComponentMapping">[docs]</a>	<span class="k">def</span> <span class="nf">getReverseComponentMapping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Get a reversed map of component references in the font.</span>
+<span class="sd">		{</span>
+<span class="sd">		&#39;A&#39; : [&#39;Aacute&#39;, &#39;Aring&#39;]</span>
+<span class="sd">		&#39;acute&#39; : [&#39;Aacute&#39;]</span>
+<span class="sd">		&#39;ring&#39; : [&#39;Aring&#39;]</span>
+<span class="sd">		etc.</span>
+<span class="sd">		}</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c"># a NON-REVERESED map is stored in the lib.</span>
+		<span class="c"># this is done because a reveresed map could</span>
+		<span class="c"># contain faulty data. for example: &quot;Aacute&quot; contains</span>
+		<span class="c"># a component that references &quot;A&quot;. Glyph &quot;Aacute&quot; is</span>
+		<span class="c"># then deleted. The reverse map would still say that</span>
+		<span class="c"># &quot;A&quot; is referenced by &quot;Aacute&quot; even though the</span>
+		<span class="c"># glyph has been deleted. So, the stored lib works like this:</span>
+		<span class="c"># {</span>
+		<span class="c"># &#39;Aacute&#39; : [</span>
+		<span class="c">#		# the last known mod time of the GLIF</span>
+		<span class="c">#		1098706856.75,</span>
+		<span class="c">#		# component references in a glyph</span>
+		<span class="c">#		[&#39;A&#39;, &#39;acute&#39;]</span>
+		<span class="c">#		]</span>
+		<span class="c"># }</span>
+		<span class="kn">import</span> <span class="nn">time</span>
+		<span class="kn">import</span> <span class="nn">os</span>
+		<span class="kn">import</span> <span class="nn">re</span>
+		<span class="n">componentSearch_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+			<span class="s">&quot;&lt;component\s+&quot;</span>		<span class="c"># &lt;component</span>
+			<span class="s">&quot;[^&gt;]*?&quot;</span>			<span class="c"># anything EXCEPT &gt;</span>
+			<span class="s">&quot;base\s*=\s*[</span><span class="se">\&quot;\&#39;</span><span class="s">]&quot;</span>		<span class="c"># base=&quot;</span>
+			<span class="s">&quot;(.*?)&quot;</span>			<span class="c"># foo</span>
+			<span class="s">&quot;[</span><span class="se">\&quot;\&#39;</span><span class="s">]&quot;</span>			<span class="c"># &quot;</span>
+			<span class="p">)</span>
+		<span class="n">rightNow</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="n">libKey</span> <span class="o">=</span> <span class="s">&quot;org.robofab.componentMapping&quot;</span>
+		<span class="n">previousMap</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">libKey</span><span class="p">):</span>
+			<span class="n">previousMap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="p">[</span><span class="n">libKey</span><span class="p">]</span>
+		<span class="n">basicMap</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="n">reverseMap</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">componentsToMap</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="n">modTime</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="c"># get the previous bits of data</span>
+			<span class="n">previousModTime</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="n">previousList</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="k">if</span> <span class="n">previousMap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">previousMap</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">glyphName</span><span class="p">):</span>
+				<span class="n">previousModTime</span><span class="p">,</span> <span class="n">previousList</span> <span class="o">=</span> <span class="n">previousMap</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+			<span class="c"># the glyph has been loaded.</span>
+			<span class="c"># simply get the components from it.</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">glyphName</span><span class="p">):</span>
+				<span class="n">componentsToMap</span> <span class="o">=</span> <span class="p">[</span><span class="n">component</span><span class="o">.</span><span class="n">baseGlyph</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span><span class="o">.</span><span class="n">components</span><span class="p">]</span>
+			<span class="c"># the glyph has not been loaded.</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">glyphPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span><span class="o">.</span><span class="n">dirName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">glyphName</span><span class="p">])</span>
+				<span class="n">scanGlyph</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="c"># test the modified time of the GLIF</span>
+				<span class="n">fileModTime</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">glyphPath</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">previousModTime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">fileModTime</span> <span class="o">==</span> <span class="n">previousModTime</span><span class="p">:</span>
+					<span class="c"># the GLIF almost* certianly has not changed.</span>
+					<span class="c"># *theoretically, a user could replace a GLIF</span>
+					<span class="c"># with another GLIF that has precisely the same</span>
+					<span class="c"># mod time. </span>
+					<span class="n">scanGlyph</span> <span class="o">=</span> <span class="bp">False</span>
+					<span class="n">componentsToMap</span> <span class="o">=</span> <span class="n">previousList</span>
+					<span class="n">modTime</span> <span class="o">=</span> <span class="n">previousModTime</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="c"># the GLIF is different</span>
+					<span class="n">modTime</span> <span class="o">=</span> <span class="n">fileModTime</span>
+				<span class="k">if</span> <span class="n">scanGlyph</span><span class="p">:</span>
+					<span class="c"># use regex to extract component</span>
+					<span class="c"># base glyphs from the file</span>
+					<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">glyphPath</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+					<span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+					<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+					<span class="n">componentsToMap</span> <span class="o">=</span> <span class="n">componentSearch_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">componentsToMap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="c"># store the non-reversed map</span>
+				<span class="n">basicMap</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">modTime</span><span class="p">,</span> <span class="n">componentsToMap</span><span class="p">)</span>
+				<span class="c"># reverse the map for the user</span>
+				<span class="k">if</span> <span class="n">componentsToMap</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">baseGlyphName</span> <span class="ow">in</span> <span class="n">componentsToMap</span><span class="p">:</span>
+						<span class="k">if</span> <span class="ow">not</span> <span class="n">reverseMap</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">baseGlyphName</span><span class="p">):</span>
+							<span class="n">reverseMap</span><span class="p">[</span><span class="n">baseGlyphName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+						<span class="n">reverseMap</span><span class="p">[</span><span class="n">baseGlyphName</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+				<span class="c"># if a glyph has been loaded, we do not store data about it in the lib.</span>
+				<span class="c"># this is done becuase there is not way to determine the proper mod time</span>
+				<span class="c"># for a loaded glyph.</span>
+				<span class="k">if</span> <span class="n">modTime</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="k">del</span> <span class="n">basicMap</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+		<span class="c"># store the map in the lib for re-use</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="p">[</span><span class="n">libKey</span><span class="p">]</span> <span class="o">=</span> <span class="n">basicMap</span>
+		<span class="k">return</span> <span class="n">reverseMap</span>
+		
+</div>
+<div class="viewcode-block" id="RFont.save"><a class="viewcode-back" href="../../../objects/objectsRF.html#robofab.objects.objectsRF.RFont.save">[docs]</a>	<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destDir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">doProgress</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">formatVersion</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Save the Font in UFO format.&quot;&quot;&quot;</span>
+		<span class="c"># XXX note that when doing &quot;save as&quot; by specifying the destDir argument</span>
+		<span class="c"># _all_ glyphs get loaded into memory. This could be optimized by either</span>
+		<span class="c"># copying those .glif files that have not been edited or (not sure how</span>
+		<span class="c"># well that would work) by simply clearing out self._objects after the</span>
+		<span class="c"># save.</span>
+		<span class="kn">from</span> <span class="nn">robofab.ufoLib</span> <span class="kn">import</span> <span class="n">UFOWriter</span>
+		<span class="kn">from</span> <span class="nn">robofab.tools.fontlabFeatureSplitter</span> <span class="kn">import</span> <span class="n">splitFeaturesForFontLab</span>
+		<span class="c"># if no destination is given, or if</span>
+		<span class="c"># the given destination is the current</span>
+		<span class="c"># path, this is not a save as operation</span>
+		<span class="k">if</span> <span class="n">destDir</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">destDir</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">:</span>
+			<span class="n">saveAs</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="n">destDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">saveAs</span> <span class="o">=</span> <span class="bp">True</span>
+		<span class="c"># start a progress bar</span>
+		<span class="n">nonGlyphCount</span> <span class="o">=</span> <span class="mi">5</span>
+		<span class="n">bar</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+			<span class="kn">from</span> <span class="nn">robofab.interface.all.dialogs</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
+			<span class="n">bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="s">&quot;Exporting UFO&quot;</span><span class="p">,</span> <span class="n">nonGlyphCount</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+		<span class="c"># write</span>
+		<span class="n">writer</span> <span class="o">=</span> <span class="n">UFOWriter</span><span class="p">(</span><span class="n">destDir</span><span class="p">,</span> <span class="n">formatVersion</span><span class="o">=</span><span class="n">formatVersion</span><span class="p">)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="c"># make a shallow copy of the lib. stuff may be added to it.</span>
+			<span class="n">fontLib</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="p">)</span>
+			<span class="c"># info</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s">&quot;Saving info...&quot;</span><span class="p">)</span>
+			<span class="n">writer</span><span class="o">.</span><span class="n">writeInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+			<span class="c"># kerning</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kerning</span><span class="o">.</span><span class="n">changed</span> <span class="ow">or</span> <span class="n">saveAs</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+					<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s">&quot;Saving kerning...&quot;</span><span class="p">)</span>
+				<span class="n">writer</span><span class="o">.</span><span class="n">writeKerning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kerning</span><span class="o">.</span><span class="n">asDict</span><span class="p">())</span>
+				<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+					<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+			<span class="c"># groups</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s">&quot;Saving groups...&quot;</span><span class="p">)</span>
+			<span class="n">writer</span><span class="o">.</span><span class="n">writeGroups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+			<span class="c"># features</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s">&quot;Saving features...&quot;</span><span class="p">)</span>
+			<span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">text</span>
+			<span class="k">if</span> <span class="n">features</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">features</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+			<span class="k">if</span> <span class="n">formatVersion</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">writer</span><span class="o">.</span><span class="n">writeFeatures</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">formatVersion</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">classes</span><span class="p">,</span> <span class="n">features</span> <span class="o">=</span> <span class="n">splitFeaturesForFontLab</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">classes</span><span class="p">:</span>
+					<span class="n">fontLib</span><span class="p">[</span><span class="s">&quot;org.robofab.opentype.classes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+				<span class="k">if</span> <span class="n">features</span><span class="p">:</span>
+					<span class="n">featureDict</span> <span class="o">=</span> <span class="p">{}</span>
+					<span class="k">for</span> <span class="n">featureName</span><span class="p">,</span> <span class="n">featureText</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+						<span class="n">featureDict</span><span class="p">[</span><span class="n">featureName</span><span class="p">]</span> <span class="o">=</span> <span class="n">featureText</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+					<span class="n">fontLib</span><span class="p">[</span><span class="s">&quot;org.robofab.opentype.features&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featureDict</span>
+					<span class="n">fontLib</span><span class="p">[</span><span class="s">&quot;org.robofab.opentype.featureorder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">featureName</span> <span class="k">for</span> <span class="n">featureName</span><span class="p">,</span> <span class="n">featureText</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+			<span class="c"># lib</span>
+			<span class="k">if</span> <span class="n">formatVersion</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">fontLib</span><span class="p">[</span><span class="n">postScriptHintDataLibKey</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">psHints</span><span class="o">.</span><span class="n">asDict</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s">&quot;Saving lib...&quot;</span><span class="p">)</span>
+			<span class="n">writer</span><span class="o">.</span><span class="n">writeLib</span><span class="p">(</span><span class="n">fontLib</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+			<span class="c"># glyphs</span>
+			<span class="n">glyphNameToFileNameFunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getGlyphNameToFileNameFunc</span><span class="p">()</span>
+
+			<span class="n">glyphSet</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">getGlyphSet</span><span class="p">(</span><span class="n">glyphNameToFileNameFunc</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+					<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s">&quot;Removing deleted glyphs...&quot;</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">glyphSet</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">glyphName</span><span class="p">):</span>
+						<span class="n">glyphSet</span><span class="o">.</span><span class="n">deleteGlyph</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+					<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s">&quot;Saving glyphs...&quot;</span><span class="p">)</span>
+			<span class="n">count</span> <span class="o">=</span> <span class="n">nonGlyphCount</span>
+			<span class="k">if</span> <span class="n">saveAs</span><span class="p">:</span>
+				<span class="n">glyphNames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">glyphNames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="n">glyphNames</span><span class="p">:</span>
+				<span class="n">glyph</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">psHints</span><span class="o">.</span><span class="n">_saveToLib</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">lib</span><span class="p">)</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">_saveToGlyphSet</span><span class="p">(</span><span class="n">glyphSet</span><span class="p">,</span> <span class="n">glyphName</span><span class="o">=</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">saveAs</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">bar</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">count</span> <span class="o">%</span> <span class="mi">10</span><span class="p">:</span>
+					<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+				<span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="n">glyphSet</span><span class="o">.</span><span class="n">writeContents</span><span class="p">()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span> <span class="o">=</span> <span class="n">glyphSet</span>
+		<span class="c"># only blindly stop if the user says to</span>
+		<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+			<span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+			<span class="n">bar</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="c"># kill the progress bar</span>
+		<span class="k">if</span> <span class="n">bar</span><span class="p">:</span>
+			<span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="c"># reset internal stuff</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">destDir</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="RFont.newGlyph"><a class="viewcode-back" href="../../../objects/objectsRF.html#robofab.objects.objectsRF.RFont.newGlyph">[docs]</a>	<span class="k">def</span> <span class="nf">newGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Make a new glyph with glyphName</span>
+<span class="sd">		if the glyph exists and clear=True clear the glyph&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">clear</span> <span class="ow">and</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+			<span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+			<span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">postscriptDefaultWidthX</span>
+			<span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">w</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">w</span>
+			<span class="k">return</span> <span class="n">g</span>
+		<span class="n">g</span> <span class="o">=</span> <span class="n">RGlyph</span><span class="p">()</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">glyphName</span>
+		<span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">postscriptDefaultWidthX</span>
+		<span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">w</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">w</span>
+		<span class="n">g</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span>
+		<span class="c"># is the user adding a glyph that has the same</span>
+		<span class="c"># name as one that was deleted earlier?</span>
+		<span class="k">if</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getGlyph</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+		</div>
+<div class="viewcode-block" id="RFont.insertGlyph"><a class="viewcode-back" href="../../../objects/objectsRF.html#robofab.objects.objectsRF.RFont.insertGlyph">[docs]</a>	<span class="k">def</span> <span class="nf">insertGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;returns a new glyph that has been inserted into the font&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">name</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">name</span>
+		<span class="n">glyph</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+		<span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+		<span class="n">glyph</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="n">glyph</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">glyph</span>
+		<span class="c"># is the user adding a glyph that has the same</span>
+		<span class="c"># name as one that was deleted earlier?</span>
+		<span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getGlyph</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+		</div>
+<div class="viewcode-block" id="RFont.removeGlyph"><a class="viewcode-back" href="../../../objects/objectsRF.html#robofab.objects.objectsRF.RFont.removeGlyph">[docs]</a>	<span class="k">def</span> <span class="nf">removeGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;remove a glyph from the font&quot;&quot;&quot;</span>
+		<span class="c"># XXX! Potential issue with removing glyphs.</span>
+		<span class="c"># if a glyph is removed from a font, but it is still referenced</span>
+		<span class="c"># by a component, it will give pens some trouble.</span>
+		<span class="c"># where does the resposibility for catching this fall?</span>
+		<span class="c"># the removeGlyph method? the addComponent method</span>
+		<span class="c"># of the various pens? somewhere else? hm... tricky.</span>
+		<span class="c">#</span>
+		<span class="c">#we won&#39;t actually remove it, we will just store it for removal</span>
+		<span class="c"># but only if the glyph does exist</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span> <span class="ow">and</span> <span class="n">glyphName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+		<span class="c"># now delete the object</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">glyphName</span><span class="p">):</span>
+			<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		</div>
+	<span class="k">def</span> <span class="nf">getGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">):</span>
+		<span class="c"># XXX getGlyph may have to become private, to avoid duplication</span>
+		<span class="c"># with __getitem__</span>
+		<span class="n">n</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">glyphName</span><span class="p">):</span>
+			<span class="c"># have we served this glyph before? it should be in _object</span>
+			<span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c"># haven&#39;t served it before, is it in the glyphSet then?</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphSet</span><span class="p">:</span>
+				<span class="c"># yes, read the .glif file from disk</span>
+				<span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loadGlyph</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="n">glyphName</span>
+		<span class="k">return</span> <span class="n">n</span>
+
+</div>
+<span class="k">class</span> <span class="nc">RGlyph</span><span class="p">(</span><span class="n">BaseGlyph</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RGlyph&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">BaseGlyph</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contours</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">anchors</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_unicodes</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">note</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s">&quot;Unnamed Glyph&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_properties</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lib</span> <span class="o">=</span> <span class="n">RLib</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">psHints</span> <span class="o">=</span> <span class="n">PostScriptGlyphHintValues</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">psHints</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contours</span><span class="p">)</span> 
+
+	<span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contours</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">contours</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+		<span class="k">raise</span> <span class="ne">IndexError</span>
+	
+	<span class="k">def</span> <span class="nf">_hasNotChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contours</span><span class="p">:</span>
+			<span class="n">contour</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">contour</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+				<span class="n">segment</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">segment</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
+					<span class="n">point</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+			<span class="n">component</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">anchor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchors</span><span class="p">:</span>
+			<span class="n">anchor</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+	
+	<span class="c">#</span>
+	<span class="c"># attributes</span>
+	<span class="c">#</span>
+	
+	<span class="k">def</span> <span class="nf">_get_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span>
+	
+	<span class="k">def</span> <span class="nf">_set_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+	
+	<span class="n">lib</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_lib</span><span class="p">,</span> <span class="n">_set_lib</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+	
+	<span class="k">def</span> <span class="nf">_set_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="n">prevName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+		<span class="n">newName</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="k">if</span> <span class="n">newName</span> <span class="o">==</span> <span class="n">prevName</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">newName</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+		<span class="n">font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="c"># but, this glyph could be linked to a</span>
+			<span class="c"># FontLab font, because objectsFL.RGlyph.copy()</span>
+			<span class="c"># creates an objectsRF.RGlyph with the parent</span>
+			<span class="c"># set to an objectsFL.RFont object. so, check to see</span>
+			<span class="c"># if this is a legitimate RFont before trying to </span>
+			<span class="c"># do the objectsRF.RFont glyph name change</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">RFont</span><span class="p">):</span>
+				<span class="n">font</span><span class="o">.</span><span class="n">_object</span><span class="p">[</span><span class="n">newName</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+				<span class="c"># is the user changing a glyph&#39;s name to the</span>
+				<span class="c"># name of a glyph that was deleted earlier?</span>
+				<span class="k">if</span> <span class="n">newName</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="p">:</span>
+					<span class="n">font</span><span class="o">.</span><span class="n">_scheduledForDeletion</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newName</span><span class="p">)</span>
+				<span class="n">font</span><span class="o">.</span><span class="n">removeGlyph</span><span class="p">(</span><span class="n">prevName</span><span class="p">)</span>
+	
+	<span class="n">name</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_name</span><span class="p">,</span> <span class="n">_set_name</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_unicodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicodes</span>
+	
+	<span class="k">def</span> <span class="nf">_set_unicodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="k">raise</span> <span class="n">RoboFabError</span><span class="p">,</span> <span class="s">&quot;unicodes must be a list&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_unicodes</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+			
+	<span class="n">unicodes</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_unicodes</span><span class="p">,</span> <span class="n">_set_unicodes</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;all unicode values for the glyph&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_unicode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unicodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">None</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	
+	<span class="k">def</span> <span class="nf">_set_unicode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="n">uni</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicodes</span>
+		<span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uni</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">unicodes</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">uni</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">uni</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uni</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">uni</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">unicodes</span> <span class="o">=</span> <span class="n">uni</span>
+		
+	<span class="nb">unicode</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_unicode</span><span class="p">,</span> <span class="n">_set_unicode</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;first unicode value for the glyph&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">getPointPen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">robofab.pens.rfUFOPen</span> <span class="kn">import</span> <span class="n">RFUFOPointPen</span>
+		<span class="k">return</span> <span class="n">RFUFOPointPen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">appendComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">baseGlyph</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+		<span class="sd">&quot;&quot;&quot;append a component to the glyph&quot;&quot;&quot;</span>
+		<span class="n">new</span> <span class="o">=</span> <span class="n">RComponent</span><span class="p">(</span><span class="n">baseGlyph</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+		<span class="n">new</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="k">def</span> <span class="nf">appendAnchor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;append an anchor to the glyph&quot;&quot;&quot;</span>
+		<span class="n">new</span> <span class="o">=</span> <span class="n">RAnchor</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">mark</span><span class="p">)</span>
+		<span class="n">new</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">anchors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">removeContour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;remove  a specific contour from the glyph&quot;&quot;&quot;</span>
+		<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">contours</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="k">def</span> <span class="nf">removeAnchor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchor</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;remove  a specific anchor from the glyph&quot;&quot;&quot;</span>
+		<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchors</span><span class="p">[</span><span class="n">anchor</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">removeComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;remove  a specific component from the glyph&quot;&quot;&quot;</span>
+		<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="n">component</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+			
+	<span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Equalise sidebearings, set to padding if wanted.&quot;&quot;&quot;</span>
+		<span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">leftMargin</span>
+		<span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rightMargin</span>
+		<span class="k">if</span> <span class="n">padding</span><span class="p">:</span>
+			<span class="n">e_left</span> <span class="o">=</span> <span class="n">e_right</span> <span class="o">=</span> <span class="n">padding</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">e_left</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+			<span class="n">e_right</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">-</span> <span class="n">e_left</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">leftMargin</span> <span class="o">=</span> <span class="n">e_left</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rightMargin</span> <span class="o">=</span> <span class="n">e_right</span>
+	
+	<span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Decompose all components&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">)):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+			
+	<span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contours</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">anchors</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">guides</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Clear all items marked as True from the glyph&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">contours</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">clearContours</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">components</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">clearComponents</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">anchors</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">clearAnchors</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">guides</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">clearHGuides</span><span class="p">()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">clearVGuides</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">clearContours</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;clear all contours&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contours</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">clearComponents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;clear all components&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="k">def</span> <span class="nf">clearAnchors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;clear all anchors&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">anchors</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="k">def</span> <span class="nf">clearHGuides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;clear all horizontal guides&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">hGuides</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">clearVGuides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;clear all vertical guides&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">vGuides</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="k">def</span> <span class="nf">getAnchors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchors</span>
+	
+	<span class="k">def</span> <span class="nf">getComponents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span>
+	
+	<span class="c">#</span>
+	<span class="c"># stuff related to Glyph Properties</span>
+	<span class="c">#</span>
+	
+
+
+<span class="k">class</span> <span class="nc">RContour</span><span class="p">(</span><span class="n">BaseContour</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabContour&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="c">#BaseContour.__init__(self)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="bp">False</span>
+		
+	<span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span> 
+
+	<span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+		<span class="k">raise</span> <span class="ne">IndexError</span>
+		
+	<span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span><span class="o">.</span><span class="n">contours</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		
+	<span class="k">def</span> <span class="nf">_set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+		<span class="n">ogIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+		<span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="n">ogIndex</span><span class="p">:</span>
+			<span class="n">contourList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span><span class="o">.</span><span class="n">contours</span>
+			<span class="n">contourList</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">contourList</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">ogIndex</span><span class="p">))</span>
+			
+	
+	<span class="n">index</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_index</span><span class="p">,</span> <span class="n">_set_index</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;index of the contour&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">segment</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
+				<span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">points</span>
+	
+	<span class="n">points</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_points</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;view the contour as a list of points&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_bPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">bPoints</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+			<span class="n">segType</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">type</span>
+			<span class="k">if</span> <span class="n">segType</span> <span class="o">==</span> <span class="n">MOVE</span><span class="p">:</span>
+				<span class="n">bType</span> <span class="o">=</span> <span class="n">CORNER</span>
+			<span class="k">elif</span> <span class="n">segType</span> <span class="o">==</span> <span class="n">LINE</span><span class="p">:</span>
+				<span class="n">bType</span> <span class="o">=</span> <span class="n">CORNER</span>
+			<span class="k">elif</span> <span class="n">segType</span> <span class="o">==</span> <span class="n">CURVE</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">smooth</span><span class="p">:</span>
+					<span class="n">bType</span> <span class="o">=</span> <span class="n">CURVE</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">bType</span> <span class="o">=</span> <span class="n">CORNER</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">RoboFabError</span><span class="p">,</span> <span class="s">&quot;encountered unknown segment type&quot;</span>
+			<span class="n">b</span> <span class="o">=</span> <span class="n">RBPoint</span><span class="p">()</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+			<span class="n">bPoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">bPoints</span>
+
+	<span class="n">bPoints</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_bPoints</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;view the contour as a list of bPoints&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">appendSegment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;append a segment to the contour&quot;&quot;&quot;</span>
+		<span class="n">segment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insertSegment</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="n">segmentType</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="n">smooth</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">segment</span>
+		
+	<span class="k">def</span> <span class="nf">insertSegment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;insert a segment into the contour&quot;&quot;&quot;</span>
+		<span class="n">segment</span> <span class="o">=</span> <span class="n">RSegment</span><span class="p">(</span><span class="n">segmentType</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">smooth</span><span class="p">)</span>
+		<span class="n">segment</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">segment</span>
+		
+	<span class="k">def</span> <span class="nf">removeSegment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;remove a segment from the contour&quot;&quot;&quot;</span>
+		<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+				
+	<span class="k">def</span> <span class="nf">reverseContour</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;reverse the contour&quot;&quot;&quot;</span>
+		<span class="kn">from</span> <span class="nn">robofab.pens.reverseContourPointPen</span> <span class="kn">import</span> <span class="n">ReverseContourPointPen</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+		<span class="n">glyph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+		<span class="n">pen</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">getPointPen</span><span class="p">()</span>
+		<span class="n">reversePen</span> <span class="o">=</span> <span class="n">ReverseContourPointPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">drawPoints</span><span class="p">(</span><span class="n">reversePen</span><span class="p">)</span>
+		<span class="c"># we&#39;ve drawn the reversed contour onto our parent glyph,</span>
+		<span class="c"># so it sits at the end of the contours list:</span>
+		<span class="n">newContour</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">contours</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">newContour</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+			<span class="n">segment</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="n">newContour</span><span class="o">.</span><span class="n">segments</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">setStartSegment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segmentIndex</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;set the first segment on the contour&quot;&quot;&quot;</span>
+		<span class="c"># this obviously does not support open contours</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="k">if</span> <span class="n">segmentIndex</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="k">if</span> <span class="n">segmentIndex</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="s">&#39;segment index not in segments list&#39;</span>
+		<span class="n">oldStart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">oldLast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		 <span class="c">#check to see if the contour ended with a curve on top of the move</span>
+		 <span class="c">#if we find one delete it,</span>
+		<span class="k">if</span> <span class="n">oldLast</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">CURVE</span> <span class="ow">or</span> <span class="n">oldLast</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">QCURVE</span><span class="p">:</span>
+			<span class="n">startOn</span> <span class="o">=</span> <span class="n">oldStart</span><span class="o">.</span><span class="n">onCurve</span>
+			<span class="n">lastOn</span> <span class="o">=</span> <span class="n">oldLast</span><span class="o">.</span><span class="n">onCurve</span>
+			<span class="k">if</span> <span class="n">startOn</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">lastOn</span><span class="o">.</span><span class="n">x</span> <span class="ow">and</span> <span class="n">startOn</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">lastOn</span><span class="o">.</span><span class="n">y</span><span class="p">:</span>
+				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="c"># since we deleted the first contour, the segmentIndex needs to shift</span>
+				<span class="n">segmentIndex</span> <span class="o">=</span> <span class="n">segmentIndex</span> <span class="o">-</span> <span class="mi">1</span>
+		<span class="c"># if we DO have a move left over, we need to convert it to a line</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MOVE</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">LINE</span>
+		<span class="c"># slice up the segments and reassign them to the contour</span>
+		<span class="n">segments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">segmentIndex</span><span class="p">:]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="n">segments</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[:</span><span class="n">segmentIndex</span><span class="p">]</span>
+		<span class="c"># now, draw the contour onto the parent glyph</span>
+		<span class="n">glyph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+		<span class="n">pen</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">getPointPen</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">drawPoints</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+		<span class="c"># we&#39;ve drawn the new contour onto our parent glyph,</span>
+		<span class="c"># so it sits at the end of the contours list:</span>
+		<span class="n">newContour</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">contours</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">newContour</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+			<span class="n">segment</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="n">newContour</span><span class="o">.</span><span class="n">segments</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">RSegment</span><span class="p">(</span><span class="n">BaseSegment</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabSegment&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segmentType</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">[],</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+		<span class="n">BaseSegment</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">smooth</span> <span class="o">=</span> <span class="n">smooth</span>
+		<span class="k">if</span> <span class="n">points</span><span class="p">:</span>
+			<span class="c">#the points in the segment should be RPoints, so create those objects</span>
+			<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+				<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">point</span>
+				<span class="n">p</span> <span class="o">=</span> <span class="n">RPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pointType</span><span class="o">=</span><span class="n">OFFCURVE</span><span class="p">)</span>
+				<span class="n">p</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+			<span class="n">aX</span><span class="p">,</span> <span class="n">aY</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">p</span> <span class="o">=</span> <span class="n">RPoint</span><span class="p">(</span><span class="n">aX</span><span class="p">,</span> <span class="n">aY</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">)</span>
+			<span class="n">p</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+		
+	<span class="k">def</span> <span class="nf">_get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
+	
+	<span class="k">def</span> <span class="nf">_set_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pointType</span><span class="p">):</span>
+		<span class="n">onCurve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">ocType</span> <span class="o">=</span> <span class="n">onCurve</span><span class="o">.</span><span class="n">type</span>
+		<span class="k">if</span> <span class="n">ocType</span> <span class="o">==</span> <span class="n">pointType</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="c">#we are converting a cubic line into a cubic curve</span>
+		<span class="k">if</span> <span class="n">pointType</span> <span class="o">==</span> <span class="n">CURVE</span> <span class="ow">and</span>  <span class="n">ocType</span> <span class="o">==</span> <span class="n">LINE</span><span class="p">:</span>
+			<span class="n">onCurve</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">pointType</span>
+			<span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+			<span class="n">prev</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_prevSegment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+			<span class="n">p1</span> <span class="o">=</span> <span class="n">RPoint</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">onCurve</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">onCurve</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pointType</span><span class="o">=</span><span class="n">OFFCURVE</span><span class="p">)</span>
+			<span class="n">p1</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+			<span class="n">p2</span> <span class="o">=</span> <span class="n">RPoint</span><span class="p">(</span><span class="n">onCurve</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">onCurve</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pointType</span><span class="o">=</span><span class="n">OFFCURVE</span><span class="p">)</span>
+			<span class="n">p2</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p1</span><span class="p">)</span>
+		<span class="c">#we are converting a cubic move to a curve</span>
+		<span class="k">elif</span> <span class="n">pointType</span> <span class="o">==</span> <span class="n">CURVE</span> <span class="ow">and</span> <span class="n">ocType</span> <span class="o">==</span> <span class="n">MOVE</span><span class="p">:</span>
+			<span class="n">onCurve</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">pointType</span>
+			<span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+			<span class="n">prev</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_prevSegment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+			<span class="n">p1</span> <span class="o">=</span> <span class="n">RPoint</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">onCurve</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">onCurve</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pointType</span><span class="o">=</span><span class="n">OFFCURVE</span><span class="p">)</span>
+			<span class="n">p1</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+			<span class="n">p2</span> <span class="o">=</span> <span class="n">RPoint</span><span class="p">(</span><span class="n">onCurve</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">onCurve</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pointType</span><span class="o">=</span><span class="n">OFFCURVE</span><span class="p">)</span>
+			<span class="n">p2</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p1</span><span class="p">)</span>
+		<span class="c">#we are converting a quad curve to a cubic curve</span>
+		<span class="k">elif</span> <span class="n">pointType</span> <span class="o">==</span> <span class="n">CURVE</span> <span class="ow">and</span> <span class="n">ocType</span> <span class="o">==</span> <span class="n">QCURVE</span><span class="p">:</span>
+			<span class="n">onCurve</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">CURVE</span>
+		<span class="c">#we are converting a cubic curve into a cubic line</span>
+		<span class="k">elif</span> <span class="n">pointType</span> <span class="o">==</span> <span class="n">LINE</span> <span class="ow">and</span> <span class="n">ocType</span> <span class="o">==</span> <span class="n">CURVE</span><span class="p">:</span>
+			<span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">]</span>
+			<span class="n">onCurve</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">pointType</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">smooth</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="c">#we are converting a cubic move to a line</span>
+		<span class="k">elif</span> <span class="n">pointType</span> <span class="o">==</span> <span class="n">LINE</span> <span class="ow">and</span> <span class="n">ocType</span> <span class="o">==</span> <span class="n">MOVE</span><span class="p">:</span>
+			<span class="n">onCurve</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">pointType</span>
+		<span class="c">#we are converting a quad curve to a line:</span>
+		<span class="k">elif</span> <span class="n">pointType</span> <span class="o">==</span> <span class="n">LINE</span> <span class="ow">and</span> <span class="n">ocType</span> <span class="o">==</span> <span class="n">QCURVE</span><span class="p">:</span>
+			<span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">]</span>
+			<span class="n">onCurve</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">pointType</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">smooth</span> <span class="o">=</span> <span class="bp">False</span>	
+		<span class="c"># we are converting to a quad curve where just about anything is legal</span>
+		<span class="k">elif</span> <span class="n">pointType</span> <span class="o">==</span> <span class="n">QCURVE</span><span class="p">:</span>
+			<span class="n">onCurve</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">pointType</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">RoboFabError</span><span class="p">,</span> <span class="s">&#39;unknown segment type&#39;</span>
+			
+	<span class="nb">type</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_type</span><span class="p">,</span> <span class="n">_set_type</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;type of the segment&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		
+	<span class="n">index</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_index</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;index of the segment&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">insertPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">pointType</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+		<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">point</span>
+		<span class="n">p</span> <span class="o">=</span> <span class="n">RPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pointType</span><span class="o">=</span><span class="n">pointType</span><span class="p">)</span>
+		<span class="n">p</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">removePoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+		<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+
+<span class="k">class</span> <span class="nc">RBPoint</span><span class="p">(</span><span class="n">BaseBPoint</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabBPoint&quot;</span>
+		
+	<span class="k">def</span> <span class="nf">_setAnchorChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_anchorPoint</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_setNextChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_nextOnCurve</span><span class="o">.</span><span class="n">setChanged</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>	
+		
+	<span class="k">def</span> <span class="nf">_get__parentSegment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+		
+	<span class="n">_parentSegment</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get__parentSegment</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get__nextOnCurve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">pSeg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parentSegment</span>
+		<span class="n">contour</span> <span class="o">=</span> <span class="n">pSeg</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+		<span class="c">#could this potentially return an incorrect index? say, if two segments are exactly the same?</span>
+		<span class="k">return</span> <span class="n">contour</span><span class="o">.</span><span class="n">segments</span><span class="p">[(</span><span class="n">contour</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pSeg</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="o">.</span><span class="n">segments</span><span class="p">)]</span>
+	
+	<span class="n">_nextOnCurve</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get__nextOnCurve</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parentSegment</span><span class="o">.</span><span class="n">index</span>
+	
+	<span class="n">index</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_index</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;index of the bPoint on the contour&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">RPoint</span><span class="p">(</span><span class="n">BasePoint</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabPoint&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pointType</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">pointType</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">x</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">None</span>
+		
+	<span class="k">def</span> <span class="nf">_get_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+		
+	<span class="k">def</span> <span class="nf">_set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="n">x</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_x</span><span class="p">,</span> <span class="n">_set_x</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">_get_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+	
+	<span class="k">def</span> <span class="nf">_set_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+
+	<span class="n">y</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_y</span><span class="p">,</span> <span class="n">_set_y</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+	
+	<span class="k">def</span> <span class="nf">_set_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+
+	<span class="nb">type</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_type</span><span class="p">,</span> <span class="n">_set_type</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+	
+	<span class="k">def</span> <span class="nf">_set_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+
+	<span class="n">name</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_name</span><span class="p">,</span> <span class="n">_set_name</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+		
+<span class="k">class</span> <span class="nc">RAnchor</span><span class="p">(</span><span class="n">BaseAnchor</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabAnchor&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="n">BaseAnchor</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+		<span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">position</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mark</span> <span class="o">=</span> <span class="n">mark</span>
+		
+	<span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span><span class="o">.</span><span class="n">anchors</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+	
+	<span class="n">index</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_index</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;index of the anchor&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_set_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="n">position</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_position</span><span class="p">,</span> <span class="n">_set_position</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;position of the anchor&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)):</span>
+		<span class="sd">&quot;&quot;&quot;Move the anchor&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">y</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+
+		
+<span class="k">class</span> <span class="nc">RComponent</span><span class="p">(</span><span class="n">BaseComponent</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabComponent&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">baseGlyphName</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="n">BaseComponent</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_baseGlyph</span> <span class="o">=</span> <span class="n">baseGlyphName</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_offset</span> <span class="o">=</span> <span class="n">offset</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="n">scale</span>
+		<span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">scale</span>
+			<span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">offset</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">transformation</span> <span class="o">=</span> <span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">transformation</span> <span class="o">=</span> <span class="n">transform</span>
+		
+	<span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		
+	<span class="n">index</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_index</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;index of the component&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_baseGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_baseGlyph</span>
+		
+	<span class="k">def</span> <span class="nf">_set_baseGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">):</span>
+		<span class="c"># XXXX needs to be implemented in objectsFL for symmetricity&#39;s sake. Eventually.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_baseGlyph</span> <span class="o">=</span> <span class="n">glyphName</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="n">baseGlyph</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_baseGlyph</span><span class="p">,</span> <span class="n">_set_baseGlyph</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">_get_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Get the offset component of the transformation.=&quot;&quot;&quot;</span>
+		<span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span>
+		<span class="k">return</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span>
+	
+	<span class="k">def</span> <span class="nf">_set_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Set the offset component of the transformation.&quot;&quot;&quot;</span>
+		<span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span> <span class="o">=</span> <span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="n">offset</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_offset</span><span class="p">,</span> <span class="n">_set_offset</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;the offset of the component&quot;</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">_get_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Return the scale components of the transformation.&quot;&quot;&quot;</span>
+		<span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span>
+		<span class="k">return</span> <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span>
+	
+	<span class="k">def</span> <span class="nf">_set_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="n">xScale</span><span class="p">,</span> <span class="n">yScale</span><span class="p">)):</span>
+		<span class="sd">&quot;&quot;&quot; Set the scale component of the transformation.</span>
+<span class="sd">			Note: setting this value effectively makes the xy and yx values meaningless.</span>
+<span class="sd">			We&#39;re assuming that if you&#39;re setting the xy and yx values, you will use</span>
+<span class="sd">			the transformation attribute rather than the scale and offset attributes.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span> <span class="o">=</span> <span class="p">(</span><span class="n">xScale</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yScale</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+		
+	<span class="n">scale</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_scale</span><span class="p">,</span> <span class="n">_set_scale</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;the scale of the component&quot;</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">_get_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span>
+	
+	<span class="k">def</span> <span class="nf">_set_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transformation</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformation</span><span class="p">)</span><span class="o">==</span><span class="mi">6</span><span class="p">,</span> <span class="s">&quot;Transformation matrix must have 6 values&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span> <span class="o">=</span> <span class="n">transformation</span>
+	
+	<span class="n">transformation</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_transformation</span><span class="p">,</span> <span class="n">_set_transformation</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;the transformation matrix of the component&quot;</span><span class="p">)</span>
+		
+	<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)):</span>
+		<span class="sd">&quot;&quot;&quot;Move the component&quot;&quot;&quot;</span>
+		<span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span> <span class="o">=</span> <span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">dx</span><span class="o">+</span><span class="n">x</span><span class="p">,</span> <span class="n">dy</span><span class="o">+</span><span class="n">y</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_hasChanged</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Decompose the component&quot;&quot;&quot;</span>
+		<span class="n">baseGlyphName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseGlyph</span>
+		<span class="n">parentGlyph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+		<span class="c"># if there is no parent glyph, there is nothing to decompose to</span>
+		<span class="k">if</span> <span class="n">baseGlyphName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">parentGlyph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">parentFont</span> <span class="o">=</span> <span class="n">parentGlyph</span><span class="o">.</span><span class="n">getParent</span><span class="p">()</span>
+			<span class="c"># we must have a parent glyph with the baseGlyph</span>
+			<span class="c"># if not, we will simply remove the component from</span>
+			<span class="c"># the parent glyph thereby decomposing the component</span>
+			<span class="c"># to nothing.</span>
+			<span class="k">if</span> <span class="n">parentFont</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">parentFont</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">baseGlyphName</span><span class="p">):</span>
+				<span class="kn">from</span> <span class="nn">robofab.pens.adapterPens</span> <span class="kn">import</span> <span class="n">TransformPointPen</span>
+				<span class="n">baseGlyph</span> <span class="o">=</span> <span class="n">parentFont</span><span class="p">[</span><span class="n">baseGlyphName</span><span class="p">]</span>
+				<span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">baseGlyph</span><span class="o">.</span><span class="n">contours</span><span class="p">:</span>
+					<span class="n">pointPen</span> <span class="o">=</span> <span class="n">parentGlyph</span><span class="o">.</span><span class="n">getPointPen</span><span class="p">()</span>
+					<span class="n">transPen</span> <span class="o">=</span> <span class="n">TransformPointPen</span><span class="p">(</span><span class="n">pointPen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span><span class="p">)</span>
+					<span class="n">contour</span><span class="o">.</span><span class="n">drawPoints</span><span class="p">(</span><span class="n">transPen</span><span class="p">)</span>
+			<span class="n">parentGlyph</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+	
+		
+<span class="k">class</span> <span class="nc">RKerning</span><span class="p">(</span><span class="n">BaseKerning</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabKerning&quot;</span>
+
+		
+<span class="k">class</span> <span class="nc">RGroups</span><span class="p">(</span><span class="n">BaseGroups</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabGroups&quot;</span>
+	
+<span class="k">class</span> <span class="nc">RLib</span><span class="p">(</span><span class="n">BaseLib</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabLib&quot;</span>
+
+		
+<span class="k">class</span> <span class="nc">RInfo</span><span class="p">(</span><span class="n">BaseInfo</span><span class="p">):</span>
+	
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabFontInfo&quot;</span>
+
+<span class="k">class</span> <span class="nc">RFeatures</span><span class="p">(</span><span class="n">BaseFeatures</span><span class="p">):</span>
+
+	<span class="n">_title</span> <span class="o">=</span> <span class="s">&quot;RoboFabFeatures&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

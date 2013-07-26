@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dialogs &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">RoboFab 599 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dialogs">
+<h1>dialogs<a class="headerlink" href="#dialogs" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><p class="first">FontLab 5.04    10.6    dialogKit       fl internal     * theoretically that should work under windows as well, untested</p>
+</li>
+<li><p class="first">FontLab 5.1     10.6    dialogKit       fl internal</p>
+</li>
+<li><p class="first">FontLab 5.1     10.7    raw cocao       fl internal
+Glyphs          any     vanilla         vanilla
+RoboFont        any     vanilla         vanilla</p>
+<p>This module does a fair amount of sniffing in order to guess
+which dialogs to load. Linux and Windows environments are
+underrepresented at the moment. Following the prototypes in dialogs_default.py
+it is possible (with knowledge of the platform) to extend support.</p>
+<p>The platformApplicationSupport table contains very specific
+versions with which certain apps need to work. Moving forward,
+it is likely that these versions will change and need to be updated.</p>
+<p># this calls the new dialogs infrastructure:
+from robofab.interface.all.dialogs import Message</p>
+<p># this calls the old original legacy dialogs infrastructure:
+from robofab.interface.all.dialogs_legacy import Message</p>
+</li>
+</ul>
+<dl class="function">
+<dt id="robofab.interface.all.dialogs.AskString">
+<tt class="descclassname">robofab.interface.all.dialogs.</tt><tt class="descname">AskString</tt><big>(</big><em>message</em>, <em>value=''</em>, <em>title='RoboFab'</em><big>)</big><a class="headerlink" href="#robofab.interface.all.dialogs.AskString" title="Permalink to this definition">¶</a></dt>
+<dd><p>AskString Dialog</p>
+<p>message      the string
+value       a default value
+title       a title of the window (may not be supported everywhere)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.interface.all.dialogs.AskYesNoCancel">
+<tt class="descclassname">robofab.interface.all.dialogs.</tt><tt class="descname">AskYesNoCancel</tt><big>(</big><em>message</em>, <em>title='RoboFab'</em>, <em>default=0</em>, <em>informativeText=''</em><big>)</big><a class="headerlink" href="#robofab.interface.all.dialogs.AskYesNoCancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>AskYesNoCancel Dialog</p>
+<p>message              the string
+title*              a title of the window</p>
+<blockquote>
+<div>(may not be supported everywhere)</div></blockquote>
+<dl class="docutils">
+<dt>default*            index number of which button should be default</dt>
+<dd>(i.e. respond to return)</dd>
+</dl>
+<p>informativeText*    A string with secundary information</p>
+<ul class="simple">
+<li>may not be supported everywhere</li>
+</ul>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/interface/mac/dialogs.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">RoboFab 599 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>boundsPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../index.html" />
+    <link rel="up" title="Pens" href="pens.html" />
+    <link rel="next" title="digestPen" href="digestPen.html" />
+    <link rel="prev" title="angledMarginPen" href="angledMarginPen.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="digestPen.html" title="digestPen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="angledMarginPen.html" title="angledMarginPen"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" accesskey="U">Pens</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-robofab.pens.boundsPen">
+<span id="boundspen"></span><h1>boundsPen<a class="headerlink" href="#module-robofab.pens.boundsPen" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="robofab.pens.boundsPen.BoundsPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.boundsPen.</tt><tt class="descname">BoundsPen</tt><big>(</big><em>glyphSet</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/boundsPen.html#BoundsPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.boundsPen.BoundsPen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pen to calculate the bounds of a shape. It calculates the
+correct bounds even when the shape contains curves that don&#8217;t
+have points on their extremes. This is somewhat slower to compute
+than the &#8220;control bounds&#8221;.</p>
+<p>When the shape has been drawn, the bounds are available as the
+&#8216;bounds&#8217; attribute of the pen object. It&#8217;s a 4-tuple:</p>
+<blockquote>
+<div>(xMin, yMin, xMax, yMax)</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="robofab.pens.boundsPen.ControlBoundsPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.boundsPen.</tt><tt class="descname">ControlBoundsPen</tt><big>(</big><em>glyphSet</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/boundsPen.html#ControlBoundsPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.boundsPen.ControlBoundsPen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pen to calculate the &#8220;control bounds&#8221; of a shape. This is the
+bounding box of all control points __on closed <a href="#id1"><span class="problematic" id="id2">paths__</span></a>, so may be larger than the
+actual bounding box if there are curves that don&#8217;t have points
+on their extremes.</p>
+<p>Single points, or anchors, are ignored.</p>
+<p>When the shape has been drawn, the bounds are available as the
+&#8216;bounds&#8217; attribute of the pen object. It&#8217;s a 4-tuple:</p>
+<blockquote>
+<div>(xMin, yMin, xMax, yMax)</div></blockquote>
+<p>This replaces fontTools/pens/boundsPen (temporarily?)
+The fontTools bounds pen takes lose anchor points into account, 
+this one doesn&#8217;t.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="angledMarginPen.html"
+                        title="previous chapter">angledMarginPen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="digestPen.html"
+                        title="next chapter">digestPen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pens/boundsPen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="digestPen.html" title="digestPen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="angledMarginPen.html" title="angledMarginPen"
+             >previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" >Pens</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

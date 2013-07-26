@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.pens.adapterPens &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.pens.adapterPens</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">fontTools.pens.basePen</span> <span class="kn">import</span> <span class="n">AbstractPen</span>
+<span class="kn">from</span> <span class="nn">robofab.pens.pointPen</span> <span class="kn">import</span> <span class="n">AbstractPointPen</span><span class="p">,</span> <span class="n">BasePointToSegmentPen</span>
+
+
+<div class="viewcode-block" id="FabToFontToolsPenAdapter"><a class="viewcode-back" href="../../../pens/adapterPens.html#robofab.pens.adapterPens.FabToFontToolsPenAdapter">[docs]</a><span class="k">class</span> <span class="nc">FabToFontToolsPenAdapter</span><span class="p">:</span>
+
+	<span class="sd">&quot;&quot;&quot;Class that covers up the subtle differences between RoboFab</span>
+<span class="sd">	Pens and FontTools Pens. &#39;Fab should eventually move to FontTools</span>
+<span class="sd">	Pens, this class may help to make the transition smoother.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c"># XXX The change to FontTools pens has almost been completed. Any</span>
+	<span class="c"># usage of this class should be highly suspect.</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fontToolsPen</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span> <span class="o">=</span> <span class="n">fontToolsPen</span>
+
+	<span class="k">def</span> <span class="nf">moveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">lineTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">curveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pts</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">curveTo</span><span class="p">(</span><span class="o">*</span><span class="n">pts</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">qCurveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pts</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">qCurveTo</span><span class="p">(</span><span class="o">*</span><span class="n">pts</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">closePath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span>
+				<span class="p">(</span><span class="n">scale</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">offset</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">offset</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+	<span class="k">def</span> <span class="nf">setWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+
+	<span class="k">def</span> <span class="nf">setNote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+		<span class="k">pass</span>
+
+	<span class="k">def</span> <span class="nf">addAnchor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fontToolsPen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">doneDrawing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PointToSegmentPen"><a class="viewcode-back" href="../../../pens/adapterPens.html#robofab.pens.adapterPens.PointToSegmentPen">[docs]</a><span class="k">class</span> <span class="nc">PointToSegmentPen</span><span class="p">(</span><span class="n">BasePointToSegmentPen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Adapter class that converts the PointPen protocol to the</span>
+<span class="sd">	(Segment)Pen protocol.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segmentPen</span><span class="p">,</span> <span class="n">outputImpliedClosingLine</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+		<span class="n">BasePointToSegmentPen</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pen</span> <span class="o">=</span> <span class="n">segmentPen</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">outputImpliedClosingLine</span> <span class="o">=</span> <span class="n">outputImpliedClosingLine</span>
+
+	<span class="k">def</span> <span class="nf">_flushContour</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segments</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+		<span class="n">pen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen</span>
+		<span class="k">if</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;move&quot;</span><span class="p">:</span>
+			<span class="c"># It&#39;s an open path.</span>
+			<span class="n">closed</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="n">points</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+			<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+			<span class="n">movePt</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">del</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c"># It&#39;s a closed path, do a moveTo to the last</span>
+			<span class="c"># point of the last segment.</span>
+			<span class="n">closed</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="n">segmentType</span><span class="p">,</span> <span class="n">points</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">movePt</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">movePt</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="c"># quad special case: a contour with no on-curve points contains</span>
+			<span class="c"># one &quot;qcurve&quot; segment that ends with a point that&#39;s None. We</span>
+			<span class="c"># must not output a moveTo() in that case.</span>
+			<span class="k">pass</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">pen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">movePt</span><span class="p">)</span>
+		<span class="n">outputImpliedClosingLine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputImpliedClosingLine</span>
+		<span class="n">nSegments</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSegments</span><span class="p">):</span>
+			<span class="n">segmentType</span><span class="p">,</span> <span class="n">points</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">pt</span> <span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">points</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">segmentType</span> <span class="o">==</span> <span class="s">&quot;line&quot;</span><span class="p">:</span>
+				<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+				<span class="n">pt</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="n">nSegments</span> <span class="ow">or</span> <span class="n">outputImpliedClosingLine</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">closed</span><span class="p">:</span>
+					<span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">segmentType</span> <span class="o">==</span> <span class="s">&quot;curve&quot;</span><span class="p">:</span>
+				<span class="n">pen</span><span class="o">.</span><span class="n">curveTo</span><span class="p">(</span><span class="o">*</span><span class="n">points</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">segmentType</span> <span class="o">==</span> <span class="s">&quot;qcurve&quot;</span><span class="p">:</span>
+				<span class="n">pen</span><span class="o">.</span><span class="n">qCurveTo</span><span class="p">(</span><span class="o">*</span><span class="n">points</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">assert</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;illegal segmentType: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">segmentType</span>
+		<span class="k">if</span> <span class="n">closed</span><span class="p">:</span>
+			<span class="n">pen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">pen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="SegmentToPointPen"><a class="viewcode-back" href="../../../pens/adapterPens.html#robofab.pens.adapterPens.SegmentToPointPen">[docs]</a><span class="k">class</span> <span class="nc">SegmentToPointPen</span><span class="p">(</span><span class="n">AbstractPen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Adapter class that converts the (Segment)Pen protocol to the</span>
+<span class="sd">	PointPen protocol.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pointPen</span><span class="p">,</span> <span class="n">guessSmooth</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">guessSmooth</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pen</span> <span class="o">=</span> <span class="n">GuessSmoothPointPen</span><span class="p">(</span><span class="n">pointPen</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pen</span> <span class="o">=</span> <span class="n">pointPen</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">_flushContour</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">pen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">:</span>
+			<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="o">=</span><span class="n">segmentType</span><span class="p">)</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">moveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pt</span><span class="p">,</span> <span class="s">&quot;move&quot;</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">lineTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pt</span><span class="p">,</span> <span class="s">&quot;line&quot;</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">curveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pts</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">pts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pt</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;curve&quot;</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">qCurveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pts</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">contour</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">pts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pt</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;qcurve&quot;</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">closePath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c"># There&#39;s an implied line at the end, replace &quot;move&quot; with &quot;line&quot;</span>
+			<span class="c"># for the first point</span>
+			<span class="n">pt</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">tp</span> <span class="o">==</span> <span class="s">&quot;move&quot;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pt</span><span class="p">,</span> <span class="s">&quot;line&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_flushContour</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_flushContour</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">contour</span> <span class="ow">is</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="TransformPointPen"><a class="viewcode-back" href="../../../pens/adapterPens.html#robofab.pens.adapterPens.TransformPointPen">[docs]</a><span class="k">class</span> <span class="nc">TransformPointPen</span><span class="p">(</span><span class="n">AbstractPointPen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;PointPen that transforms all coordinates, and passes them to another</span>
+<span class="sd">	PointPen. It also transforms the transformation given to addComponent().</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outPen</span><span class="p">,</span> <span class="n">transformation</span><span class="p">):</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">transformation</span><span class="p">,</span> <span class="s">&quot;transformPoint&quot;</span><span class="p">):</span>
+			<span class="kn">from</span> <span class="nn">fontTools.misc.transform</span> <span class="kn">import</span> <span class="n">Transform</span>
+			<span class="n">transformation</span> <span class="o">=</span> <span class="n">Transform</span><span class="p">(</span><span class="o">*</span><span class="n">transformation</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span> <span class="o">=</span> <span class="n">transformation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_transformPoint</span> <span class="o">=</span> <span class="n">transformation</span><span class="o">.</span><span class="n">transformPoint</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span> <span class="o">=</span> <span class="n">outPen</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">def</span> <span class="nf">beginPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">addPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">):</span>
+		<span class="n">transformation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformation</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformation</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="GuessSmoothPointPen"><a class="viewcode-back" href="../../../pens/adapterPens.html#robofab.pens.adapterPens.GuessSmoothPointPen">[docs]</a><span class="k">class</span> <span class="nc">GuessSmoothPointPen</span><span class="p">(</span><span class="n">AbstractPointPen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Filtering PointPen that tries to determine whether an on-curve point</span>
+<span class="sd">	should be &quot;smooth&quot;, ie. that it&#39;s a &quot;tangent&quot; point or a &quot;curve&quot; point.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outPen</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span> <span class="o">=</span> <span class="n">outPen</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">_flushContour</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span>
+		<span class="n">nPoints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">nPoints</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="k">if</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;move&quot;</span><span class="p">:</span>
+			<span class="c"># Open path.</span>
+			<span class="n">indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nPoints</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">nPoints</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="c"># Closed path. To avoid having to mod the contour index, we</span>
+			<span class="c"># simply abuse Python&#39;s negative index feature, and start at -1</span>
+			<span class="n">indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nPoints</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c"># closed path containing 1 point (!), ignore.</span>
+			<span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+			<span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">dummy</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">segmentType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="k">continue</span>
+			<span class="n">prev</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+			<span class="nb">next</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="n">points</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">points</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="k">continue</span>
+			<span class="c"># At least one of our neighbors is an off-curve point</span>
+			<span class="n">pt</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">prevPt</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">prev</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">nextPt</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="nb">next</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">pt</span> <span class="o">!=</span> <span class="n">prevPt</span> <span class="ow">and</span> <span class="n">pt</span> <span class="o">!=</span> <span class="n">nextPt</span><span class="p">:</span>
+				<span class="n">dx1</span><span class="p">,</span> <span class="n">dy1</span> <span class="o">=</span> <span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">prevPt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">prevPt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span> <span class="o">=</span> <span class="n">nextPt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nextPt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">a1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">dx1</span><span class="p">,</span> <span class="n">dy1</span><span class="p">)</span>
+				<span class="n">a2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span><span class="p">)</span>
+				<span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a1</span> <span class="o">-</span> <span class="n">a2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">:</span>
+					<span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span>
+
+		<span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">beginPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="ow">is</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_flushContour</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">addPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="ow">is</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_outPen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+	<span class="kn">from</span> <span class="nn">fontTools.pens.basePen</span> <span class="kn">import</span> <span class="n">_TestPen</span> <span class="k">as</span> <span class="n">PSPen</span>
+	<span class="kn">from</span> <span class="nn">robofab.pens.pointPen</span> <span class="kn">import</span> <span class="n">PrintingPointPen</span>
+	<span class="n">segmentPen</span> <span class="o">=</span> <span class="n">PSPen</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+<span class="c">#	pen = PointToSegmentPen(SegmentToPointPen(PointToSegmentPen(PSPen(None))))</span>
+	<span class="n">pen</span> <span class="o">=</span> <span class="n">PointToSegmentPen</span><span class="p">(</span><span class="n">SegmentToPointPen</span><span class="p">(</span><span class="n">PrintingPointPen</span><span class="p">()))</span>
+<span class="c">#	pen = PrintingPointPen()</span>
+	<span class="n">pen</span> <span class="o">=</span> <span class="n">PointToSegmentPen</span><span class="p">(</span><span class="n">PSPen</span><span class="p">(</span><span class="bp">None</span><span class="p">),</span> <span class="n">outputImpliedClosingLine</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="c">#	pen.beginPath()</span>
+<span class="c">#	pen.addPoint((50, 50), name=&quot;an anchor&quot;)</span>
+<span class="c">#	pen.endPath()</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">)</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">)</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">)</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">30</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;superbezcontrolpoint!&quot;</span><span class="p">)</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">70</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;curve&quot;</span><span class="p">)</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">)</span>
+	<span class="n">pen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+<span class="c">#	pen.addComponent(&quot;a&quot;, (1, 0, 0, 1, 100, 200))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

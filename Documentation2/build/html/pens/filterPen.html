@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>filterPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../index.html" />
+    <link rel="up" title="Pens" href="pens.html" />
+    <link rel="next" title="flPen" href="flPen.html" />
+    <link rel="prev" title="digestPen" href="digestPen.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="flPen.html" title="flPen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="digestPen.html" title="digestPen"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" accesskey="U">Pens</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-robofab.pens.filterPen">
+<span id="filterpen"></span><h1>filterPen<a class="headerlink" href="#module-robofab.pens.filterPen" title="Permalink to this headline">¶</a></h1>
+<p>A couple of point pens to filter contours in various ways.</p>
+<dl class="class">
+<dt id="robofab.pens.filterPen.FlattenPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">FlattenPen</tt><big>(</big><em>otherPen</em>, <em>approximateSegmentLength=5</em>, <em>segmentLines=False</em>, <em>filterDoubles=True</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#FlattenPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.FlattenPen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the contours into a series of straight lines by flattening the curves.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="robofab.pens.filterPen.ThresholdPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">ThresholdPen</tt><big>(</big><em>otherPen</em>, <em>threshold=10</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#ThresholdPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.ThresholdPen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes segments shorter in length than the threshold value.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="robofab.pens.filterPen.ThresholdPointPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">ThresholdPointPen</tt><big>(</big><em>otherPointPen</em>, <em>threshold=10</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#ThresholdPointPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.ThresholdPointPen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewrite of the ThresholdPen as a PointPen
+so that we can preserve named points and other arguments.
+This pen will add components from the original glyph, but
+but it won&#8217;t filter those components.</p>
+<p>&#8220;move&#8221;, &#8220;line&#8221;, &#8220;curve&#8221; or &#8220;qcurve&#8221;</p>
+<dl class="method">
+<dt id="robofab.pens.filterPen.ThresholdPointPen.addComponent">
+<tt class="descname">addComponent</tt><big>(</big><em>baseGlyphName</em>, <em>transformation</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#ThresholdPointPen.addComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.ThresholdPointPen.addComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a sub glyph. Note: this way components are not filtered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.pens.filterPen.ThresholdPointPen.addPoint">
+<tt class="descname">addPoint</tt><big>(</big><em>pt</em>, <em>segmentType=None</em>, <em>smooth=False</em>, <em>name=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#ThresholdPointPen.addPoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.ThresholdPointPen.addPoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a point to the current sub path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.pens.filterPen.ThresholdPointPen.beginPath">
+<tt class="descname">beginPath</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#ThresholdPointPen.beginPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.ThresholdPointPen.beginPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a new sub path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.pens.filterPen.ThresholdPointPen.endPath">
+<tt class="descname">endPath</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#ThresholdPointPen.endPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.ThresholdPointPen.endPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>End the current sub path.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.filterPen.flattenGlyph">
+<tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">flattenGlyph</tt><big>(</big><em>aGlyph</em>, <em>threshold=10</em>, <em>segmentLines=True</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#flattenGlyph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.flattenGlyph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace curves with series of straight l ines.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.filterPen.halftoneGlyph">
+<tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">halftoneGlyph</tt><big>(</big><em>aGlyph</em>, <em>invert=False</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#halftoneGlyph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.halftoneGlyph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the glyph into some sort of halftoning pattern.
+Measure a bunch of inside/outside points to simulate grayscale levels.
+Slow.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.filterPen.spikeGlyph">
+<tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">spikeGlyph</tt><big>(</big><em>aGlyph</em>, <em>segmentLength=20</em>, <em>spikeLength=40</em>, <em>patternFunc=None</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#spikeGlyph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.spikeGlyph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add narly spikes or dents to the glyph.
+patternFunc is an optional function which recalculates the offset.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.filterPen.thresholdGlyph">
+<tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">thresholdGlyph</tt><big>(</big><em>aGlyph</em>, <em>threshold=10</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#thresholdGlyph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.thresholdGlyph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function that handles the filtering.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.filterPen.thresholdGlyphPointPen">
+<tt class="descclassname">robofab.pens.filterPen.</tt><tt class="descname">thresholdGlyphPointPen</tt><big>(</big><em>aGlyph</em>, <em>threshold=10</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/filterPen.html#thresholdGlyphPointPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.filterPen.thresholdGlyphPointPen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same a thresholdGlyph, but using the ThresholdPointPen, which should respect anchors.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="digestPen.html"
+                        title="previous chapter">digestPen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="flPen.html"
+                        title="next chapter">flPen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pens/filterPen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="flPen.html" title="flPen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="digestPen.html" title="digestPen"
+             >previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" >Pens</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.pens.boundsPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.pens.boundsPen</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">fontTools.pens.basePen</span> <span class="kn">import</span> <span class="n">BasePen</span>
+<span class="kn">from</span> <span class="nn">robofab.misc.arrayTools</span> <span class="kn">import</span> <span class="n">updateBounds</span><span class="p">,</span> <span class="n">pointInRect</span><span class="p">,</span> <span class="n">unionRect</span>
+<span class="kn">from</span> <span class="nn">robofab.misc.bezierTools</span> <span class="kn">import</span> <span class="n">calcCubicBounds</span><span class="p">,</span> <span class="n">calcQuadraticBounds</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BoundsPen&quot;</span><span class="p">,</span> <span class="s">&quot;ControlBoundsPen&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ControlBoundsPen"><a class="viewcode-back" href="../../../pens/boundsPen.html#robofab.pens.boundsPen.ControlBoundsPen">[docs]</a><span class="k">class</span> <span class="nc">ControlBoundsPen</span><span class="p">(</span><span class="n">BasePen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Pen to calculate the &quot;control bounds&quot; of a shape. This is the</span>
+<span class="sd">	bounding box of all control points __on closed paths__, so may be larger than the</span>
+<span class="sd">	actual bounding box if there are curves that don&#39;t have points</span>
+<span class="sd">	on their extremes.</span>
+<span class="sd">	</span>
+<span class="sd">	Single points, or anchors, are ignored.</span>
+
+<span class="sd">	When the shape has been drawn, the bounds are available as the</span>
+<span class="sd">	&#39;bounds&#39; attribute of the pen object. It&#39;s a 4-tuple:</span>
+<span class="sd">		(xMin, yMin, xMax, yMax)</span>
+<span class="sd">		</span>
+<span class="sd">	This replaces fontTools/pens/boundsPen (temporarily?)</span>
+<span class="sd">	The fontTools bounds pen takes lose anchor points into account, </span>
+<span class="sd">	this one doesn&#39;t.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphSet</span><span class="p">):</span>
+		<span class="n">BasePen</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphSet</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">_moveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="n">pt</span>
+	
+	<span class="k">def</span> <span class="nf">_addMoveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+		<span class="k">if</span> <span class="n">bounds</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">_lineTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_addMoveTo</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">pt</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">_curveToOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bcp1</span><span class="p">,</span> <span class="n">bcp2</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_addMoveTo</span><span class="p">()</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">bcp1</span><span class="p">)</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">bcp2</span><span class="p">)</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">pt</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+
+	<span class="k">def</span> <span class="nf">_qCurveToOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bcp</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_addMoveTo</span><span class="p">()</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">bcp</span><span class="p">)</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">pt</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+
+</div>
+<div class="viewcode-block" id="BoundsPen"><a class="viewcode-back" href="../../../pens/boundsPen.html#robofab.pens.boundsPen.BoundsPen">[docs]</a><span class="k">class</span> <span class="nc">BoundsPen</span><span class="p">(</span><span class="n">ControlBoundsPen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Pen to calculate the bounds of a shape. It calculates the</span>
+<span class="sd">	correct bounds even when the shape contains curves that don&#39;t</span>
+<span class="sd">	have points on their extremes. This is somewhat slower to compute</span>
+<span class="sd">	than the &quot;control bounds&quot;.</span>
+
+<span class="sd">	When the shape has been drawn, the bounds are available as the</span>
+<span class="sd">	&#39;bounds&#39; attribute of the pen object. It&#39;s a 4-tuple:</span>
+<span class="sd">		(xMin, yMin, xMax, yMax)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">_curveToOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bcp1</span><span class="p">,</span> <span class="n">bcp2</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_addMoveTo</span><span class="p">()</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">pt</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">pointInRect</span><span class="p">(</span><span class="n">bcp1</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">pointInRect</span><span class="p">(</span><span class="n">bcp2</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+			<span class="n">bounds</span> <span class="o">=</span> <span class="n">unionRect</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">calcCubicBounds</span><span class="p">(</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_getCurrentPoint</span><span class="p">(),</span> <span class="n">bcp1</span><span class="p">,</span> <span class="n">bcp2</span><span class="p">,</span> <span class="n">pt</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+
+	<span class="k">def</span> <span class="nf">_qCurveToOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bcp</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_addMoveTo</span><span class="p">()</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+		<span class="n">bounds</span> <span class="o">=</span> <span class="n">updateBounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">pt</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">pointInRect</span><span class="p">(</span><span class="n">bcp</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+			<span class="n">bounds</span> <span class="o">=</span> <span class="n">unionRect</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">calcQuadraticBounds</span><span class="p">(</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_getCurrentPoint</span><span class="p">(),</span> <span class="n">bcp</span><span class="p">,</span> <span class="n">pt</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

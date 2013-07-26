@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>marginPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../index.html" />
+    <link rel="up" title="Pens" href="pens.html" />
+    <link rel="next" title="mathPens" href="mathPens.html" />
+    <link rel="prev" title="flPen" href="flPen.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mathPens.html" title="mathPens"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="flPen.html" title="flPen"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" accesskey="U">Pens</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-robofab.pens.marginPen">
+<span id="marginpen"></span><h1>marginPen<a class="headerlink" href="#module-robofab.pens.marginPen" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="robofab.pens.marginPen.MarginPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.marginPen.</tt><tt class="descname">MarginPen</tt><big>(</big><em>glyphSet</em>, <em>value</em>, <em>isHorizontal=True</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/marginPen.html#MarginPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.marginPen.MarginPen" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Pen to calculate the margins at a given value.</dt>
+<dd>When isHorizontal is True, the margins at &lt;value&gt; are horizontal.
+When isHorizontal is False, the margins at &lt;value&gt; are vertical.</dd>
+</dl>
+<p>When a glyphset or font is given, MarginPen will also calculate for glyphs with components.</p>
+<p>pen.getMargins() returns the minimum and maximum intersections of the glyph.
+pen.getContourMargins() returns the minimum and maximum intersections for each contour.</p>
+<p>Possible optimisation:
+Initialise the pen object with a list of points we want to measure,
+then draw the glyph once, but do the splitLine() math for all measure points.</p>
+<dl class="method">
+<dt id="robofab.pens.marginPen.MarginPen.getAll">
+<tt class="descname">getAll</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/robofab/pens/marginPen.html#MarginPen.getAll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.marginPen.MarginPen.getAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the slices.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.pens.marginPen.MarginPen.getContourMargins">
+<tt class="descname">getContourMargins</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/robofab/pens/marginPen.html#MarginPen.getContourMargins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.marginPen.MarginPen.getContourMargins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal margins for each contour.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.pens.marginPen.MarginPen.getMargins">
+<tt class="descname">getMargins</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/robofab/pens/marginPen.html#MarginPen.getMargins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.marginPen.MarginPen.getMargins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal margins for all contours combined, i.e. the whole glyph.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="flPen.html"
+                        title="previous chapter">flPen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mathPens.html"
+                        title="next chapter">mathPens</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pens/marginPen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mathPens.html" title="mathPens"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="flPen.html" title="flPen"
+             >previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" >Pens</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

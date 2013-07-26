@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.pens.reverseContourPointPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.pens.reverseContourPointPen</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;PointPen for reversing the winding direction of contours.&quot;&quot;&quot;</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;ReverseContourPointPen&quot;</span><span class="p">]</span>
+
+
+<span class="kn">from</span> <span class="nn">robofab.pens.pointPen</span> <span class="kn">import</span> <span class="n">AbstractPointPen</span>
+
+
+<div class="viewcode-block" id="ReverseContourPointPen"><a class="viewcode-back" href="../../../pens/reverseContourPointPen.html#robofab.pens.reverseContourPointPen.ReverseContourPointPen">[docs]</a><span class="k">class</span> <span class="nc">ReverseContourPointPen</span><span class="p">(</span><span class="n">AbstractPointPen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;This is a PointPen that passes outline data to another PointPen, but</span>
+<span class="sd">	reversing the winding direction of all contours. Components are simply</span>
+<span class="sd">	passed through unchanged.</span>
+
+<span class="sd">	Closed contours are reversed in such a way that the first point remains</span>
+<span class="sd">	the first point.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputPointPen</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pen</span> <span class="o">=</span> <span class="n">outputPointPen</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># a place to store the points for the current sub path</span>
+
+	<span class="k">def</span> <span class="nf">_flushContour</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">pen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pen</span>
+		<span class="n">contour</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">contour</span><span class="p">:</span>
+			<span class="n">pen</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+			<span class="n">pen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+			<span class="k">return</span>
+
+		<span class="n">closed</span> <span class="o">=</span> <span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&quot;move&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">closed</span><span class="p">:</span>
+			<span class="n">lastSegmentType</span> <span class="o">=</span> <span class="s">&quot;move&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c"># Remove the first point and insert it at the end. When</span>
+			<span class="c"># the list of points gets reversed, this point will then</span>
+			<span class="c"># again be at the start. In other words, the following</span>
+			<span class="c"># will hold:</span>
+			<span class="c">#   for N in range(len(originalContour)):</span>
+			<span class="c">#       originalContour[N] == reversedContour[-N]</span>
+			<span class="n">contour</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contour</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+			<span class="c"># Find the first on-curve point.</span>
+			<span class="n">firstOnCurve</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)):</span>
+				<span class="k">if</span> <span class="n">contour</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">firstOnCurve</span> <span class="o">=</span> <span class="n">i</span>
+					<span class="k">break</span>
+			<span class="k">if</span> <span class="n">firstOnCurve</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="c"># There are no on-curve points, be basically have to</span>
+				<span class="c"># do nothing but contour.reverse().</span>
+				<span class="n">lastSegmentType</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">lastSegmentType</span> <span class="o">=</span> <span class="n">contour</span><span class="p">[</span><span class="n">firstOnCurve</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+		<span class="n">contour</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">closed</span><span class="p">:</span>
+			<span class="c"># Open paths must start with a move, so we simply dump</span>
+			<span class="c"># all off-curve points leading up to the first on-curve.</span>
+			<span class="k">while</span> <span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">contour</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">nextSegmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">contour</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">nextSegmentType</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">segmentType</span> <span class="o">=</span> <span class="n">lastSegmentType</span>
+				<span class="n">lastSegmentType</span> <span class="o">=</span> <span class="n">nextSegmentType</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">segmentType</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="n">pen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="o">=</span><span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">beginPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span> <span class="ow">is</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">onCurve</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">def</span> <span class="nf">endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_flushContour</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">addPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentContour</span> <span class="ow">is</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+	<span class="kn">from</span> <span class="nn">robofab.pens.pointPen</span> <span class="kn">import</span> <span class="n">PrintingPointPen</span>
+	<span class="n">pP</span> <span class="o">=</span> <span class="n">PrintingPointPen</span><span class="p">()</span>
+	<span class="n">rP</span> <span class="o">=</span> <span class="n">ReverseContourPointPen</span><span class="p">(</span><span class="n">pP</span><span class="p">)</span>
+
+	<span class="n">rP</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">339</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="s">&quot;curve&quot;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">502</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">635</span><span class="p">,</span> <span class="mi">65</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">635</span><span class="p">,</span> <span class="mi">305</span><span class="p">),</span> <span class="s">&quot;curve&quot;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">635</span><span class="p">,</span> <span class="mi">545</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">504</span><span class="p">,</span> <span class="mi">623</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">340</span><span class="p">,</span> <span class="mi">623</span><span class="p">),</span> <span class="s">&quot;curve&quot;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">177</span><span class="p">,</span> <span class="mi">623</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">43</span><span class="p">,</span> <span class="mi">545</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">43</span><span class="p">,</span> <span class="mi">305</span><span class="p">),</span> <span class="s">&quot;curve&quot;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">43</span><span class="p">,</span> <span class="mi">65</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">176</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="n">rP</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="s">&quot;move&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">250</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span> <span class="s">&quot;curve&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;b&#39;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">350</span><span class="p">,</span> <span class="mi">350</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">450</span><span class="p">,</span> <span class="mi">450</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="s">&quot;curve&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">550</span><span class="p">,</span> <span class="mi">550</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">600</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">650</span><span class="p">,</span> <span class="mi">650</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">700</span><span class="p">,</span> <span class="mi">700</span><span class="p">))</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">750</span><span class="p">,</span> <span class="mi">750</span><span class="p">),</span> <span class="s">&quot;qcurve&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;e&#39;</span><span class="p">)</span>
+	<span class="n">rP</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

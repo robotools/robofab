@@ -1,0 +1,439 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.tools.accentBuilder &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.tools.accentBuilder</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;A simple set of tools for building accented glyphs.</span>
+<span class="sd"># Hey look! A demonstration:</span>
+<span class="sd">from robofab.accentBuilder import AccentTools, buildRelatedAccentList</span>
+<span class="sd">font = CurrentFont</span>
+<span class="sd"># a list of accented glyphs that you want to build</span>
+<span class="sd">myList=[&#39;Aacute&#39;, &#39;aacute&#39;]</span>
+<span class="sd"># search for glyphs related to glyphs in myList and add them to myList</span>
+<span class="sd">myList=buildRelatedAccentList(font, myList)+myList</span>
+<span class="sd"># start the class</span>
+<span class="sd">at=AccentTools(font, myList)</span>
+<span class="sd"># clear away any anchors that exist (this is optional)</span>
+<span class="sd">at.clearAnchors()</span>
+<span class="sd"># add necessary anchors if you want to</span>
+<span class="sd">at.buildAnchors(ucXOffset=20, ucYOffset=40, lcXOffset=15, lcYOffset=30)</span>
+<span class="sd"># print a report of any errors that occured</span>
+<span class="sd">at.printAnchorErrors()</span>
+<span class="sd"># build the accented glyphs if you want to</span>
+<span class="sd">at.buildAccents()</span>
+<span class="sd"># print a report of any errors that occured</span>
+<span class="sd">at.printAccentErrors()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c">#XXX! This is *very* experimental! I think it works, but you never know.</span>
+
+<span class="kn">from</span> <span class="nn">robofab.gString</span> <span class="kn">import</span> <span class="n">lowercase_plain</span><span class="p">,</span> <span class="n">accents</span><span class="p">,</span> <span class="n">uppercase_plain</span><span class="p">,</span> <span class="n">splitAccent</span><span class="p">,</span> <span class="n">findAccentBase</span>
+<span class="kn">from</span> <span class="nn">robofab.tools.toolsAll</span> <span class="kn">import</span> <span class="n">readGlyphConstructions</span>
+<span class="kn">import</span> <span class="nn">robofab</span>
+<span class="kn">from</span> <span class="nn">robofab.interface.all.dialogs</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
+<span class="kn">from</span> <span class="nn">robofab.world</span> <span class="kn">import</span> <span class="n">RFWorld</span>
+<span class="n">inFontLab</span> <span class="o">=</span> <span class="n">RFWorld</span><span class="p">()</span><span class="o">.</span><span class="n">inFontLab</span>
+
+<span class="n">anchorColor</span><span class="o">=</span><span class="mi">125</span>
+<span class="n">accentColor</span><span class="o">=</span><span class="mi">75</span>
+
+<div class="viewcode-block" id="stripSuffix"><a class="viewcode-back" href="../../../tools/accentBuilder.html#robofab.tools.accentBuilder.stripSuffix">[docs]</a><span class="k">def</span> <span class="nf">stripSuffix</span><span class="p">(</span><span class="n">glyphName</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;strip away unnecessary suffixes from a glyph name&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+		<span class="n">baseName</span> <span class="o">=</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;.sc&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">baseName</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">baseName</span><span class="p">,</span> <span class="s">&#39;sc&#39;</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">baseName</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">glyphName</span>
+		</div>
+<div class="viewcode-block" id="buildRelatedAccentList"><a class="viewcode-back" href="../../../tools/accentBuilder.html#robofab.tools.accentBuilder.buildRelatedAccentList">[docs]</a><span class="k">def</span> <span class="nf">buildRelatedAccentList</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;build a list of related glyphs suitable for use with AccentTools&quot;&quot;&quot;</span>
+	<span class="n">searchList</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">baseGlyphs</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">foundList</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+		<span class="n">splitNames</span> <span class="o">=</span> <span class="n">splitAccent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+		<span class="n">baseName</span> <span class="o">=</span> <span class="n">splitNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">accentNames</span> <span class="o">=</span> <span class="n">splitNames</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">baseName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">searchList</span><span class="p">:</span>
+			<span class="n">searchList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baseName</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">baseName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">baseGlyphs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">baseGlyphs</span><span class="p">[</span><span class="n">baseName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">accentNames</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">baseGlyphs</span><span class="p">[</span><span class="n">baseName</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accentNames</span><span class="p">)</span>
+	<span class="n">foundGlyphs</span> <span class="o">=</span> <span class="n">findRelatedGlyphs</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">searchList</span><span class="p">,</span> <span class="n">doAccents</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">baseGlyph</span> <span class="ow">in</span> <span class="n">foundGlyphs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+		<span class="k">for</span> <span class="n">foundGlyph</span> <span class="ow">in</span> <span class="n">foundGlyphs</span><span class="p">[</span><span class="n">baseGlyph</span><span class="p">]:</span>
+			<span class="k">for</span> <span class="n">accentNames</span> <span class="ow">in</span> <span class="n">baseGlyphs</span><span class="p">[</span><span class="n">baseGlyph</span><span class="p">]:</span>
+				<span class="n">foundList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">makeAccentName</span><span class="p">(</span><span class="n">foundGlyph</span><span class="p">,</span> <span class="n">accentNames</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">foundList</span>
+	</div>
+<div class="viewcode-block" id="findRelatedGlyphs"><a class="viewcode-back" href="../../../tools/accentBuilder.html#robofab.tools.accentBuilder.findRelatedGlyphs">[docs]</a><span class="k">def</span> <span class="nf">findRelatedGlyphs</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">searchItem</span><span class="p">,</span> <span class="n">doAccents</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Gather up a bunch of related glyph names. Send it either a</span>
+<span class="sd">	single glyph name &#39;a&#39;, or a list of glyph names [&#39;a&#39;, &#39;x&#39;] and it</span>
+<span class="sd">	returns a dict like: {&#39;a&#39;: [&#39;atilde&#39;, &#39;a.alt&#39;, &#39;a.swash&#39;]}. if doAccents</span>
+<span class="sd">	is False it will skip accented glyph names.</span>
+<span class="sd">	This is a relatively slow operation!&quot;&quot;&quot;</span>
+	<span class="n">relatedGlyphs</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+		<span class="n">base</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relatedGlyphs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">base</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relatedGlyphs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">doAccents</span><span class="p">:</span>
+			<span class="n">accentBase</span> <span class="o">=</span> <span class="n">findAccentBase</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">accentBase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relatedGlyphs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">accentBase</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">baseAccentBase</span> <span class="o">=</span> <span class="n">findAccentBase</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">baseAccentBase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relatedGlyphs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">baseAccentBase</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">base</span> <span class="o">!=</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">base</span><span class="p">]:</span>
+			<span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">base</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">doAccents</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">accentBase</span> <span class="o">!=</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">accentBase</span><span class="p">]:</span>
+				<span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">accentBase</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">baseAccentBase</span> <span class="o">!=</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">baseAccentBase</span><span class="p">]:</span>
+				<span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">baseAccentBase</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+	<span class="n">foundGlyphs</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">searchItem</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="n">searchList</span> <span class="o">=</span> <span class="p">[</span><span class="n">searchItem</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">searchList</span> <span class="o">=</span> <span class="n">searchItem</span>
+	<span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">searchList</span><span class="p">:</span>
+		<span class="n">foundGlyphs</span><span class="p">[</span><span class="n">glyph</span><span class="p">]</span> <span class="o">=</span> <span class="n">relatedGlyphs</span><span class="p">[</span><span class="n">glyph</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">foundGlyphs</span>
+</div>
+<div class="viewcode-block" id="makeAccentName"><a class="viewcode-back" href="../../../tools/accentBuilder.html#robofab.tools.accentBuilder.makeAccentName">[docs]</a><span class="k">def</span> <span class="nf">makeAccentName</span><span class="p">(</span><span class="n">baseName</span><span class="p">,</span> <span class="n">accentNames</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;make an accented glyph name&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">accentNames</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="n">accentNames</span> <span class="o">=</span> <span class="p">[</span><span class="n">accentNames</span><span class="p">]</span>
+	<span class="n">build</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">if</span> <span class="n">baseName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+		<span class="n">base</span> <span class="o">=</span> <span class="n">baseName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">suffix</span> <span class="o">=</span> <span class="n">baseName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">base</span> <span class="o">=</span> <span class="n">baseName</span>
+		<span class="n">suffix</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="n">build</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">accent</span> <span class="ow">in</span> <span class="n">accentNames</span><span class="p">:</span>
+		<span class="n">build</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accent</span><span class="p">)</span>
+	<span class="n">buildJoin</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">build</span><span class="p">)</span>
+	<span class="n">name</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">buildJoin</span><span class="p">,</span> <span class="n">suffix</span><span class="p">])</span>
+	<span class="k">return</span> <span class="n">name</span>
+	</div>
+<span class="k">def</span> <span class="nf">nameBuster</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">glyphConstruct</span><span class="p">):</span>
+		<span class="n">stripedSuffixName</span> <span class="o">=</span> <span class="n">stripSuffix</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+		<span class="n">suffix</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">accentNames</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">baseName</span> <span class="o">=</span> <span class="n">glyphName</span>
+		<span class="k">if</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">suffix</span> <span class="o">=</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;.sc&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">suffix</span> <span class="o">=</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.sc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">stripedSuffixName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">glyphConstruct</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> not in glyph construction database&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">stripedSuffixName</span><span class="p">))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">suffix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">baseName</span> <span class="o">=</span> <span class="n">glyphConstruct</span><span class="p">[</span><span class="n">stripedSuffixName</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">glyphName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;.sc&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+					<span class="n">baseName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">glyphConstruct</span><span class="p">[</span><span class="n">stripedSuffixName</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">suffix</span><span class="p">])</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">baseName</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">glyphConstruct</span><span class="p">[</span><span class="n">stripedSuffixName</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">suffix</span><span class="p">])</span>
+			<span class="n">accentNames</span> <span class="o">=</span> <span class="n">glyphConstruct</span><span class="p">[</span><span class="n">stripedSuffixName</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">baseName</span><span class="p">,</span> <span class="n">stripedSuffixName</span><span class="p">,</span> <span class="n">accentNames</span><span class="p">,</span> <span class="n">errors</span><span class="p">)</span>
+	
+<span class="k">class</span> <span class="nc">AccentTools</span><span class="p">:</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">accentList</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;several tools for working with anchors and building accents&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">glyphConstructions</span> <span class="o">=</span> <span class="n">readGlyphConstructions</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">accentList</span> <span class="o">=</span> <span class="n">accentList</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">anchorErrors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ANCHOR ERRORS:&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ACCENT ERRORS:&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">font</span>
+		
+	<span class="k">def</span> <span class="nf">clearAnchors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doProgress</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;clear all anchors in the font&quot;&quot;&quot;</span>
+		<span class="n">tickCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+			<span class="n">bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="s">&quot;Cleaning all anchors...&quot;</span><span class="p">,</span> <span class="n">tickCount</span><span class="p">)</span>
+		<span class="n">tick</span> <span class="o">=</span> <span class="mi">0</span>	
+		<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accentList</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+			<span class="n">baseName</span><span class="p">,</span> <span class="n">stripedSuffixName</span><span class="p">,</span> <span class="n">accentNames</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">nameBuster</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">glyphConstructions</span><span class="p">)</span>
+			<span class="n">existError</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">existError</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">existError</span><span class="p">:</span>
+				<span class="n">toClear</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseName</span><span class="p">]</span>
+				<span class="k">for</span> <span class="n">accent</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">accentNames</span><span class="p">:</span>
+					<span class="n">toClear</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accent</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="n">toClear</span><span class="p">:</span>
+					<span class="k">try</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span><span class="o">.</span><span class="n">clearAnchors</span><span class="p">()</span>
+					<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span> <span class="k">pass</span>
+			<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="n">tick</span><span class="p">)</span>
+			<span class="n">tick</span> <span class="o">=</span> <span class="n">tick</span><span class="o">+</span><span class="mi">1</span>
+		<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+			<span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">buildAnchors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ucXOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ucYOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lcXOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lcYOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">markGlyph</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">doProgress</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;add the necessary anchors to the glyphs if they don&#39;t exist</span>
+<span class="sd">		some flag definitions:</span>
+<span class="sd">		uc/lc/X/YOffset=20 offset values for the anchors</span>
+<span class="sd">		markGlyph=1 mark the glyph that is created</span>
+<span class="sd">		doProgress=1 show a progress bar&quot;&quot;&quot;</span>
+		<span class="n">accentOffset</span> <span class="o">=</span> <span class="mi">10</span>
+		<span class="n">tickCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accentList</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+			<span class="n">bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="s">&#39;Adding anchors...&#39;</span><span class="p">,</span> <span class="n">tickCount</span><span class="p">)</span>
+		<span class="n">tick</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accentList</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+			<span class="n">previousPositions</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="n">baseName</span><span class="p">,</span> <span class="n">stripedSuffixName</span><span class="p">,</span> <span class="n">accentNames</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">nameBuster</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">glyphConstructions</span><span class="p">)</span>
+			<span class="n">existError</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">existError</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">for</span> <span class="n">anchorError</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">anchorErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anchorError</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">existError</span><span class="p">:</span>
+				<span class="n">existError</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">baseName</span><span class="p">]</span>
+				<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">anchorErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">glyphName</span><span class="p">,</span> <span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="n">baseName</span><span class="p">,</span> <span class="s">&#39;does not exist.&#39;</span><span class="p">]))</span>
+					<span class="n">existError</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">for</span> <span class="n">accentName</span><span class="p">,</span> <span class="n">accentPosition</span> <span class="ow">in</span> <span class="n">accentNames</span><span class="p">:</span>
+						<span class="k">try</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">accentName</span><span class="p">]</span>
+						<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">anchorErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">glyphName</span><span class="p">,</span> <span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="n">accentName</span><span class="p">,</span> <span class="s">&#39;does not exist.&#39;</span><span class="p">]))</span>
+							<span class="n">existError</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">existError</span><span class="p">:</span>
+					<span class="c">#glyph = self.font.newGlyph(glyphName, clear=True)</span>
+					<span class="k">for</span> <span class="n">accentName</span><span class="p">,</span> <span class="n">accentPosition</span> <span class="ow">in</span> <span class="n">accentNames</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">baseName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">lowercase_plain</span><span class="p">:</span>
+							<span class="n">xOffset</span> <span class="o">=</span> <span class="n">lcXOffset</span><span class="o">-</span><span class="n">accentOffset</span>
+							<span class="n">yOffset</span> <span class="o">=</span> <span class="n">lcYOffset</span><span class="o">-</span><span class="n">accentOffset</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="n">xOffset</span> <span class="o">=</span> <span class="n">ucXOffset</span><span class="o">-</span><span class="n">accentOffset</span>
+							<span class="n">yOffset</span> <span class="o">=</span> <span class="n">ucYOffset</span><span class="o">-</span><span class="n">accentOffset</span>
+						<span class="c"># should I add a cedilla and ogonek yoffset override here?</span>
+						<span class="k">if</span> <span class="n">accentPosition</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">previousPositions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">_dropAnchor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">baseName</span><span class="p">],</span> <span class="n">accentPosition</span><span class="p">,</span> <span class="n">xOffset</span><span class="p">,</span> <span class="n">yOffset</span><span class="p">)</span>
+							<span class="k">if</span> <span class="n">markGlyph</span><span class="p">:</span>
+								<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">baseName</span><span class="p">]</span><span class="o">.</span><span class="n">mark</span> <span class="o">=</span> <span class="n">anchorColor</span>
+								<span class="k">if</span> <span class="n">inFontLab</span><span class="p">:</span>
+									<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">baseName</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">_dropAnchor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">previousPositions</span><span class="p">[</span><span class="n">accentPosition</span><span class="p">]],</span> <span class="n">accentPosition</span><span class="p">,</span> <span class="n">xOffset</span><span class="p">,</span> <span class="n">yOffset</span><span class="p">)</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">_dropAnchor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">accentName</span><span class="p">],</span> <span class="n">accentPosition</span><span class="p">,</span> <span class="n">accentOffset</span><span class="p">,</span> <span class="n">accentOffset</span><span class="p">,</span> <span class="n">doAccentPosition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+						<span class="n">previousPositions</span><span class="p">[</span><span class="n">accentPosition</span><span class="p">]</span> <span class="o">=</span> <span class="n">accentName</span>
+						<span class="k">if</span> <span class="n">markGlyph</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">accentName</span><span class="p">]</span><span class="o">.</span><span class="n">mark</span> <span class="o">=</span> <span class="n">anchorColor</span>
+							<span class="k">if</span> <span class="n">inFontLab</span><span class="p">:</span>
+								<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">accentName</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">inFontLab</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="n">tick</span><span class="p">)</span>
+			<span class="n">tick</span> <span class="o">=</span> <span class="n">tick</span><span class="o">+</span><span class="mi">1</span>
+		<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+			<span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>	
+						
+	<span class="k">def</span> <span class="nf">printAnchorErrors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;print errors encounted during buildAnchors&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anchorErrors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">print</span> <span class="s">&#39;No anchor errors encountered&#39;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchorErrors</span><span class="p">:</span>
+				<span class="k">print</span> <span class="n">i</span>
+												
+	<span class="k">def</span> <span class="nf">_dropAnchor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">positionName</span><span class="p">,</span> <span class="n">xOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">yOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">doAccentPosition</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;anchor adding method. for internal use only.&quot;&quot;&quot;</span>
+		<span class="n">existingAnchorNames</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">anchor</span> <span class="ow">in</span> <span class="n">glyph</span><span class="o">.</span><span class="n">getAnchors</span><span class="p">():</span>
+			<span class="n">existingAnchorNames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anchor</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">doAccentPosition</span><span class="p">:</span>
+			<span class="n">positionName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_&#39;</span><span class="p">,</span> <span class="n">positionName</span><span class="p">])</span>
+		<span class="k">if</span> <span class="n">positionName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existingAnchorNames</span><span class="p">:</span>	
+			<span class="n">glyphLeft</span><span class="p">,</span> <span class="n">glyphBottom</span><span class="p">,</span> <span class="n">glyphRight</span><span class="p">,</span> <span class="n">glyphTop</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">box</span>
+			<span class="n">glyphXCenter</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span>
+			<span class="k">if</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;top&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphXCenter</span><span class="p">,</span> <span class="n">glyphTop</span><span class="o">+</span><span class="n">yOffset</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;bottom&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphXCenter</span><span class="p">,</span> <span class="n">glyphBottom</span><span class="o">-</span><span class="n">yOffset</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;left&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphLeft</span><span class="o">-</span><span class="n">xOffset</span><span class="p">,</span> <span class="n">glyphTop</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;right&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphRight</span><span class="o">+</span><span class="n">xOffset</span><span class="p">,</span> <span class="n">glyphTop</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;_top&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphXCenter</span><span class="p">,</span> <span class="n">glyphBottom</span><span class="o">-</span><span class="n">yOffset</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;_bottom&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphXCenter</span><span class="p">,</span> <span class="n">glyphTop</span><span class="o">+</span><span class="n">yOffset</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;_left&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphRight</span><span class="o">+</span><span class="n">xOffset</span><span class="p">,</span> <span class="n">glyphTop</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">positionName</span> <span class="o">==</span> <span class="s">&#39;_right&#39;</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">appendAnchor</span><span class="p">(</span><span class="n">positionName</span><span class="p">,</span> <span class="p">(</span><span class="n">glyphLeft</span><span class="o">-</span><span class="n">xOffset</span><span class="p">,</span> <span class="n">glyphTop</span><span class="p">))</span>
+			<span class="k">if</span> <span class="n">inFontLab</span><span class="p">:</span>
+				<span class="n">glyph</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">buildAccents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">adjustWidths</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">markGlyph</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">doProgress</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;build accented glyphs. some flag definitions:</span>
+<span class="sd">		clear=1 clear the glyphs if they already exist</span>
+<span class="sd">		markGlyph=1 mark the glyph that is created</span>
+<span class="sd">		doProgress=1 show a progress bar</span>
+<span class="sd">		adjustWidths=1 will fix right and left margins when left or right accents are added&quot;&quot;&quot;</span>
+		<span class="n">tickCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accentList</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+			<span class="n">bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="s">&#39;Building accented glyphs...&#39;</span><span class="p">,</span> <span class="n">tickCount</span><span class="p">)</span>
+		<span class="n">tick</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accentList</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">glyphName</span><span class="p">)</span>
+			<span class="n">existError</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="n">anchorError</span> <span class="o">=</span> <span class="bp">False</span>
+	
+			<span class="n">baseName</span><span class="p">,</span> <span class="n">stripedSuffixName</span><span class="p">,</span> <span class="n">accentNames</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">nameBuster</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">glyphConstructions</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">existError</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">for</span> <span class="n">accentError</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accentError</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">existError</span><span class="p">:</span>
+				<span class="n">baseAnchors</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">baseName</span><span class="p">]</span>
+				<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> does not exist.&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">baseName</span><span class="p">))</span>
+					<span class="n">existError</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">anchor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">baseName</span><span class="p">]</span><span class="o">.</span><span class="n">anchors</span><span class="p">:</span>
+						<span class="n">baseAnchors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anchor</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">accentName</span><span class="p">,</span> <span class="n">accentPosition</span> <span class="ow">in</span> <span class="n">accentNames</span><span class="p">:</span>
+					<span class="n">accentAnchors</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">try</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">accentName</span><span class="p">]</span>
+					<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> does not exist.&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">accentName</span><span class="p">))</span>
+						<span class="n">existError</span> <span class="o">=</span> <span class="bp">True</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="k">for</span> <span class="n">anchor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="n">accentName</span><span class="p">]</span><span class="o">.</span><span class="n">getAnchors</span><span class="p">():</span>
+							<span class="n">accentAnchors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anchor</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+						<span class="k">if</span> <span class="n">accentPosition</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">baseAnchors</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> not in </span><span class="si">%s</span><span class="s"> anchors.&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">accentPosition</span><span class="p">,</span> <span class="n">baseName</span><span class="p">))</span>
+							<span class="n">anchorError</span> <span class="o">=</span> <span class="bp">True</span>
+						<span class="k">if</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_&#39;</span><span class="p">,</span> <span class="n">accentPosition</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">accentAnchors</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> not in </span><span class="si">%s</span><span class="s"> anchors.&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_&#39;</span><span class="p">,</span> <span class="n">accentPosition</span><span class="p">]),</span> <span class="n">accentName</span><span class="p">))</span>
+							<span class="n">anchorError</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">existError</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">anchorError</span><span class="p">:</span>
+					<span class="n">destination</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">compileGlyph</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">baseName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">glyphConstructions</span><span class="p">[</span><span class="n">stripedSuffixName</span><span class="p">][</span><span class="mi">1</span><span class="p">:],</span> <span class="n">adjustWidths</span><span class="p">)</span>
+					<span class="k">if</span> <span class="n">markGlyph</span><span class="p">:</span>
+						<span class="n">destination</span><span class="o">.</span><span class="n">mark</span> <span class="o">=</span> <span class="n">accentColor</span>
+			<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+				<span class="n">bar</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="n">tick</span><span class="p">)</span>
+			<span class="n">tick</span> <span class="o">=</span> <span class="n">tick</span><span class="o">+</span><span class="mi">1</span>
+		<span class="k">if</span> <span class="n">doProgress</span><span class="p">:</span>
+			<span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+			
+	<span class="k">def</span> <span class="nf">printAccentErrors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;print errors encounted during buildAccents&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">print</span> <span class="s">&#39;No accent errors encountered&#39;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accentErrors</span><span class="p">:</span>
+				<span class="k">print</span> <span class="n">i</span>
+	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

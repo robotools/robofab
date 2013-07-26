@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.tools.rfPrefs &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.tools.rfPrefs</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;A simple module for dealing with preferences that are used by scripts. Based almost entirely on MacPrefs.</span>
+
+<span class="sd">To save some preferences:</span>
+<span class="sd">myPrefs = RFPrefs(drive/directory/directory/myPrefs.plist)</span>
+<span class="sd">myPrefs.myString = &#39;xyz&#39;</span>
+<span class="sd">myPrefs.myInteger = 1234</span>
+<span class="sd">myPrefs.myList = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">myPrefs.myDict = {&#39;a&#39;:1, &#39;b&#39;:2}</span>
+<span class="sd">myPrefs.save()</span>
+
+<span class="sd">To retrieve some preferences:</span>
+<span class="sd">myPrefs = RFPrefs(drive/directory/directory/myPrefs.plist)</span>
+<span class="sd">myString = myPrefs.myString</span>
+<span class="sd">myInteger = myPrefs.myInteger</span>
+<span class="sd">myList = myPrefs.myList</span>
+<span class="sd">myDict = myPrefs.myDict</span>
+
+<span class="sd">When using this module within FontLab, it is not necessary to</span>
+<span class="sd">provide the RFPrefs class with a path. If a path is not given,</span>
+<span class="sd">it will look for a file in FontLab/RoboFab Data/RFPrefs.plist.</span>
+<span class="sd">If that file does not exist, it will make it.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">robofab</span> <span class="kn">import</span> <span class="n">RoboFabError</span>
+<span class="kn">from</span> <span class="nn">robofab.plistlib</span> <span class="kn">import</span> <span class="n">Plist</span>
+<span class="kn">from</span> <span class="nn">cStringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">class</span> <span class="nc">_PrefObject</span><span class="p">:</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">dict</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span> <span class="o">=</span> <span class="nb">dict</span>
+	
+	<span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+			<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">,</span> <span class="s">&#39;delete non-existing instance attribute&#39;</span>
+	
+	<span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s">&#39;__members__&#39;</span><span class="p">:</span>
+			<span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+			<span class="n">keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+			<span class="k">return</span> <span class="n">keys</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">,</span> <span class="n">attr</span>
+
+	<span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;_&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+			
+	<span class="k">def</span> <span class="nf">asDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span>
+
+<div class="viewcode-block" id="RFPrefs"><a class="viewcode-back" href="../../../tools/rfPrefs.html#robofab.tools.rfPrefs.RFPrefs">[docs]</a><span class="k">class</span> <span class="nc">RFPrefs</span><span class="p">(</span><span class="n">_PrefObject</span><span class="p">):</span>
+	
+	<span class="sd">&quot;&quot;&quot;The main preferences object to call&quot;&quot;&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">robofab.world</span> <span class="kn">import</span> <span class="n">world</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__path</span> <span class="o">=</span> <span class="n">path</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">if</span> <span class="n">world</span><span class="o">.</span><span class="n">inFontLab</span><span class="p">:</span>
+			<span class="c">#we don&#39;t have a path, but we know where we can put it</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+				<span class="kn">from</span> <span class="nn">robofab.tools.toolsFL</span> <span class="kn">import</span> <span class="n">makeDataFolder</span>
+				<span class="n">settingsPath</span> <span class="o">=</span> <span class="n">makeDataFolder</span><span class="p">()</span>
+				<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">settingsPath</span><span class="p">,</span> <span class="s">&#39;RFPrefs.plist&#39;</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">__path</span> <span class="o">=</span> <span class="n">path</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_makePrefsFile</span><span class="p">()</span>
+			<span class="c">#we do have a path, make sure it exists and load it</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_makePrefsFile</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c">#no path, raise error</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">RoboFabError</span><span class="p">,</span> <span class="s">&quot;no preferences path defined&quot;</span>
+			<span class="c">#we do have a path, make sure it exists and load it</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_makePrefsFile</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span> <span class="o">=</span> <span class="n">Plist</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+			
+	<span class="k">def</span> <span class="nf">_makePrefsFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__path</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;__members__&#39;</span><span class="p">:</span>
+			<span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+			<span class="n">keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+			<span class="k">return</span> <span class="n">keys</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">,</span> <span class="n">attr</span>
+			<span class="c">#if attr[0] != &#39;_&#39;:</span>
+			<span class="c">#	self._prefs[attr] = _PrefObject()</span>
+			<span class="c">#	return self._prefs[attr]</span>
+			<span class="c">#else:</span>
+			<span class="c">#	raise AttributeError, attr</span>
+			
+<div class="viewcode-block" id="RFPrefs.save"><a class="viewcode-back" href="../../../tools/rfPrefs.html#robofab.tools.rfPrefs.RFPrefs.save">[docs]</a>	<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;save the plist file&quot;&quot;&quot;</span>
+		<span class="n">f</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+		<span class="n">pl</span> <span class="o">=</span> <span class="n">Plist</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">pl</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="n">pl</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+		<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__path</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+		<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

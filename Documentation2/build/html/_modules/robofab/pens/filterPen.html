@@ -1,0 +1,499 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.pens.filterPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.pens.filterPen</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;A couple of point pens to filter contours in various ways.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">fontTools.pens.basePen</span> <span class="kn">import</span> <span class="n">AbstractPen</span><span class="p">,</span> <span class="n">BasePen</span>
+
+<span class="kn">from</span> <span class="nn">robofab.pens.pointPen</span> <span class="kn">import</span> <span class="n">AbstractPointPen</span>
+<span class="kn">from</span> <span class="nn">robofab.objects.objectsRF</span> <span class="kn">import</span> <span class="n">RGlyph</span> <span class="k">as</span> <span class="n">_RGlyph</span>
+<span class="kn">from</span> <span class="nn">robofab.objects.objectsBase</span> <span class="kn">import</span> <span class="n">_interpolatePt</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="c">#</span>
+<span class="c">#	 threshold filtering</span>
+<span class="c">#</span>
+
+<span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">pt1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">pt2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">pt2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<div class="viewcode-block" id="ThresholdPointPen"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.ThresholdPointPen">[docs]</a><span class="k">class</span> <span class="nc">ThresholdPointPen</span><span class="p">(</span><span class="n">AbstractPointPen</span><span class="p">):</span>
+	
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Rewrite of the ThresholdPen as a PointPen</span>
+<span class="sd">		so that we can preserve named points and other arguments.</span>
+<span class="sd">		This pen will add components from the original glyph, but</span>
+<span class="sd">		but it won&#39;t filter those components.</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;move&quot;, &quot;line&quot;, &quot;curve&quot; or &quot;qcurve&quot;</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">otherPointPen</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_offCurveBuffer</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span> <span class="o">=</span> <span class="n">otherPointPen</span>
+		
+<div class="viewcode-block" id="ThresholdPointPen.beginPath"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.ThresholdPointPen.beginPath">[docs]</a>	<span class="k">def</span> <span class="nf">beginPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Start a new sub path.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="ThresholdPointPen.endPath"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.ThresholdPointPen.endPath">[docs]</a>	<span class="k">def</span> <span class="nf">endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;End the current sub path.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ThresholdPointPen.addPoint"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.ThresholdPointPen.addPoint">[docs]</a>	<span class="k">def</span> <span class="nf">addPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Add a point to the current sub path.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">segmentType</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;curve&#39;</span><span class="p">,</span> <span class="s">&#39;qcurve&#39;</span><span class="p">]:</span>
+			<span class="c"># it&#39;s an offcurve, let&#39;s buffer them until we get another oncurve</span>
+			<span class="c"># and we know what to do with them</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_offCurveBuffer</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
+			<span class="k">return</span>
+		
+		<span class="k">elif</span> <span class="n">segmentType</span> <span class="o">==</span> <span class="s">&quot;move&quot;</span><span class="p">:</span>
+			<span class="c"># start of an open contour</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>	<span class="c"># how to add kwargs?</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="n">pt</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_offCurveBuffer</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="k">elif</span> <span class="n">segmentType</span> <span class="o">==</span> <span class="s">&quot;line&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>	<span class="c"># how to add kwargs?</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="n">pt</span>
+			<span class="k">elif</span> <span class="n">distance</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+				<span class="c"># we&#39;re oncurve and far enough from the last oncurve</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offCurveBuffer</span><span class="p">:</span>
+					<span class="c"># empty any buffered offcurves</span>
+					<span class="k">for</span> <span class="n">buf_pt</span><span class="p">,</span> <span class="n">buf_segmentType</span><span class="p">,</span> <span class="n">buf_smooth</span><span class="p">,</span> <span class="n">buf_name</span><span class="p">,</span> <span class="n">buf_kwargs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offCurveBuffer</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">buf_pt</span><span class="p">,</span> <span class="n">buf_segmentType</span><span class="p">,</span> <span class="n">buf_smooth</span><span class="p">,</span> <span class="n">buf_name</span><span class="p">)</span>	<span class="c"># how to add kwargs?</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_offCurveBuffer</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="c"># finally add the oncurve.</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span><span class="o">.</span><span class="n">addPoint</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">segmentType</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>	<span class="c"># how to add kwargs?</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="n">pt</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c"># we&#39;re too short, so we&#39;re not going to make it.</span>
+				<span class="c"># we need to clear out the offcurve buffer. </span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_offCurveBuffer</span> <span class="o">=</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="ThresholdPointPen.addComponent"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.ThresholdPointPen.addComponent">[docs]</a>	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">baseGlyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Add a sub glyph. Note: this way components are not filtered.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPointPen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">baseGlyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="ThresholdPen"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.ThresholdPen">[docs]</a><span class="k">class</span> <span class="nc">ThresholdPen</span><span class="p">(</span><span class="n">AbstractPen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Removes segments shorter in length than the threshold value.&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">otherPen</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span> <span class="o">=</span> <span class="n">otherPen</span>
+
+	<span class="k">def</span> <span class="nf">moveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="n">pt</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">lineTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">&lt;=</span> <span class="n">distance</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="n">pt</span>
+		
+	<span class="k">def</span> <span class="nf">curveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">&lt;=</span> <span class="n">distance</span><span class="p">(</span><span class="n">pt3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">curveTo</span><span class="p">(</span><span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="n">pt3</span>
+
+	<span class="k">def</span> <span class="nf">qCurveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">points</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">&lt;=</span> <span class="n">distance</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">qCurveTo</span><span class="p">(</span><span class="o">*</span><span class="n">points</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_lastPt</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		
+	<span class="k">def</span> <span class="nf">closePath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+		
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="thresholdGlyph"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.thresholdGlyph">[docs]</a><span class="k">def</span> <span class="nf">thresholdGlyph</span><span class="p">(</span><span class="n">aGlyph</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Convenience function that handles the filtering. &quot;&quot;&quot;</span>
+	<span class="kn">from</span> <span class="nn">robofab.pens.adapterPens</span> <span class="kn">import</span> <span class="n">PointToSegmentPen</span>
+	<span class="n">new</span> <span class="o">=</span> <span class="n">_RGlyph</span><span class="p">()</span>
+	<span class="n">filterpen</span> <span class="o">=</span> <span class="n">ThresholdPen</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">getPen</span><span class="p">(),</span> <span class="n">threshold</span><span class="p">)</span>
+	<span class="n">wrappedPen</span> <span class="o">=</span> <span class="n">PointToSegmentPen</span><span class="p">(</span><span class="n">filterpen</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">drawPoints</span><span class="p">(</span><span class="n">wrappedPen</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">appendGlyph</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">aGlyph</span>
+</div>
+<div class="viewcode-block" id="thresholdGlyphPointPen"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.thresholdGlyphPointPen">[docs]</a><span class="k">def</span> <span class="nf">thresholdGlyphPointPen</span><span class="p">(</span><span class="n">aGlyph</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Same a thresholdGlyph, but using the ThresholdPointPen, which should respect anchors.&quot;&quot;&quot;</span>
+	<span class="kn">from</span> <span class="nn">robofab.pens.adapterPens</span> <span class="kn">import</span> <span class="n">PointToSegmentPen</span>
+	<span class="n">new</span> <span class="o">=</span> <span class="n">_RGlyph</span><span class="p">()</span>
+	<span class="n">wrappedPen</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">getPointPen</span><span class="p">()</span>
+	<span class="n">filterpen</span> <span class="o">=</span> <span class="n">ThresholdPointPen</span><span class="p">(</span><span class="n">wrappedPen</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">drawPoints</span><span class="p">(</span><span class="n">filterpen</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+	<span class="n">new</span><span class="o">.</span><span class="n">drawPoints</span><span class="p">(</span><span class="n">aGlyph</span><span class="o">.</span><span class="n">getPointPen</span><span class="p">())</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">aGlyph</span>
+
+	
+<span class="c">#</span>
+<span class="c"># Curve flattening</span>
+<span class="c">#</span>
+</div>
+<span class="k">def</span> <span class="nf">_estimateCubicCurveLength</span><span class="p">(</span><span class="n">pt0</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Estimate the length of this curve by iterating</span>
+<span class="sd">	through it and averaging the length of the flat bits.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">step</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">precision</span>
+	<span class="n">factors</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">precision</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">:</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_getCubicPoint</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">step</span><span class="p">,</span> <span class="n">pt0</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">))</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">pta</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="n">ptb</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">length</span> <span class="o">+=</span> <span class="n">distance</span><span class="p">(</span><span class="n">pta</span><span class="p">,</span> <span class="n">ptb</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">length</span>
+
+<span class="k">def</span> <span class="nf">_mid</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)):</span>
+	<span class="sd">&quot;&quot;&quot;(Point, Point) -&gt; Point\nReturn the point that lies in between the two input points.&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">x1</span><span class="p">),</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="n">y1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_getCubicPoint</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">pt0</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">pt0</span>
+	<span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">pt3</span>
+	<span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
+		<span class="n">a</span> <span class="o">=</span> <span class="n">_mid</span><span class="p">(</span><span class="n">pt0</span><span class="p">,</span> <span class="n">pt1</span><span class="p">)</span>
+		<span class="n">b</span> <span class="o">=</span> <span class="n">_mid</span><span class="p">(</span><span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">)</span>
+		<span class="n">c</span> <span class="o">=</span> <span class="n">_mid</span><span class="p">(</span><span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">)</span>
+		<span class="n">d</span> <span class="o">=</span> <span class="n">_mid</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+		<span class="n">e</span> <span class="o">=</span> <span class="n">_mid</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">_mid</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">cx</span> <span class="o">=</span> <span class="p">(</span><span class="n">pt1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt0</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span>
+		<span class="n">cy</span> <span class="o">=</span> <span class="p">(</span><span class="n">pt1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt0</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span>
+		<span class="n">bx</span> <span class="o">=</span> <span class="p">(</span><span class="n">pt2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">cx</span>
+		<span class="n">by</span> <span class="o">=</span> <span class="p">(</span><span class="n">pt2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">cy</span>
+		<span class="n">ax</span> <span class="o">=</span> <span class="n">pt3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span> <span class="o">-</span> <span class="n">bx</span>
+		<span class="n">ay</span> <span class="o">=</span> <span class="n">pt3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pt0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">by</span>
+		<span class="n">t3</span> <span class="o">=</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+		<span class="n">t2</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">t</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="n">ax</span> <span class="o">*</span> <span class="n">t3</span> <span class="o">+</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">t2</span> <span class="o">+</span> <span class="n">cx</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">pt0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">ay</span> <span class="o">*</span> <span class="n">t3</span> <span class="o">+</span> <span class="n">by</span> <span class="o">*</span> <span class="n">t2</span> <span class="o">+</span> <span class="n">cy</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">pt0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+
+
+<div class="viewcode-block" id="FlattenPen"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.FlattenPen">[docs]</a><span class="k">class</span> <span class="nc">FlattenPen</span><span class="p">(</span><span class="n">BasePen</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Process the contours into a series of straight lines by flattening the curves.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">otherPen</span><span class="p">,</span> <span class="n">approximateSegmentLength</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">segmentLines</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">filterDoubles</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">approximateSegmentLength</span> <span class="o">=</span> <span class="n">approximateSegmentLength</span>
+		<span class="n">BasePen</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">{})</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span> <span class="o">=</span> <span class="n">otherPen</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">firstPt</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">segmentLines</span> <span class="o">=</span> <span class="n">segmentLines</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">filterDoubles</span> <span class="o">=</span> <span class="n">filterDoubles</span>
+
+	<span class="k">def</span> <span class="nf">_moveTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="n">pt</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">firstPt</span> <span class="o">=</span> <span class="n">pt</span>
+
+	<span class="k">def</span> <span class="nf">_lineTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filterDoubles</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">pt</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span><span class="p">:</span>
+				<span class="k">return</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">segmentLines</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="n">pt</span>
+			<span class="k">return</span>
+		<span class="n">d</span> <span class="o">=</span> <span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span><span class="p">,</span> <span class="n">pt</span><span class="p">)</span>
+		<span class="n">maxSteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">d</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">approximateSegmentLength</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">maxSteps</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="n">pt</span>
+			<span class="k">return</span>
+		<span class="n">step</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">maxSteps</span>
+		<span class="n">factors</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxSteps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">_interpolatePt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">i</span><span class="o">*</span><span class="n">step</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="n">pt</span>
+
+	<span class="k">def</span> <span class="nf">_curveToOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">):</span>
+		<span class="n">est</span> <span class="o">=</span> <span class="n">_estimateCubicCurveLength</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">approximateSegmentLength</span>
+		<span class="n">maxSteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">est</span><span class="p">))</span>
+		<span class="n">falseCurve</span> <span class="o">=</span> <span class="p">(</span><span class="n">pt1</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pt2</span><span class="o">==</span><span class="n">pt3</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">maxSteps</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">falseCurve</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">pt3</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="n">pt3</span>
+			<span class="k">return</span>
+		<span class="n">step</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">maxSteps</span>
+		<span class="n">factors</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxSteps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+			<span class="n">pt</span> <span class="o">=</span> <span class="n">_getCubicPoint</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span><span class="p">,</span> <span class="n">pt1</span><span class="p">,</span> <span class="n">pt2</span><span class="p">,</span> <span class="n">pt3</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="n">pt3</span>
+		
+	<span class="k">def</span> <span class="nf">_closePath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firstPt</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="bp">None</span>
+	
+	<span class="k">def</span> <span class="nf">_endPath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currentPt</span> <span class="o">=</span> <span class="bp">None</span>
+		
+	<span class="k">def</span> <span class="nf">addComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otherPen</span><span class="o">.</span><span class="n">addComponent</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">transformation</span><span class="p">)</span>
+		
+</div>
+<div class="viewcode-block" id="flattenGlyph"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.flattenGlyph">[docs]</a><span class="k">def</span> <span class="nf">flattenGlyph</span><span class="p">(</span><span class="n">aGlyph</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">segmentLines</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Replace curves with series of straight l ines.&quot;&quot;&quot;</span>
+
+	<span class="kn">from</span> <span class="nn">robofab.pens.adapterPens</span> <span class="kn">import</span> <span class="n">PointToSegmentPen</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">aGlyph</span><span class="o">.</span><span class="n">contours</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span>
+	<span class="n">new</span> <span class="o">=</span> <span class="n">_RGlyph</span><span class="p">()</span>
+	<span class="n">writerPen</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">getPen</span><span class="p">()</span>
+	<span class="n">filterpen</span> <span class="o">=</span> <span class="n">FlattenPen</span><span class="p">(</span><span class="n">writerPen</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">segmentLines</span><span class="p">)</span>
+	<span class="n">wrappedPen</span> <span class="o">=</span> <span class="n">PointToSegmentPen</span><span class="p">(</span><span class="n">filterpen</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">drawPoints</span><span class="p">(</span><span class="n">wrappedPen</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">appendGlyph</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">aGlyph</span>
+
+</div>
+<div class="viewcode-block" id="spikeGlyph"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.spikeGlyph">[docs]</a><span class="k">def</span> <span class="nf">spikeGlyph</span><span class="p">(</span><span class="n">aGlyph</span><span class="p">,</span> <span class="n">segmentLength</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">spikeLength</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">patternFunc</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	
+	<span class="sd">&quot;&quot;&quot;Add narly spikes or dents to the glyph.</span>
+<span class="sd">	patternFunc is an optional function which recalculates the offset.&quot;&quot;&quot;</span>
+
+	<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">atan2</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span>
+	
+	<span class="n">new</span> <span class="o">=</span> <span class="n">_RGlyph</span><span class="p">()</span>
+	<span class="n">new</span><span class="o">.</span><span class="n">appendGlyph</span><span class="p">(</span><span class="n">aGlyph</span><span class="p">)</span>
+	<span class="n">new</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">aGlyph</span><span class="o">.</span><span class="n">width</span>
+	
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">contours</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span>
+	<span class="n">flattenGlyph</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">segmentLength</span><span class="p">,</span> <span class="n">segmentLines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">new</span><span class="p">:</span>
+		<span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+		<span class="n">lastAngle</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="o">.</span><span class="n">points</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
+			<span class="n">prev</span> <span class="o">=</span> <span class="n">contour</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">cur</span> <span class="o">=</span> <span class="n">contour</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="nb">next</span> <span class="o">=</span> <span class="n">contour</span><span class="o">.</span><span class="n">points</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">l</span><span class="p">]</span>
+			<span class="n">angle</span> <span class="o">=</span> <span class="n">atan2</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="nb">next</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="nb">next</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+			<span class="n">lastAngle</span> <span class="o">=</span> <span class="n">angle</span>
+			<span class="k">if</span> <span class="n">patternFunc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">thisSpikeLength</span> <span class="o">=</span> <span class="n">patternFunc</span><span class="p">(</span><span class="n">spikeLength</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">thisSpikeLength</span> <span class="o">=</span> <span class="n">spikeLength</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">x</span> <span class="o">-=</span> <span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="o">+.</span><span class="mi">5</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">thisSpikeLength</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">y</span> <span class="o">-=</span> <span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="o">+.</span><span class="mi">5</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">thisSpikeLength</span>
+			<span class="n">new</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">appendGlyph</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">aGlyph</span>
+
+</div>
+<div class="viewcode-block" id="halftoneGlyph"><a class="viewcode-back" href="../../../pens/filterPen.html#robofab.pens.filterPen.halftoneGlyph">[docs]</a><span class="k">def</span> <span class="nf">halftoneGlyph</span><span class="p">(</span><span class="n">aGlyph</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	
+	<span class="sd">&quot;&quot;&quot;Convert the glyph into some sort of halftoning pattern.</span>
+<span class="sd">	Measure a bunch of inside/outside points to simulate grayscale levels.</span>
+<span class="sd">	Slow.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">print</span> <span class="s">&#39;halftoneGlyph is running...&#39;</span>
+	<span class="n">grid</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">drawing</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">dataDistance</span> <span class="o">=</span> <span class="mi">10</span>
+	<span class="n">scan</span> <span class="o">=</span> <span class="mi">2</span>
+	<span class="n">preload</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">cellDistance</span> <span class="o">=</span> <span class="n">dataDistance</span> <span class="o">*</span> <span class="mi">5</span>
+	<span class="n">overshoot</span> <span class="o">=</span> <span class="n">dataDistance</span> <span class="o">*</span> <span class="mi">2</span>
+	<span class="p">(</span><span class="n">xMin</span><span class="p">,</span> <span class="n">yMin</span><span class="p">,</span> <span class="n">xMax</span><span class="p">,</span> <span class="n">yMax</span><span class="p">)</span> <span class="o">=</span> <span class="n">aGlyph</span><span class="o">.</span><span class="n">box</span>
+	<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xMin</span><span class="o">-</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">xMax</span><span class="o">+</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">dataDistance</span><span class="p">):</span>
+		<span class="k">print</span> <span class="s">&#39;scanning..&#39;</span><span class="p">,</span> <span class="n">x</span>
+		<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">yMin</span><span class="o">-</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">yMax</span><span class="o">+</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">dataDistance</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">aGlyph</span><span class="o">.</span><span class="n">pointInside</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)):</span>
+				<span class="n">grid</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">grid</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="c">#print &#39;gathering data&#39;, x, y, grid[(x, y)]</span>
+	<span class="k">print</span> <span class="s">&#39;analyzing..&#39;</span>
+	<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xMin</span><span class="o">-</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">xMax</span><span class="o">+</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">cellDistance</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">yMin</span><span class="o">-</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">yMax</span><span class="o">+</span><span class="n">overshoot</span><span class="p">,</span> <span class="n">cellDistance</span><span class="p">):</span>
+			<span class="n">total</span> <span class="o">=</span> <span class="n">preload</span>
+			<span class="k">for</span> <span class="n">scanx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">scan</span><span class="p">,</span> <span class="n">scan</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">scany</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">scan</span><span class="p">,</span> <span class="n">scan</span><span class="p">):</span>
+					<span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="n">scanx</span><span class="o">*</span><span class="n">dataDistance</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">scany</span><span class="o">*</span><span class="n">dataDistance</span><span class="p">)):</span>
+						<span class="n">total</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="n">invert</span><span class="p">:</span>
+				<span class="n">drawing</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">scan</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">drawing</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+	<span class="n">aGlyph</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+	<span class="k">print</span> <span class="n">drawing</span>
+	<span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">drawing</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+		<span class="n">size</span> <span class="o">=</span> <span class="n">drawing</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)]</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">scan</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span>
+		<span class="n">pen</span> <span class="o">=</span> <span class="n">aGlyph</span><span class="o">.</span><span class="n">getPen</span><span class="p">()</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">size</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">size</span><span class="p">))</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="n">size</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">size</span><span class="p">))</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="n">size</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">size</span><span class="p">))</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">size</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">size</span><span class="p">))</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">size</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">size</span><span class="p">))</span>
+		<span class="n">pen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
+		<span class="n">aGlyph</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+	<span class="kn">from</span> <span class="nn">robofab.pens.pointPen</span> <span class="kn">import</span> <span class="n">PrintingPointPen</span>
+	<span class="n">pp</span> <span class="o">=</span> <span class="n">PrintingPointPen</span><span class="p">()</span>
+	<span class="c">#pp.beginPath()</span>
+	<span class="c">#pp.addPoint((100, 100))</span>
+	<span class="c">#pp.endPath()</span>
+
+	<span class="n">tpp</span> <span class="o">=</span> <span class="n">ThresholdPointPen</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+	<span class="c">#segmentType=None, smooth=False, name=None</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="c"># section that should be too small</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">102</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="c"># curve section with final point that&#39;s far enough, but with offcurves that are under the threshold</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">205</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;curve&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">300</span><span class="p">,</span> <span class="mi">295</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;curve&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="c"># curve section with final point that is not far enough</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">550</span><span class="p">,</span> <span class="mi">350</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;curve&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">360</span><span class="p">,</span> <span class="mi">760</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;curve&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">310</span><span class="p">,</span> <span class="mi">310</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="c"># couple of single points with names</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;move&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;named point&quot;</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">600</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;move&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;named point&quot;</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">601</span><span class="p">,</span> <span class="mi">501</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;move&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;named point&quot;</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+
+	<span class="c"># open path</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">beginPath</span><span class="p">()</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;move&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">501</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">101</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">101</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">addPoint</span><span class="p">((</span><span class="mi">498</span><span class="p">,</span> <span class="mi">498</span><span class="p">),</span> <span class="n">segmentType</span><span class="o">=</span><span class="s">&quot;line&quot;</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tpp</span><span class="o">.</span><span class="n">endPath</span><span class="p">()</span>
+	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

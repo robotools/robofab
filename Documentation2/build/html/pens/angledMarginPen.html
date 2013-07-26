@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>angledMarginPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../index.html" />
+    <link rel="up" title="Pens" href="pens.html" />
+    <link rel="next" title="boundsPen" href="boundsPen.html" />
+    <link rel="prev" title="adapterPens" href="adapterPens.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="boundsPen.html" title="boundsPen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="adapterPens.html" title="adapterPens"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" accesskey="U">Pens</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-robofab.pens.angledMarginPen">
+<span id="angledmarginpen"></span><h1>angledMarginPen<a class="headerlink" href="#module-robofab.pens.angledMarginPen" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="robofab.pens.angledMarginPen.AngledMarginPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.angledMarginPen.</tt><tt class="descname">AngledMarginPen</tt><big>(</big><em>glyphSet</em>, <em>width</em>, <em>italicAngle</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/angledMarginPen.html#AngledMarginPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.angledMarginPen.AngledMarginPen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Angled Margin Pen</p>
+<p>Pen to calculate the margins as if the margin lines were slanted
+according to the font.info.italicAngle.</p>
+<p>Notes:
+- this pen works on the on-curve points, and approximates the distance to curves.
+- results will be float.
+- when used in FontLab, the resulting margins may be slightly</p>
+<blockquote>
+<div>different from the values originally set, due to rounding errors.</div></blockquote>
+<ul class="simple">
+<li>similar to what RoboFog used to do.</li>
+<li>RoboFog had a special attribute for &#8220;italicoffset&#8221;, horizontal</li>
+</ul>
+<p>shift of all glyphs. This is missing in Robofab.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.angledMarginPen.getAngledMargins">
+<tt class="descclassname">robofab.pens.angledMarginPen.</tt><tt class="descname">getAngledMargins</tt><big>(</big><em>glyph</em>, <em>font</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/angledMarginPen.html#getAngledMargins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.angledMarginPen.getAngledMargins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the angled margins for this glyph.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.angledMarginPen.setAngledLeftMargin">
+<tt class="descclassname">robofab.pens.angledMarginPen.</tt><tt class="descname">setAngledLeftMargin</tt><big>(</big><em>glyph</em>, <em>font</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/angledMarginPen.html#setAngledLeftMargin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.angledMarginPen.setAngledLeftMargin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the left angled margin to value, adjusted for font.info.italicAngle.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.angledMarginPen.setAngledRightMargin">
+<tt class="descclassname">robofab.pens.angledMarginPen.</tt><tt class="descname">setAngledRightMargin</tt><big>(</big><em>glyph</em>, <em>font</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/angledMarginPen.html#setAngledRightMargin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.angledMarginPen.setAngledRightMargin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the right angled margin to value, adjusted for font.info.italicAngle.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="robofab.pens.angledMarginPen.centerAngledMargins">
+<tt class="descclassname">robofab.pens.angledMarginPen.</tt><tt class="descname">centerAngledMargins</tt><big>(</big><em>glyph</em>, <em>font</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/angledMarginPen.html#centerAngledMargins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.angledMarginPen.centerAngledMargins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Center the glyph on angled margins.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="adapterPens.html"
+                        title="previous chapter">adapterPens</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="boundsPen.html"
+                        title="next chapter">boundsPen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pens/angledMarginPen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="boundsPen.html" title="boundsPen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="adapterPens.html" title="adapterPens"
+             >previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" >Pens</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

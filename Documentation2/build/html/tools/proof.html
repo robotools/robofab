@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>proof &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../index.html" />
+    <link rel="up" title="Tools" href="tools.html" />
+    <link rel="next" title="remote" href="remote.html" />
+    <link rel="prev" title="otFeatures" href="otFeatures.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="remote.html" title="remote"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="otFeatures.html" title="otFeatures"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="tools.html" accesskey="U">Tools</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-robofab.tools.proof">
+<span id="proof"></span><h1>proof<a class="headerlink" href="#module-robofab.tools.proof" title="Permalink to this headline">¶</a></h1>
+<p>This is the place for stuff that makes proofs and test text settings etc</p>
+<dl class="class">
+<dt id="robofab.tools.proof.IDTaggedText">
+<em class="property">class </em><tt class="descclassname">robofab.tools.proof.</tt><tt class="descname">IDTaggedText</tt><big>(</big><em>family</em>, <em>weight</em>, <em>size=36</em>, <em>leading=None</em><big>)</big><a class="reference internal" href="../_modules/robofab/tools/proof.html#IDTaggedText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.tools.proof.IDTaggedText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export a text as a XML tagged text file for InDesign (2.0?).
+The tags can contain information about</p>
+<blockquote>
+<div><ul>
+<li><p class="first">family: font family i.e. &#8220;Times&#8221;</p>
+</li>
+<li><p class="first">weight: font weight &#8220;Bold&#8221;</p>
+</li>
+<li><p class="first">size: typesize in points</p>
+</li>
+<li><p class="first">leading: leading in points</p>
+</li>
+<li><p class="first">color:  a CMYK color, as a 4 tuple of floats between 0 and 1</p>
+</li>
+<li><dl class="first docutils">
+<dt>insert special glyphs based on glyphindex</dt>
+<dd><p class="first last">(which is why it only makes sense if you use this in FontLab,
+otherwise there is no other way to get the indices)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<dl class="method">
+<dt id="robofab.tools.proof.IDTaggedText.add">
+<tt class="descname">add</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../_modules/robofab/tools/proof.html#IDTaggedText.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.tools.proof.IDTaggedText.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to add text to the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.tools.proof.IDTaggedText.addGlyph">
+<tt class="descname">addGlyph</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/robofab/tools/proof.html#IDTaggedText.addGlyph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.tools.proof.IDTaggedText.addGlyph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a special glyph, index is the glyphIndex in an OpenType font.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.tools.proof.IDTaggedText.addHeader">
+<tt class="descname">addHeader</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/robofab/tools/proof.html#IDTaggedText.addHeader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.tools.proof.IDTaggedText.addHeader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the standard header.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.tools.proof.IDTaggedText.addStyle">
+<tt class="descname">addStyle</tt><big>(</big><em>family=None</em>, <em>weight=None</em>, <em>size=None</em>, <em>leading=None</em>, <em>color=None</em><big>)</big><a class="reference internal" href="../_modules/robofab/tools/proof.html#IDTaggedText.addStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.tools.proof.IDTaggedText.addStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the paragraph style for the following text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.tools.proof.IDTaggedText.replace">
+<tt class="descname">replace</tt><big>(</big><em>old</em>, <em>new</em><big>)</big><a class="reference internal" href="../_modules/robofab/tools/proof.html#IDTaggedText.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.tools.proof.IDTaggedText.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace occurances of &#8216;old&#8217; with &#8216;new&#8217; in all content.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robofab.tools.proof.IDTaggedText.save">
+<tt class="descname">save</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="../_modules/robofab/tools/proof.html#IDTaggedText.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.tools.proof.IDTaggedText.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the tagged text here.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="otFeatures.html"
+                        title="previous chapter">otFeatures</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="remote.html"
+                        title="next chapter">remote</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tools/proof.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="remote.html" title="remote"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="otFeatures.html" title="otFeatures"
+             >previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="tools.html" >Tools</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

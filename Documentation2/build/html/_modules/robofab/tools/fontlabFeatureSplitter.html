@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.tools.fontlabFeatureSplitter &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.tools.fontlabFeatureSplitter</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">featureRE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="s">&quot;^&quot;</span>            <span class="c"># start of line</span>
+    <span class="s">&quot;\s*&quot;</span>          <span class="c">#</span>
+    <span class="s">&quot;feature&quot;</span>      <span class="c"># feature</span>
+    <span class="s">&quot;\s+&quot;</span>          <span class="c">#</span>
+    <span class="s">&quot;(\w{4})&quot;</span>      <span class="c"># four alphanumeric characters</span>
+    <span class="s">&quot;\s*&quot;</span>          <span class="c">#</span>
+    <span class="s">&quot;\{&quot;</span>           <span class="c"># {</span>
+    <span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span> <span class="c"># run in multiline to preserve line seps</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="splitFeaturesForFontLab"><a class="viewcode-back" href="../../../tools/fontlabFeatureSplitter.html#robofab.tools.fontlabFeatureSplitter.splitFeaturesForFontLab">[docs]</a><span class="k">def</span> <span class="nf">splitFeaturesForFontLab</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; result = splitFeaturesForFontLab(testText)</span>
+<span class="sd">    &gt;&gt;&gt; result == expectedTestResult</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">classes</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">text</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">featureRE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">classes</span> <span class="o">=</span> <span class="n">text</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+            <span class="c"># if start is not zero, this is the first match</span>
+            <span class="c"># and all previous lines are part of the &quot;classes&quot;</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="ow">not</span> <span class="n">classes</span>
+                <span class="n">classes</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span>
+            <span class="c"># extract the current feature</span>
+            <span class="n">featureName</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">featureText</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">end</span><span class="p">:]</span>
+            <span class="c"># grab all text before the next feature definition</span>
+            <span class="c"># and add it to the current definition</span>
+            <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">featureRE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+                    <span class="n">featureText</span> <span class="o">+=</span> <span class="n">text</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">featureText</span> <span class="o">+=</span> <span class="n">text</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="c"># store the feature</span>
+            <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">featureName</span><span class="p">,</span> <span class="n">featureText</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">classes</span><span class="p">,</span> <span class="n">features</span>
+</div>
+<span class="n">testText</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">@class1 = [a b c d];</span>
+
+<span class="s">feature liga {</span>
+<span class="s">    sub f i by fi;</span>
+<span class="s">} liga;</span>
+
+<span class="s">@class2 = [x y z];</span>
+
+<span class="s">feature salt {</span>
+<span class="s">    sub a by a.alt;</span>
+<span class="s">} salt; feature ss01 {sub x by x.alt} ss01;</span>
+
+<span class="s">feature ss02 {sub y by y.alt} ss02;</span>
+
+<span class="s"># feature calt {</span>
+<span class="s">#     sub a b&#39; by b.alt;</span>
+<span class="s"># } calt;</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="n">expectedTestResult</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">&quot;</span><span class="se">\n</span><span class="s">@class1 = [a b c d];</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s">&quot;liga&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">feature liga {</span><span class="se">\n</span><span class="s">    sub f i by fi;</span><span class="se">\n</span><span class="s">} liga;</span><span class="se">\n\n</span><span class="s">@class2 = [x y z];</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&quot;salt&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">feature salt {</span><span class="se">\n</span><span class="s">    sub a by a.alt;</span><span class="se">\n</span><span class="s">} salt; feature ss01 {sub x by x.alt} ss01;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&quot;ss02&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">feature ss02 {sub y by y.alt} ss02;</span><span class="se">\n\n</span><span class="s"># feature calt {</span><span class="se">\n</span><span class="s">#     sub a b&#39; by b.alt;</span><span class="se">\n</span><span class="s"># } calt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

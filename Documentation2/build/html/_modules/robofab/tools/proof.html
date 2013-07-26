@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.tools.proof &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.tools.proof</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;This is the place for stuff that makes proofs and test text settings etc&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+
+
+
+
+<span class="n">idHeader</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;&lt;ASCII-MAC&gt;</span>
+<span class="s">&lt;Version:2.000000&gt;&lt;FeatureSet:InDesign-Roman&gt;&lt;ColorTable:=&lt;Black:COLOR:CMYK:Process:0.000000,0.000000,0.000000,1.000000&gt;&gt;&quot;&quot;&quot;</span>
+
+<span class="n">idColor</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;&lt;cColor:COLOR\:</span><span class="si">%(model)s</span><span class="s">\:Process\:</span><span class="si">%(c)f</span><span class="s">\,</span><span class="si">%(m)f</span><span class="s">\,</span><span class="si">%(y)f</span><span class="s">\,</span><span class="si">%(k)f</span><span class="s">&gt;&quot;&quot;&quot;</span>
+
+<span class="n">idParaStyle</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;&lt;ParaStyle:&gt;&lt;cTypeface:</span><span class="si">%(weight)s</span><span class="s">&gt;&lt;cSize:</span><span class="si">%(size)f</span><span class="s">&gt;&lt;cLeading:</span><span class="si">%(leading)f</span><span class="s">&gt;&lt;cFont:</span><span class="si">%(family)s</span><span class="s">&gt;&quot;&quot;&quot;</span>
+<span class="n">idGlyphStyle</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;&lt;cTypeface:</span><span class="si">%(weight)s</span><span class="s">&gt;&lt;cSize:</span><span class="si">%(size)f</span><span class="s">&gt;&lt;cLeading:</span><span class="si">%(leading)f</span><span class="s">&gt;&lt;cFont:</span><span class="si">%(family)s</span><span class="s">&gt;&quot;&quot;&quot;</span>
+
+<span class="n">seperator</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="n">autoLinespaceFactor</span> <span class="o">=</span> <span class="mf">1.2</span>
+
+
+<div class="viewcode-block" id="IDTaggedText"><a class="viewcode-back" href="../../../tools/proof.html#robofab.tools.proof.IDTaggedText">[docs]</a><span class="k">class</span> <span class="nc">IDTaggedText</span><span class="p">:</span>
+
+	<span class="sd">&quot;&quot;&quot;Export a text as a XML tagged text file for InDesign (2.0?).</span>
+<span class="sd">	The tags can contain information about</span>
+<span class="sd">		- family: font family i.e. &quot;Times&quot;</span>
+<span class="sd">		- weight: font weight &quot;Bold&quot;</span>
+<span class="sd">		- size: typesize in points</span>
+<span class="sd">		- leading: leading in points</span>
+<span class="sd">		- color:  a CMYK color, as a 4 tuple of floats between 0 and 1</span>
+<span class="sd">		- insert special glyphs based on glyphindex</span>
+<span class="sd">			(which is why it only makes sense if you use this in FontLab,</span>
+<span class="sd">			otherwise there is no other way to get the indices)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span> <span class="n">leading</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">family</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">leading</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">leading</span> <span class="o">=</span> <span class="n">autoLinespaceFactor</span><span class="o">*</span><span class="n">size</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addHeader</span><span class="p">()</span>
+	
+<div class="viewcode-block" id="IDTaggedText.add"><a class="viewcode-back" href="../../../tools/proof.html#robofab.tools.proof.IDTaggedText.add">[docs]</a>	<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Method to add text to the file.&quot;&quot;&quot;</span>
+		<span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">charToGlyph</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+	</div>
+	<span class="k">def</span> <span class="nf">charToGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">text</span>
+	
+<div class="viewcode-block" id="IDTaggedText.addHeader"><a class="viewcode-back" href="../../../tools/proof.html#robofab.tools.proof.IDTaggedText.addHeader">[docs]</a>	<span class="k">def</span> <span class="nf">addHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Add the standard header.&quot;&quot;&quot;</span>
+		<span class="c"># set colors too?</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idHeader</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="IDTaggedText.replace"><a class="viewcode-back" href="../../../tools/proof.html#robofab.tools.proof.IDTaggedText.replace">[docs]</a>	<span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Replace occurances of &#39;old&#39; with &#39;new&#39; in all content.&quot;&quot;&quot;</span>
+		<span class="n">d</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+			<span class="n">d</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">d</span>
+		</div>
+<div class="viewcode-block" id="IDTaggedText.save"><a class="viewcode-back" href="../../../tools/proof.html#robofab.tools.proof.IDTaggedText.save">[docs]</a>	<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Save the tagged text here.&quot;&quot;&quot;</span>
+		<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">seperator</span><span class="p">))</span>
+		<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	</div>
+<div class="viewcode-block" id="IDTaggedText.addGlyph"><a class="viewcode-back" href="../../../tools/proof.html#robofab.tools.proof.IDTaggedText.addGlyph">[docs]</a>	<span class="k">def</span> <span class="nf">addGlyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Add a special glyph, index is the glyphIndex in an OpenType font.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStyle</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;cSpecialGlyph:</span><span class="si">%d</span><span class="s">&gt;&lt;0xFFFD&gt;&quot;</span><span class="o">%</span><span class="n">index</span><span class="p">)</span>
+		</div>
+<div class="viewcode-block" id="IDTaggedText.addStyle"><a class="viewcode-back" href="../../../tools/proof.html#robofab.tools.proof.IDTaggedText.addStyle">[docs]</a>	<span class="k">def</span> <span class="nf">addStyle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">leading</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Set the paragraph style for the following text.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">family</span><span class="p">:</span>
+			<span class="n">family</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">weight</span><span class="p">:</span>
+			<span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">size</span><span class="p">:</span>
+			<span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">leading</span><span class="p">:</span>
+			<span class="n">leading</span> <span class="o">=</span> <span class="n">autoLinespaceFactor</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idGlyphStyle</span><span class="o">%</span><span class="p">({</span><span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="n">weight</span><span class="p">,</span> <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span> <span class="s">&#39;family&#39;</span><span class="p">:</span> <span class="n">family</span><span class="p">,</span> <span class="s">&#39;leading&#39;</span><span class="p">:</span><span class="n">leading</span><span class="p">}))</span>
+		<span class="k">if</span> <span class="n">color</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idColor</span><span class="o">%</span><span class="p">({</span><span class="s">&#39;model&#39;</span><span class="p">:</span> <span class="s">&#39;CMYK&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;m&#39;</span><span class="p">:</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;y&#39;</span><span class="p">:</span> <span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s">&#39;k&#39;</span><span class="p">:</span> <span class="n">color</span><span class="p">[</span><span class="mi">3</span><span class="p">]}))</span>
+		
+
+		</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+	<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randint</span>
+	<span class="nb">id</span> <span class="o">=</span> <span class="n">IDTaggedText</span><span class="p">(</span><span class="s">&quot;Minion&quot;</span><span class="p">,</span> <span class="s">&quot;Regular&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">leading</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+	
+	<span class="nb">id</span><span class="o">.</span><span class="n">addStyle</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+	<span class="nb">id</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">)</span>
+
+	<span class="nb">id</span><span class="o">.</span><span class="n">addStyle</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="s">&quot;Bold&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+	<span class="nb">id</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot; Everybody&quot;</span><span class="p">)</span>
+	<span class="nb">id</span><span class="o">.</span><span class="n">addStyle</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="s">&quot;Regular&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+	<span class="nb">id</span><span class="o">.</span><span class="n">addGlyph</span><span class="p">(</span><span class="mi">102</span><span class="p">)</span>
+	<span class="nb">id</span><span class="o">.</span><span class="n">addGlyph</span><span class="p">(</span><span class="mi">202</span><span class="p">)</span>
+	
+	<span class="kn">from</span> <span class="nn">robofab.interface.all.dialogs</span> <span class="kn">import</span> <span class="n">PutFile</span>
+	<span class="n">path</span> <span class="o">=</span> <span class="n">PutFile</span><span class="p">(</span><span class="s">&quot;Save the tagged file:&quot;</span><span class="p">,</span> <span class="s">&quot;TaggedText.txt&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+		<span class="nb">id</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+	
+	<span class="c"># 	then: open a document in Adobe InDesign</span>
+	<span class="c">#	select &quot;Place&quot; (cmd-D on Mac)</span>
+	<span class="c">#	select the text file you just generated</span>
+	<span class="c">#	place the text</span>
+	
+
+
+
+
+	<span class="c"># </span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

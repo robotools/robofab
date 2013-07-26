@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>digestPen &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../index.html" />
+    <link rel="up" title="Pens" href="pens.html" />
+    <link rel="next" title="filterPen" href="filterPen.html" />
+    <link rel="prev" title="boundsPen" href="boundsPen.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="filterPen.html" title="filterPen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="boundsPen.html" title="boundsPen"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" accesskey="U">Pens</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-robofab.pens.digestPen">
+<span id="digestpen"></span><h1>digestPen<a class="headerlink" href="#module-robofab.pens.digestPen" title="Permalink to this headline">¶</a></h1>
+<p>A couple of point pens which return the glyph as a list of basic values.</p>
+<dl class="class">
+<dt id="robofab.pens.digestPen.DigestPointPen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.digestPen.</tt><tt class="descname">DigestPointPen</tt><big>(</big><em>ignoreSmoothAndName=False</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/digestPen.html#DigestPointPen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.digestPen.DigestPointPen" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Calculate a digest of all points</dt>
+<dd>AND coordinates
+AND components</dd>
+</dl>
+<p>in a glyph.</p>
+<dl class="method">
+<dt id="robofab.pens.digestPen.DigestPointPen.getDigestPointsOnly">
+<tt class="descname">getDigestPointsOnly</tt><big>(</big><em>needSort=True</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/digestPen.html#DigestPointPen.getDigestPointsOnly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.digestPen.DigestPointPen.getDigestPointsOnly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple with all coordinates of all points, 
+but without smooth info or drawing instructions.
+For instance if you want to compare 2 glyphs in shape,
+but not interpolatability.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="robofab.pens.digestPen.DigestPointStructurePen">
+<em class="property">class </em><tt class="descclassname">robofab.pens.digestPen.</tt><tt class="descname">DigestPointStructurePen</tt><big>(</big><em>ignoreSmoothAndName=False</em><big>)</big><a class="reference internal" href="../_modules/robofab/pens/digestPen.html#DigestPointStructurePen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robofab.pens.digestPen.DigestPointStructurePen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a digest of the structure of the glyph
+NOT coordinates
+NOT values.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="boundsPen.html"
+                        title="previous chapter">boundsPen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="filterPen.html"
+                        title="next chapter">filterPen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pens/digestPen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="filterPen.html" title="filterPen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="boundsPen.html" title="boundsPen"
+             >previous</a> |</li>
+        <li><a href="../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="pens.html" >Pens</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robofab.tools.toolsAll &mdash; RoboFab 599 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '599',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RoboFab 599 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robofab.tools.toolsAll</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;A collection of non-environment specific tools&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">robofab.objects.objectsRF</span> <span class="kn">import</span> <span class="n">RInfo</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&quot;darwin&quot;</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+	<span class="c"># the Mac support of Jaguar&#39;s Python 2.2 is broken</span>
+	<span class="n">have_broken_macsupport</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">else</span><span class="p">:</span>
+	<span class="n">have_broken_macsupport</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="readGlyphConstructions"><a class="viewcode-back" href="../../../tools/toolsAll.html#robofab.tools.toolsAll.readGlyphConstructions">[docs]</a><span class="k">def</span> <span class="nf">readGlyphConstructions</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;read GlyphConstruction and turn it into a dict&quot;&quot;&quot;</span>
+	<span class="kn">from</span> <span class="nn">robofab.tools.glyphConstruction</span> <span class="kn">import</span> <span class="n">_glyphConstruction</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">_glyphConstruction</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+	<span class="n">glyphConstructions</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+		<span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;#&#39;</span><span class="p">:</span>
+			<span class="n">name</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;: &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">construction</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+			<span class="n">build</span> <span class="o">=</span> <span class="p">[</span><span class="n">construction</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+			<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">construction</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+				<span class="n">accent</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="n">position</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">build</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">accent</span><span class="p">,</span> <span class="n">position</span><span class="p">))</span>
+			<span class="n">glyphConstructions</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">build</span>
+	<span class="k">return</span> <span class="n">glyphConstructions</span>
+
+<span class="c">#</span>
+<span class="c">#</span>
+<span class="c">#	glyph.unicode: ttFont[&quot;cmap&quot;].getcmap(3, 1)</span>
+<span class="c">#</span>
+<span class="c">#</span>
+</div>
+<span class="k">def</span> <span class="nf">guessFileType</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">None</span>
+	<span class="n">base</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+	<span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">have_broken_macsupport</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="kn">import</span> <span class="nn">MacOS</span>
+		<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+			<span class="k">pass</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">cr</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">MacOS</span><span class="o">.</span><span class="n">GetCreatorAndType</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">tp</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;sfnt&quot;</span><span class="p">,</span> <span class="s">&quot;FFIL&quot;</span><span class="p">):</span>
+				<span class="k">return</span> <span class="s">&quot;TTF&quot;</span>
+			<span class="k">if</span> <span class="n">tp</span> <span class="o">==</span> <span class="s">&quot;LWFN&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="s">&quot;Type 1&quot;</span>
+			<span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s">&quot;.dfont&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="s">&quot;TTF&quot;</span>
+	<span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;.otf&quot;</span><span class="p">,</span> <span class="s">&quot;.ttf&quot;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s">&quot;TTF&quot;</span>
+	<span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;.pfb&quot;</span><span class="p">,</span> <span class="s">&quot;.pfa&quot;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s">&quot;Type 1&quot;</span>
+	<span class="k">return</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">extractTTFFontInfo</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+	<span class="c"># UFO.info attribute name / index. </span>
+	<span class="c"># name table entries index according to http://www.microsoft.com/typography/otspec/name.htm</span>
+	<span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span>
+			<span class="p">(</span><span class="s">&#39;copyright&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+			<span class="p">(</span><span class="s">&#39;familyName&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+			<span class="p">(</span><span class="s">&#39;fontStyle&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+			<span class="p">(</span><span class="s">&#39;postscriptFullName&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+			<span class="p">(</span><span class="s">&#39;trademark&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+			<span class="p">(</span><span class="s">&#39;openTypeNameDesigner&#39;</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+			<span class="p">(</span><span class="s">&#39;openTypeNameLicenseURL&#39;</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+			<span class="p">(</span><span class="s">&#39;openTypeNameDesignerURL&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+			<span class="p">]</span>
+	<span class="n">info</span> <span class="o">=</span> <span class="n">RInfo</span><span class="p">()</span>
+	<span class="n">names</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">ascender</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="s">&#39;hhea&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ascent</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">descender</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="s">&#39;hhea&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">descent</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">unitsPerEm</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="s">&#39;head&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unitsPerEm</span>
+	<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+		<span class="n">entry</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">getName</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="nb">setattr</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="s">&quot;utf16&quot;</span><span class="p">))</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="k">print</span> <span class="s">&quot;Error importing value </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">info</span>
+
+<span class="k">def</span> <span class="nf">extractT1FontInfo</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+	<span class="n">info</span> <span class="o">=</span> <span class="n">RInfo</span><span class="p">()</span>
+	<span class="n">src</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="s">&#39;FontInfo&#39;</span><span class="p">]</span>
+	<span class="n">factor</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="s">&#39;FontMatrix&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">assert</span> <span class="n">factor</span> <span class="o">&gt;</span> <span class="mi">0</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">unitsPerEm</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+	<span class="c"># assume something for ascender descender</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">ascender</span> <span class="o">=</span> <span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">unitsPerEm</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">descender</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">ascender</span> <span class="o">-</span> <span class="n">info</span><span class="o">.</span><span class="n">unitsPerEm</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">versionMajor</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="s">&#39;FontInfo&#39;</span><span class="p">][</span><span class="s">&#39;version&#39;</span><span class="p">]</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">fullName</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="s">&#39;FontInfo&#39;</span><span class="p">][</span><span class="s">&#39;FullName&#39;</span><span class="p">]</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">familyName</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="s">&#39;FontInfo&#39;</span><span class="p">][</span><span class="s">&#39;FullName&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">notice</span> <span class="o">=</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="s">&#39;FontInfo&#39;</span><span class="p">][</span><span class="s">&#39;Notice&#39;</span><span class="p">],</span> <span class="s">&quot;macroman&quot;</span><span class="p">)</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">italicAngle</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">font</span><span class="p">[</span><span class="s">&#39;FontInfo&#39;</span><span class="p">][</span><span class="s">&#39;ItalicAngle&#39;</span><span class="p">]</span>
+	<span class="n">info</span><span class="o">.</span><span class="n">uniqueID</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="s">&#39;UniqueID&#39;</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">info</span>
+
+<span class="k">def</span> <span class="nf">fontToUFO</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">fileType</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="kn">from</span> <span class="nn">robofab.ufoLib</span> <span class="kn">import</span> <span class="n">UFOWriter</span>
+	<span class="kn">from</span> <span class="nn">robofab.pens.adapterPens</span> <span class="kn">import</span> <span class="n">SegmentToPointPen</span>
+	<span class="k">if</span> <span class="n">fileType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">fileType</span> <span class="o">=</span> <span class="n">guessFileType</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">fileType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&quot;Can&#39;t determine input file type&quot;</span>
+	<span class="n">ufoWriter</span> <span class="o">=</span> <span class="n">UFOWriter</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s">&quot;TTF&quot;</span><span class="p">:</span>
+		<span class="kn">from</span> <span class="nn">fontTools.ttLib</span> <span class="kn">import</span> <span class="n">TTFont</span>
+		<span class="n">font</span> <span class="o">=</span> <span class="n">TTFont</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s">&quot;Type 1&quot;</span><span class="p">:</span>
+		<span class="kn">from</span> <span class="nn">fontTools.t1Lib</span> <span class="kn">import</span> <span class="n">T1Font</span>
+		<span class="n">font</span> <span class="o">=</span> <span class="n">T1Font</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">assert</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;unknown file type: </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">fileType</span>
+	<span class="n">inGlyphSet</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">getGlyphSet</span><span class="p">()</span>
+	<span class="n">outGlyphSet</span> <span class="o">=</span> <span class="n">ufoWriter</span><span class="o">.</span><span class="n">getGlyphSet</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">glyphName</span> <span class="ow">in</span> <span class="n">inGlyphSet</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+		<span class="k">print</span> <span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="n">glyphName</span>
+		<span class="n">glyph</span> <span class="o">=</span> <span class="n">inGlyphSet</span><span class="p">[</span><span class="n">glyphName</span><span class="p">]</span>
+		<span class="k">def</span> <span class="nf">drawPoints</span><span class="p">(</span><span class="n">pen</span><span class="p">):</span>
+			<span class="n">pen</span> <span class="o">=</span> <span class="n">SegmentToPointPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+			<span class="n">glyph</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+		<span class="n">outGlyphSet</span><span class="o">.</span><span class="n">writeGlyph</span><span class="p">(</span><span class="n">glyphName</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">drawPoints</span><span class="p">)</span>
+	<span class="n">outGlyphSet</span><span class="o">.</span><span class="n">writeContents</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s">&quot;TTF&quot;</span><span class="p">:</span>
+		<span class="n">info</span> <span class="o">=</span> <span class="n">extractTTFFontInfo</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s">&quot;Type 1&quot;</span><span class="p">:</span>
+		<span class="n">info</span> <span class="o">=</span> <span class="n">extractT1FontInfo</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+	<span class="n">ufoWriter</span><span class="o">.</span><span class="n">writeInfo</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+	<span class="k">print</span> <span class="n">readGlyphConstructions</span><span class="p">()</span>
+	
+	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">RoboFab 599 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Erik van Blokland, Tal Leming, Just van Rossum.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

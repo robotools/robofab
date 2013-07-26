@@ -1,5 +1,5 @@
 =======
-Objects
+objects
 =======
 
 .. py:module:: robofab.objects

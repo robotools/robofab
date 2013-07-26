@@ -1,5 +1,5 @@
 ====
-Pens
+pens
 ====
 
 .. py:module:: robofab.pens

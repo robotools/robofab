@@ -1,5 +1,5 @@
 =====
-Tools
+tools
 =====
 
 .. automodule:: robofab.tools

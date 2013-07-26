@@ -1,5 +1,5 @@
 =========
-Interface
+interface
 =========
 
 .. automodule:: robofab.interface

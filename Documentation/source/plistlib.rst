@@ -2,5 +2,7 @@
 plistlib
 ========
 
-.. automodule:: robofab.plistlib
+.. 
+
+automodule:: robofab.plistlib
    :members:

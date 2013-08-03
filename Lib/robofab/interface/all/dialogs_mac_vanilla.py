@@ -12,7 +12,7 @@ __all__ = [
     "AskYesNoCancel",
     "FindGlyph",
     "GetFile",
-    "GetFileOrFolder", 
+    "GetFileOrFolder",
     "GetFolder",
     "Message",
     "OneList",
@@ -27,22 +27,22 @@ __all__ = [
 
 class _ModalWindow(vanilla.Window):
     
-   nsWindowLevel = NSModalPanelWindowLevel 
+    nsWindowLevel = NSModalPanelWindowLevel 
     
-   def __init__(self, *args, **kwargs):
-       super(_ModalWindow, self).__init__(*args, **kwargs)
-       self._window.standardWindowButton_(NSWindowCloseButton).setHidden_(True)        
-       self._window.standardWindowButton_(NSWindowZoomButton).setHidden_(True)
-       self._window.standardWindowButton_(NSWindowMiniaturizeButton).setHidden_(True)
+    def __init__(self, *args, **kwargs):
+        super(_ModalWindow, self).__init__(*args, **kwargs)
+        self._window.standardWindowButton_(NSWindowCloseButton).setHidden_(True)
+        self._window.standardWindowButton_(NSWindowZoomButton).setHidden_(True)
+        self._window.standardWindowButton_(NSWindowMiniaturizeButton).setHidden_(True)
     
-   def open(self):
-       super(_ModalWindow, self).open()
-       self.center()
-       NSApp().runModalForWindow_(self._window)
+    def open(self):
+        super(_ModalWindow, self).open()
+        self.center()
+        NSApp().runModalForWindow_(self._window)
         
-   def windowWillClose_(self, notification):
-       super(_ModalWindow, self).windowWillClose_(notification)
-       NSApp().stopModal()
+    def windowWillClose_(self, notification):
+        super(_ModalWindow, self).windowWillClose_(notification)
+        NSApp().stopModal()
 
 
 class _baseWindowController(object):
@@ -52,30 +52,30 @@ class _baseWindowController(object):
         
         self.w.okButton = vanilla.Button((-70, -30, -15, 20), "OK", callback=self.okCallback, sizeStyle="small")
         self.w.setDefaultButton(self.w.okButton)
-
+        
         self.w.closeButton = vanilla.Button((-150, -30, -80, 20), "Cancel", callback=self.closeCallback, sizeStyle="small")
         self.w.closeButton.bind(".", ["command"])
         self.w.closeButton.bind(unichr(27), [])
     
     def okCallback(self, sender):
         self.w.close()
-
+    
     def closeCallback(self, sender):
         self.w.close()
     
     def get(self):
         raise NotImplementedError
 
-        
+
 class _AskStringController(_baseWindowController):
 
     def __init__(self, message, value, title):
         self.w = _ModalWindow((370, 110), title)
-
+        
         self.w.infoText = vanilla.TextBox((15, 10, -15, 22), message)
         self.w.input = vanilla.EditText((15, 40, -15, 22))
         self.w.input.set(value)
-
+        
         self.setUpBaseWindowBehavior()
         self.w.open()
     
@@ -87,7 +87,7 @@ class _listController(_baseWindowController):
     
     def __init__(self, items, message, title, showSearch=False):
         
-        self.items = items 
+        self.items = items
         
         self.w = _ModalWindow((350, 300), title)
         y = 10
@@ -116,7 +116,7 @@ class _listController(_baseWindowController):
             return self.w.itemList[index]
         return None
 
-    
+
 def AskString(message, value='', title='RoboFab'):
     """
         AskString Dialog
@@ -127,7 +127,7 @@ def AskString(message, value='', title='RoboFab'):
     """
     w = _AskStringController(message, value, title)
     return w.get()
-    
+
 def AskYesNoCancel(message, title='RoboFab', default=0, informativeText=""):
     """
         AskYesNoCancel Dialog
@@ -181,7 +181,7 @@ def GetFileOrFolder(message=None, title=None, directory=None, fileName=None, all
 
 def Message(message, title='RoboFab', informativeText=""):
     vanilla.dialogs.message(messageText=message, informativeText=informativeText)
-    
+
 def OneList(items, message="Select an item:", title='RoboFab'):
     w = _listController(items, message, title, showSearch=False)
     return w.get()
@@ -189,7 +189,7 @@ def OneList(items, message="Select an item:", title='RoboFab'):
 def PutFile(message=None, fileName=None):
     return vanilla.dialogs.putFile(messageText=message, fileName=fileName)
 
-def SearchList(list, message="Select an item:", title='RoboFab'):    
+def SearchList(list, message="Select an item:", title='RoboFab'):
     w = _listController(list, message, title, showSearch=True)
     return w.get()
 
@@ -243,7 +243,7 @@ class ProgressBar(object):
     def close(self):
         self.w.progress.stop()
         self.w.close()
-        
+    
     def getCurrentTick(self):
         return self.w.progress.get()
     
@@ -256,7 +256,7 @@ class ProgressBar(object):
             self.w.progress.increment()
         else:
             self.w.progress.set(tickValue)
-            
+    
 
 if __name__ == "__main__":
     pass

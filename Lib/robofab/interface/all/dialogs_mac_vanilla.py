@@ -4,7 +4,7 @@
 
 """
 
-import vanilla
+import vanilla.dialogs
 from AppKit import NSApp, NSModalPanelWindowLevel, NSWindowCloseButton, NSWindowZoomButton, NSWindowMiniaturizeButton
 
 __all__ = [
@@ -141,7 +141,6 @@ def AskYesNoCancel(message, title='RoboFab', default=0, informativeText=""):
 
         * may not be supported everywhere
     """
-    import vanilla.dialogs
     return vanilla.dialogs.askYesNoCancel(messageText=message, informativeText=informativeText)
 
 def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):

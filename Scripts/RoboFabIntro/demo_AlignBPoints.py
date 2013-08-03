@@ -41,7 +41,7 @@ if len(sel) != 0:
 			cY = int(round((minY + maxY)/2))
 			
 			#set the undo
-			fl.SetUndo()
+			#fl.SetUndo()
 			
 			#determine what the user wants to do
 			noY = False

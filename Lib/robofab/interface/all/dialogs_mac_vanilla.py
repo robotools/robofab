@@ -183,9 +183,10 @@ def GetFileOrFolder(message=None, title=None, directory=None, fileName=None, all
 def Message(message, title='RoboFab', informativeText=""):
     vanilla.dialogs.message(messageText=message, informativeText=informativeText)
     
-def OneList(list, message="Select an item:", title='RoboFab'):
-    raise NotImplementedError
-    
+def OneList(items, message="Select an item:", title='RoboFab'):
+    w = _listController(items, message, title, showSearch=False)
+    return w.get()
+
 def PutFile(message=None, fileName=None):
     return vanilla.dialogs.putFile(messageText=message, fileName=fileName)
 

@@ -13,7 +13,10 @@ selected = SelectGlyph(font)
 # make sure that we are not trying add the current glyph to itself
 if selected.name != glyph.name:
 	# preserve the current state
-	#fl.SetUndo()
+	try:
+		fl.SetUndo()
+	except:
+		pass
 	# add the selected glyph to the current glyph
 	glyph.appendGlyph(selected)
 	# always update the glyph!

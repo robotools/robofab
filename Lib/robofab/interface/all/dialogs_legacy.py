@@ -514,7 +514,7 @@ def TwoChecks(title_1="One",  title_2="Two", value1=1, value2=1, title='RoboFab'
 	else:
 		_raisePlatformError('TwoChecks')
 	c1 = tc.check1
-	c2 = tc.check2	
+	c2 = tc.check2
 	if c1 == 1 and c2 == 0:
 		return 1
 	elif c1 == 0 and c2 == 1:

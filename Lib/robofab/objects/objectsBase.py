@@ -1977,7 +1977,7 @@ class BaseContour(RBaseObject):
 			# add the last point to the beginning and skip the move
 			if segmentType == MOVE and (segment.onCurve.x, segment.onCurve.y) == (lastOn.x, lastOn.y):
 				point = self.segments[-1].onCurve
-				name = getattr(point, 'name', None)
+				name = getattr(segment.onCurve, 'name', None)
 				pen.addPoint((point.x, point.y), point.type, smooth=self.segments[-1].smooth, name=name)
 				didLastOn = True
 				continue

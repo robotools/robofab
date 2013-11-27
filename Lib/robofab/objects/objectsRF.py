@@ -1033,7 +1033,7 @@ class RPoint(BasePoint):
 		self._type = pointType
 		self._x = x
 		self._y = y
-		self._name = None
+		self._name = name
 		
 	def _get_x(self):
 		return self._x

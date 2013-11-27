@@ -54,7 +54,7 @@ class RFUFOPointPen(BasePointToSegmentPen):
 			# since it is being replaced by a move
 			if segmentType == 'line':
 				del segments[-1]
-		# construct a move segment and apply it to the contou if we aren't dealing with a qcurve
+		# construct a move segment and apply it to the contour if we aren't dealing with a qcurve
 		segment = RSegment()
 		segment.setParent(contour)
 		segment.smooth = smooth
@@ -64,7 +64,7 @@ class RFUFOPointPen(BasePointToSegmentPen):
 		contour.segments.append(segment)
 		# do the rest of the segments
 		for segmentType, points in segments:
-			points = [pt for pt, smooth, name, kwargs in points]
+			points = [(pt, name) for pt, smooth, name, kwargs in points]
 			if segmentType == "line":
 				assert len(points) == 1
 				sType = LINE
@@ -80,17 +80,19 @@ class RFUFOPointPen(BasePointToSegmentPen):
 			rPoints = []
 			# handle the offCurves
 			for point in points[:-1]:
+				point, name = point
 				rPoint = RPoint(x=point[0], y=point[1], pointType=OFFCURVE, name=name)
 				rPoint.setParent(segment)
 				rPoints.append(rPoint)
 			# now the onCurve
-			point = points[-1]
+			point, name = points[-1]
 			rPoint = RPoint(x=point[0], y=point[1], pointType=sType, name=name)
 			rPoint.setParent(segment)
 			rPoints.append(rPoint)
 			# apply them to the segment
 			segment.points = rPoints
 			contour.segments.append(segment)
+		contour.segments[-1].points[-1].name = None
 		self.glyph.contours.append(contour)
 		
 	def addComponent(self, glyphName, transform):

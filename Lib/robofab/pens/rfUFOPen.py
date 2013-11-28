@@ -92,7 +92,8 @@ class RFUFOPointPen(BasePointToSegmentPen):
 			# apply them to the segment
 			segment.points = rPoints
 			contour.segments.append(segment)
-		contour.segments[-1].points[-1].name = None
+		if contour.segments[-1].type == "curve":
+			contour.segments[-1].points[-1].name = None
 		self.glyph.contours.append(contour)
 		
 	def addComponent(self, glyphName, transform):

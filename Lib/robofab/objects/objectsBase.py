@@ -4,16 +4,17 @@ a series of classes that deal with fonts, glyphs,
 contours and related things.
 
 Unified Font Objects are:
+
 - platform independent
 - application independent
 
 About Object Inheritance:
-objectsFL and objectsRF objects inherit
+``objectsFL`` and ``objectsRF`` objects inherit
 methods and attributes from these objects.
 In other words, if it is in here, you can
-do it with the objectsFL and objectsRF.
-"""
+do it with the ``objectsFL`` and ``objectsRF``.
 
+"""
 
 from __future__ import generators
 from __future__ import division
@@ -79,7 +80,7 @@ class BasePostScriptHintValues(object):
 				setattr(self, name, self._attributeNames[name]['default'])
 		
 	def getParent(self):
-		"""this method will be overwritten with a weakref if there is a parent."""
+		"""This method will be overwritten with a weakref if there is a parent."""
 		return None
 
 	def setParent(self, parent):
@@ -96,7 +97,7 @@ class BasePostScriptHintValues(object):
 		return empty
 
 	def clear(self):
-		"""Set all attributes to default / empty"""
+		"""Set all attributes to default / empty."""
 		for name in self._attributeNames:
 			setattr(self, name, self._attributeNames[name]['default'])
 		
@@ -176,8 +177,8 @@ class BasePostScriptGlyphHintValues(BasePostScriptHintValues):
 		return "<PostScript Glyph Hints Values>"
 
 	def round(self):
-		"""Round the values to reasonable values.
-			- stems are rounded to int
+		"""Round the values to reasonable values. 
+		Stems are rounded to int.
 		"""
 		for name, values in self._attributeNames.items():
 			v = getattr(self, name)

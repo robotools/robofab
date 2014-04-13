@@ -10,16 +10,15 @@ These are chapters about scripting in Python, where and how to make your code an
 More step by step sections
 --------------------------
 
-- 01: Editors: Where to use RoboFab, where to edit.
-- 02: Basic Python: Some rules, syntax.
-- 03: Font object, Info object: Introduction to Font and Info objects, with examples.
-- 04: Glyph object and Pen object: Introduction to Glyph and Pen objects
-- 05: Kerning object and glyph building: Introduction to the Kerning object, and a closer look at building glyphs from parts.
-- 06: Interpolation: Scripting for interpolation
-- 07: Production: Scripting for production
-- 08: NoneLab: Adventures in NoneLab, scripting outside the box
-- 09: Dialog Kit: Interface toolkit for FontLab
-- 10: Printable manual: This documentation, formatted for print, all in one file.
+- :doc:`01: Editors <editors>`: Where to use RoboFab, where to edit.
+- :doc:`02: Basic Python <python_basics>`: Some rules, syntax.
+- :doc:`03: Font object, Info object <font_info>`: Introduction to Font and Info objects, with examples.
+- :doc:`04: Glyph object and Pen object <glyph_contour_pen>`: Introduction to Glyph and Pen objects
+- :doc:`05: Kerning object and glyph building <kerning_building_glyphs>`: Introduction to the Kerning object, and a closer look at building glyphs from parts.
+- :doc:`06: Interpolation <interpolation>`: Scripting for interpolation
+- :doc:`07: Production <production>`: Scripting for production
+- :doc:`08: NoneLab <nonelab>`: Adventures in NoneLab, scripting outside the box
+- :doc:`09: Dialog Kit <DialogKit>`: Interface toolkit for FontLab
 
 --------------------
 Additional resources
@@ -27,7 +26,7 @@ Additional resources
 
 The `Unified Font Object Specification site`_ featuring the UFO 2 extension.
 
-Find dozens of useful packages at the `TypeSupply.com public code repository`_, for instance Dialog Kit, Defcon, UFO2DK and many more.
+Find dozens of useful packages at the `TypeSupply.com public code repository`_, for instance Dialog Kit, Defcon, UFO2FDK and many more.
 
 .. _Unified Font Object Specification site : http://unifiedfontobject.org/
 .. _TypeSupply.com public code repository : http://code.typesupply.com/

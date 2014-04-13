@@ -6,7 +6,7 @@ Getting Started with RoboFab
 Installing
 ----------
 
-Installing RoboFab is pretty straightforward as installing Python libraries go. But considering this might be the first time you do this, here are a couple of things to pay attention to. First, have a look at the installation notes.
+Installing RoboFab is pretty straightforward as installing Python libraries go. But considering this might be the first time you do this, here are a couple of things to pay attention to. First, have a look at the :doc:`installation notes <install>`.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Some remarks for FontLab 4.6 users on Mac OSX
@@ -19,10 +19,10 @@ Some remarks for FontLab 4.6 users on Mac OSX
 FontLab Macros
 --------------
 
-RoboFab has some example scripts that show how it can be used in FontLab. In the RoboFab folder, there's a folder named "Scripts". In it are two folders that you can drag to FontLab's "Macros" folder. After restarting the application the "Utils" and "RoboFabIntro" folder have been added to the macro list.
+RoboFab has some example scripts that show how it can be used in FontLab. In the RoboFab folder, there's a folder named ``Scripts``. In it are two folders that you can drag to FontLab's ``Macros`` folder. After restarting the application the ``Utils`` and ``RoboFabIntro`` folder will have been added to the macro list.
 
 ^^^^^^^^^^
 Then what?
 ^^^^^^^^^^
 
-It depends on your proficiency in scripting and operating fonteditors like FontLab. Some `notes on scripting`_ are available in the how to section. There's `this manual`_ which offers documentation, examples and background. Help with operating your fonteditor of choice is not available from this site or from the RoboFab developers. Read the manual.
+It depends on your proficiency in scripting and operating fonteditors like FontLab. Some :doc:`notes on scripting <../docs_howtos/scripting>` are available in the how to section. There's :doc:`this manual <../index>` which offers documentation, examples and background. Help with operating your font editor of choice is not available from this site or from the RoboFab developers. Read the manual.

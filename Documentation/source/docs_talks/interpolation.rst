@@ -6,25 +6,25 @@ Scripting for interpolation
 Interpolation
 -------------
 
-In this session we're going to look at scripting and interpolation. Building an interpolation system has 2 phases: preparing it and using it. Though this isn't necessarily a design / production difference. In the first phase you need to make sure all the data is set up properly, the compatible glyphs in each master, matching contours in each glyph, path directions, start point locations etc. This can be a lot of work, but RoboFab can assist by reporting the problems. The second phase, using the interpolation comes when everything works and rather than look for problems (there shouldn't be any) you just want to generate all the weights as fast as possible and get on with it proofing and other things.
+In this session we're going to look at scripting and interpolation. Building an interpolation system has 2 phases: **preparing** it and **using** it. Though this isn't necessarily a design / production difference. In the first phase you need to make sure all the data is set up properly, the compatible glyphs in each master, matching contours in each glyph, path directions, start point locations etc. This can be a lot of work, but RoboFab can assist by reporting the problems. The second phase, using the interpolation comes when everything works and rather than look for problems (there shouldn't be any) you just want to generate all the weights as fast as possible and get on with it proofing and other things.
 
 -----------
 Terminology
 -----------
 
-The glyphs (or whole fonts) that are used in an interpolation system are usually called masters. The interpolation factor is a number between ``0`` and ``1``. With ``factor=0`` the result will be identical to the first master (in this case glyph "A"), and as you can probably guess, with ``factor=1`` the result will match glyph "B". ``factor=0.5`` means the resulting shape will be exactly between the two masters. The factor can actually also be outside the ``0``, ``1`` range - in that case we speak of extrapolation. The particular change in a glyph when interpolating from one master to another is called an **axis**.
+The glyphs (or whole fonts) that are used in an interpolation system are usually called **masters**. The **interpolation** factor is a number between ``0`` and ``1``. With ``factor=0`` the result will be identical to the first master (in this case glyph ``A``), and as you can probably guess, with ``factor=1`` the result will match glyph ``B``. ``factor=0.5`` means the resulting shape will be exactly between the two masters. The factor can actually also be outside the ``0``, ``1`` range -- in that case we speak of **extrapolation**. The particular change in a glyph when interpolating from one master to another is called an **axis**.
 
 ------------------------------
 Why use RoboFab interpolation?
 ------------------------------
 
-All the alternatives come with strings attached. FontLab's Blend tool forces points in contours which don't match. This is handy if you're looking for a quick fix, but it can more or less destroy your masters. Alternatively you can use the Multiple Master tools, but this requires all of your masters to be in the same file and drawing this way can be tricky. Since interpolation is a useful process in typedesign, and a good candidate for scripting we decided to include solid interpolation support in Robofab.
+All the alternatives come with strings attached. FontLab's **Blend** tool forces points in contours which don't match. This is handy if you're looking for a quick fix, but it can more or less destroy your masters. Alternatively you can use the Multiple Master tools, but this requires all of your masters to be in the same file and drawing this way can be tricky. Since interpolation is a useful process in typedesign, and a good candidate for scripting we decided to include solid interpolation support in Robofab.
 
 --------------------
 Interpolating glyphs
 --------------------
 
-In the first example we're going to interpolate two glyphs in the same font. This can be useful in the design stage, for sketching or testing. The result is stored in a third glyph. Note: if you want to run this example in FontLab, open a new, empty font. Use the circle tool to draw one circle in "A", and again in "B". Make sure these are different enough to tell what's going on.::
+In the first example we're going to interpolate two glyphs in the same font. This can be useful in the design stage, for sketching or testing. The result is stored in a third glyph. Note: if you want to run this example in FontLab, open a new, empty font. Use the circle tool to draw one circle in ``A``, and again in ``B``. Make sure these are different enough to tell what's going on::
 
     # robothon06
     # interpolate two glyphs in the same font
@@ -34,30 +34,30 @@ In the first example we're going to interpolate two glyphs in the same font. Thi
     f["C"].interpolate(factor, f["A"], f["B"])
     f["C"].update()
 
-You see there are 3 glyphs involved: the two masters (``A`` and ``B``) and a new glyph which is used to store the results. In this case the new glyph is stored as ``C``, but it can be helpful to give it a more descriptive name. This is not very PostScript-like, but chances are these glyphs won't make it to production anyway, so it's not a problem. Notice that ``interpolate()`` is a method of the Glyph object. The Font object has an interpolate method as well, more about that later. The obligatory link to the relevant RoboFab documentation.
+You see there are 3 glyphs involved: the two masters (``A`` and ``B``) and a new glyph which is used to store the results. In this case the new glyph is stored as ``C``, but it can be helpful to give it a more descriptive name. This is not very PostScript-like, but chances are these glyphs won't make it to production anyway, so it's not a problem. Notice that ``interpolate()`` is a method of the ``Glyph`` object. The ``Font`` object has an interpolate method as well, more about that later. The :doc:`obligatory link <../docs_howtos/interpolate>` to the relevant RoboFab documentation.
 
-Here's the same script, but now it generates a range of interpolated glyphs, each with a better name which tells you which interpolation factor was used:
+Here's the same script, but now it generates a range of interpolated glyphs, each with a better name which tells you which interpolation factor was used::
 
->>> # robothon06
->>> # interpolate two glyphs in the same font a bunch of times
->>> from robofab.world import CurrentFont
->>> f = CurrentFont()
->>> for i in range(0, 10):
->>>     factor = i*.1
->>>     name = "result_%f"%factor
->>>     print "interpolating", name
->>>     f[name].interpolate(factor, f["A"], f["B"])
->>> f.update()
-interpolating result_0.000000
-interpolating result_0.100000
-interpolating result_0.200000
-interpolating result_0.300000
-interpolating result_0.400000
-interpolating result_0.500000
-interpolating result_0.600000
-interpolating result_0.700000
-interpolating result_0.800000
-interpolating result_0.900000
+    >>> # robothon06
+    >>> # interpolate two glyphs in the same font a bunch of times
+    >>> from robofab.world import CurrentFont
+    >>> f = CurrentFont()
+    >>> for i in range(0, 10):
+    >>>     factor = i*.1
+    >>>     name = "result_%f"%factor
+    >>>     print "interpolating", name
+    >>>     f[name].interpolate(factor, f["A"], f["B"])
+    >>> f.update()
+    interpolating result_0.000000
+    interpolating result_0.100000
+    interpolating result_0.200000
+    interpolating result_0.300000
+    interpolating result_0.400000
+    interpolating result_0.500000
+    interpolating result_0.600000
+    interpolating result_0.700000
+    interpolating result_0.800000
+    interpolating result_0.900000
 
 Here you see a range of resulting glyphs as they could be generated by the script above.
 
@@ -65,107 +65,111 @@ Here you see a range of resulting glyphs as they could be generated by the scrip
 Rounding errors
 ---------------
 
-When you interpolate in FontLab you need to take into account that the results will be rounded off. Coordinates can only consist of whole numbers, i,e, ``101`` or ``102`` but not ``101.3290`` There is a nice solution for working with floating point precision glyphs using RoboFab. Here's a brief introduction:
+When you interpolate in FontLab you need to take into account that the results will be rounded off. Coordinates can only consist of whole numbers, i,e, ``101`` or ``102`` but not ``101.3290`` There is a nice solution for working with floating point precision glyphs using RoboFab. Here's a brief introduction::
 
->>> # robothon06
->>> from robofab.world import CurrentFont
->>> # We need to import a class with a different
->>> # implementation for the glyph object.
->>> # It looks a bit odd, but this is how it is done
->>> from robofab.objects.objectsRF import RGlyph as _RGlyph
->>> f = CurrentFont()
->>> # pick two compatible glyphs as masters
->>> m1 = f["A"]
->>> m2 = f["B"]
->>> # make a new glyph object from this other glyph class
->>> g = _RGlyph()
->>> # interpolation factor which is  bound to make floats
->>> oddFactor = 0.2382345
->>> # go!
->>> g.interpolate(oddFactor, m1, m2)
->>> # let's have a look at the raw results
->>> for contour in g:
->>>     for pt in contour.points:
->>>         print "float", pt.x, pt.y
->>> # a glyph can round itself off:
->>> g.round()
->>> # and then it looks like integers again
->>> for contour in g:
->>>     for pt in contour.points:
->>>         print "integer", pt.x, pt.y
-float glyph 285.07676 114.59806
-float glyph 641.51202 285.66048
-float glyph 452.009385 679.5407
-float glyph 95.96647 508.47828
-integer glyph 285 115
-integer glyph 642 286
-integer glyph 452 680
-integer glyph 96 508
+    >>> # robothon06
+    >>> from robofab.world import CurrentFont
+    >>> # We need to import a class with a different
+    >>> # implementation for the glyph object.
+    >>> # It looks a bit odd, but this is how it is done
+    >>> from robofab.objects.objectsRF import RGlyph as _RGlyph
+    >>> f = CurrentFont()
+    >>> # pick two compatible glyphs as masters
+    >>> m1 = f["A"]
+    >>> m2 = f["B"]
+    >>> # make a new glyph object from this other glyph class
+    >>> g = _RGlyph()
+    >>> # interpolation factor which is  bound to make floats
+    >>> oddFactor = 0.2382345
+    >>> # go!
+    >>> g.interpolate(oddFactor, m1, m2)
+    >>> # let's have a look at the raw results
+    >>> for contour in g:
+    >>>     for pt in contour.points:
+    >>>         print "float", pt.x, pt.y
+    >>> # a glyph can round itself off:
+    >>> g.round()
+    >>> # and then it looks like integers again
+    >>> for contour in g:
+    >>>     for pt in contour.points:
+    >>>         print "integer", pt.x, pt.y
+    float glyph 285.07676 114.59806
+    float glyph 641.51202 285.66048
+    float glyph 452.009385 679.5407
+    float glyph 95.96647 508.47828
+    integer glyph 285 115
+    integer glyph 642 286
+    integer glyph 452 680
+    integer glyph 96 508
 
-Use ``font.insertGlyph(myOrphanFloatGlyph, name="someName")`` if you want to insert the glyph back into a real font. Inserting causes the glyph points to be rounded off again. In a similar way you can make a font object which does not refer to an open FontLab font. In such a font you can store intermediate floating point glyphs of interpolations. Note: the ``"as"`` parameter in ``insertGlyph`` changed to ``"name"`` as of robofab svn version 200. As of python 2.6 ``"as"`` is now a reserved keyword.
+Use ``font.insertGlyph(myOrphanFloatGlyph, name="someName")`` if you want to insert the glyph back into a real font. Inserting causes the glyph points to be rounded off again. In a similar way you can make a font object which does not refer to an open FontLab font. In such a font you can store intermediate floating point glyphs of interpolations.
+
+.. note::
+
+    The ``as`` parameter in ``insertGlyph`` changed to ``name`` as of RoboFab svn version 200. As of python 2.6 ``as`` is now a reserved keyword.
 
 --------------
 Making it work
 --------------
 
-The following table shows the problems glyphs can have when interpolating. Compatible means that the data can interpolate. Functioning means that the result actually works as a glyph. You'll see there are several combinations where glyphs are compatible, but the interpolation is not functional.
+The following table shows the problems glyphs can have when interpolating. **Compatible** means that the data can interpolate. **Functioning** means that the result actually works as a glyph. You'll see there are several combinations where glyphs are compatible, but the interpolation is not functional.
 
 +----------------+---------------------------------------+---------------------------------------+
 | masters        | result                                | fix                                   |
 +================+=======================================+=======================================+
-| -              | Compatible and functioning. Same      | -                                     |
+| [img]          | Compatible and functioning. Same      | --                                    |
 |                | number of points, same direction,     |                                       |
 |                | same start point location.            |                                       |
 +----------------+---------------------------------------+---------------------------------------+
-| -              | Unusual, but compatible and           | -                                     |
+| [img]          | Unusual, but compatible and           | --                                    |
 |                | functioning. The number of off-curve  |                                       |
 |                | points differ, but these are assumed  |                                       |
 |                | to be on top of the on-curve when     |                                       |
 |                | missing. Note: this only works for    |                                       |
 |                | segments with 2 off-curve points.     |                                       |
 +----------------+---------------------------------------+---------------------------------------+
-| -              | Compatible and functioning. Same      | -                                     |
+| [img]          | Compatible and functioning. Same      | --                                    |
 |                | number of points, same direction,     |                                       |
 |                | same start point location, same       |                                       |
 |                | contour order.                        |                                       |
 +----------------+---------------------------------------+---------------------------------------+
-| -              | Incompatible and not functioning:     | Edit the masters.                     |
+| [img]          | Incompatible and not functioning:     | Edit the masters.                     |
 |                | different number of points.           |                                       |
 +----------------+---------------------------------------+---------------------------------------+
-| -              | Compatible but not functioning:       | apply ``c.autoStartSegment()``        |
+| [img]          | Compatible but not functioning:       | apply ``c.autoStartSegment()``        |
 |                | start point is in the wrong place.    | on each contour, otherwise            |
 |                |                                       | edit the masters.                     |
 +----------------+---------------------------------------+---------------------------------------+
-| -              | Incompatible and not functioning:     | Edit the masters.                     |
+| [img]          | Incompatible and not functioning:     | Edit the masters.                     |
 |                | different number of contours          |                                       |
 +----------------+---------------------------------------+---------------------------------------+
-| -              | Compatible but not functioning: one   | apply ``glyph.correctDirection()``,   |
+| [img]          | Compatible but not functioning: one   | apply ``glyph.correctDirection()``,   |
 |                | of the contours is turning in the     | otherwise edit the masters.           |
 |                | wrong direction.                      |                                       |
 +----------------+---------------------------------------+---------------------------------------+
-| -              | Compatible but not functioning.       | apply ``glyph.autoContourOrder()``,   |
-| -              | Contour order: the paths are in the   | otherwise edit the masters.           |
-| -              | wrong order.                          |                                       |
+| [img]          | Compatible but not functioning.       | apply ``glyph.autoContourOrder()``,   |
+|                | Contour order: the paths are in the   | otherwise edit the masters.           |
+|                | wrong order.                          |                                       |
 +----------------+---------------------------------------+---------------------------------------+
 
-Here are some snippets which can help prepare your glyphs. Suppose your test font has two incompatible glyphs "A" and "B".
+Here are some snippets which can help prepare your glyphs. Suppose your test font has two incompatible glyphs ``A`` and ``B``::
 
->>> # see if "A" and "B" can interpolate
->>> from robofab.world import CurrentFont
->>> f = CurrentFont()
->>> a = f["a"]
->>> print a.isCompatible(f["b"], False)
-False
+    >>> # see if "A" and "B" can interpolate
+    >>> from robofab.world import CurrentFont
+    >>> f = CurrentFont()
+    >>> a = f["a"]
+    >>> print a.isCompatible(f["b"], False)
+    False
 
-So, there's the answer in code, they can't interpolate. Suppose the glyphs were in fact compatible, the answer will read True. The ``isCompatible()`` method takes another parameter,
+So, there's the answer in code, they can't interpolate. Suppose the glyphs were in fact compatible, the answer will read True. The ``isCompatible()`` method takes another parameter::
 
->>> # see if "A" and "B" can interpolate
->>> # and find out what's wrong if you can
->>> from robofab.world import CurrentFont
->>> f = CurrentFont()
->>> a = f["a"]
->>> print a.isCompatible(f["b"], True)
-(False, ["Fatal error: contour 1 in glyph A and glyph B don't have the same number of segments."])
+    >>> # see if "A" and "B" can interpolate
+    >>> # and find out what's wrong if you can
+    >>> from robofab.world import CurrentFont
+    >>> f = CurrentFont()
+    >>> a = f["a"]
+    >>> print a.isCompatible(f["b"], True)
+    (False, ["Fatal error: contour 1 in glyph A and glyph B don't have the same number of segments."])
 
 Apart from the stunted grammar, this will tell you more or less what's wrong with the two glyphs. Now you have something to fix. Another frequently found error is this::
 
@@ -173,7 +177,7 @@ Apart from the stunted grammar, this will tell you more or less what's wrong wit
 
 More subtle errors happen when one of the contours in one of the masters turns in the wrong direction, or the start point of the contour is in a different place. These won't trip incompatibility errors like ones above, you have to verify the results.
 
-The following example shows methods which can help to make glyph more compatible. These methods use rules to arrange the starting point, the order of the contours and the direction of the contours. It is likely, but not garanteed, that other masters of your interpolation will respond the same way to these rules. For instance, autoStartSegment() moves the starting point of a contour to the most, bottom left point on the contour. If all your masters share the same structure, this will make sense. But if the masters are radically different on purpose, these rules won't produce the right results and you have to prepare the glyphs manually.::
+The following example shows methods which can help to make glyph more compatible. These methods use rules to arrange the starting point, the order of the contours and the direction of the contours. It is likely, but not garanteed, that other masters of your interpolation will respond the same way to these rules. For instance, ``autoStartSegment()`` moves the starting point of a contour to the most, bottom left point on the contour. If all your masters share the same structure, this will make sense. But if the masters are radically different on purpose, these rules won't produce the right results and you have to prepare the glyphs manually::
 
     # robothon06
     # prepare glyph for interpolation
@@ -193,7 +197,7 @@ The following example shows methods which can help to make glyph more compatible
 Interpolating fonts
 -------------------
 
-The following script interpolates two fonts and stores the results in a third. It also smoothly introduces a couple of simple user interface thingies: ``AskString`` and ``SelectFont``. Have a look at the how to page on the simple dialogs stuff. ``AskString()`` presents a small dialogbox with a prompt and a text input box. It will return the value you typed in, or None if you didn't. Which kinda implies you need to check whether the input makes sense before continuing, but that's a different project. ``SelectFont()`` gives you simple dialog with a list of the currently open fonts. When you select a fontname, the object for that font is returned. If you don't select anything, ``None`` is returned.::
+The following script interpolates two fonts and stores the results in a third. It also smoothly introduces a couple of simple user interface thingies: ``AskString`` and ``SelectFont``. Have a look at the :doc:`how to page on the simple dialogs stuff <../docs_intro/dialogs>`. ``AskString()`` presents a small dialogbox with a prompt and a text input box. It will return the value you typed in, or None if you didn't. Which kinda implies you need to check whether the input makes sense before continuing, but that's a different project. ``SelectFont()`` gives you simple dialog with a list of the currently open fonts. When you select a font name, the object for that font is returned. If you don't select anything, ``None`` is returned::
 
     # robothon06
     # interpolate two fonts
@@ -217,7 +221,7 @@ This script asks you to select 2 fonts, then it asks you for an interpolation fa
 Interpolate Kerning
 -------------------
 
-In the example above the kerning is interpolated seperately, the Kerning object has its own ``interpolate()`` method. When a kernpair exists in both masters, the resulting pair will be the expected interpolated value. If a pair is missing from one, the interpolation will assume it has value ``0``. This only works for flat, non-class kerning. Interpolating class based kerning with exceptions requires more attention. Some Robofab developers have this working though.
+In the example above the kerning is interpolated separately, the Kerning object has its own ``interpolate()`` method. When a kernpair exists in both masters, the resulting pair will be the expected interpolated value. If a pair is missing from one, the interpolation will assume it has value ``0``. This only works for flat, non-class kerning. Interpolating class based kerning with exceptions requires more attention. Some Robofab developers have this working though.
 
 -------------------
 GlyphMath (aside 1)
@@ -228,28 +232,29 @@ If they're compatible, Robofab Glyph objects can be used in Python math expressi
 +-------------+---------------------------------------------------------+
 | GlyphMath   | operation                                               |
 +=============+=========================================================+
-|             | addition: the coordinates of each point are added       |
+| [img]       | **addition**: the coordinates of each point are added   |
 +-------------+---------------------------------------------------------+
-|             | subtraction: the coordinates of each point are          |
+| [img]       | **subtraction**: the coordinates of each point are      |
 |             | subtracted. Note that though the glyph looks            |
 |             | unrecognisable, all points are still there.             |
 |             | Literally the difference between the two glyphs.        |
 +-------------+---------------------------------------------------------+
-|             | multiplication: scaling the glyph up. When you          |
+| [img]       | **multiplication**: scaling the glyph up. When you      |
 |             | multiply with a tuple like ``(1.3, 1.05)`` the first    |
 |             | value is used to multiply the ``x`` coordinates, the    |
 |             | second value is used for the ``y`` coordinates.         |
 +-------------+---------------------------------------------------------+
-|             | division: scaling the glyph down. When you divide       |
+| [img]       | **division**: scaling the glyph down. When you divide   |
 |             | with a tuple like ``(30, 29)`` the first value is used  |
 |             | to divide the ``x`` coordinates, the second value is    |
 |             | used for the ``y`` coordinates.                         |
 +-------------+---------------------------------------------------------+
-|             | Combination of operations to make a real                |
+| [img]       | Combination of operations to make a real                |
 |             | interpolation.                                          |
 +-------------+---------------------------------------------------------+
 
-::
+.. code::
+
     # glyphmath example, using glyphs in math
     # in the test font: two interpolatable, different glyphs
     # on positions A and B.
@@ -263,10 +268,11 @@ If they're compatible, Robofab Glyph objects can be used in Python math expressi
      
     # multiply works as scaling up
     d = a * 2
-    #or
+    # or
     d = 2 * a
      
-    # note: as of robofab svn version 200, the "as" argument in insertGlyph has changed to "name"
+    # note: as of robofab svn version 200,
+    # the "as" argument in insertGlyph has changed to "name"
     f.insertGlyph(d, name="A.A_times_2")
      
     # division works as scaling down
@@ -293,13 +299,15 @@ You can use GlyphMath to create interpolation effects, transplant transformation
 Superpolation (aside 2)
 -----------------------
 
-Shameless commercial: Superpolator is a tool for building complex interpolation systems. It's based on Robofab and doesn't really have a place in this presentation. It doesn't make complex interpolations easier, it makes them possible. But ask Erik afterwards.
+Shameless commercial: `Superpolator`_ is a tool for building complex interpolation systems. It's based on Robofab and doesn't really have a place in this presentation. It doesn't make complex interpolations easier, it makes them possible. But ask Erik afterwards.
+
+.. _Superpolator: http://superpolator.com/
 
 ----------------------
 Advanced Interpolation
 ----------------------
 
-Here are two more advanced examples of interpolation. The first script asks for two master fonts. Then it will generate a list of weights with predefined names and factors. After interpolating, it will close the result font and continue with the next weigt.::
+Here are two more advanced examples of interpolation. The first script asks for two master fonts. Then it will generate a list of weights with predefined names and factors. After interpolating, it will close the result font and continue with the next weight::
 
     # robothon06
     # interpolate two fonts with a series of factors.
@@ -339,7 +347,7 @@ Here are two more advanced examples of interpolation. The first script asks for 
         dst.save(path)
         dst.close()
 
-The next script is a bit tricky, but it can be useful tool in typedesign. Suppose you have a two interpolating masters of different weights. The script interpolates **in horizontal direction** with the heavy weight to increase the stem thickness of the glyph. Then it proceeds to horizontally scale the glyph in such a way that the increase of weight from the interpolation is reduced again. The effect of both operations is a condensed version of the original glyph, but with a comparable stem thickness as the original. If you measure the stems of both masters and enter the values in the script, it can calculate an exact match. Note that the success of this script depends on the quality of the interpolation, and how far you're pushing the limit. From a design point of view you might not even want the condensed to have the same stem thickness. This script won't produce ready-made condensed versions of your typeface, but it can be used to create a starting point for further editing.::
+The next script is a bit tricky, but it can be useful tool in typedesign. Suppose you have a two interpolating masters of different weights. The script interpolates **in horizontal direction** with the heavy weight to increase the stem thickness of the glyph. Then it proceeds to horizontally scale the glyph in such a way that the increase of weight from the interpolation is reduced again. The effect of both operations is a condensed version of the original glyph, but with a comparable stem thickness as the original. If you measure the stems of both masters and enter the values in the script, it can calculate an exact match. Note that the success of this script depends on the quality of the interpolation, and how far you're pushing the limit. From a design point of view you might not even want the condensed to have the same stem thickness. This script won't produce ready-made condensed versions of your typeface, but it can be used to create a starting point for further editing::
 
     # robothon06
     # Get started with a condensed if you have a regular and a bold:

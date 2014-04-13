@@ -17,21 +17,12 @@ Introduction
    docs_intro/download.rst
    docs_intro/install.rst
    docs_intro/gettingstarted.rst
+   docs_intro/ufo.rst
    docs_intro/history.rst
    docs_intro/glossary.rst
    docs_intro/limitations.rst
    docs_intro/links.rst
    docs_intro/credits.rst
-
------
-Tools
------
-
-.. toctree::
-   :maxdepth: 1
-
-   docs_intro/dialogs.rst
-   docs_intro/tools.rst
 
 -----
 Talks
@@ -41,15 +32,15 @@ Talks
    :maxdepth: 1
 
    docs_talks/talks.rst
-   docs_talks/python-basics.rst
-   docs_talks/DialogKit.rst
    docs_talks/editors.rst
+   docs_talks/python_basics.rst
    docs_talks/font_info.rst
    docs_talks/glyph_contour_pen.rst
-   docs_talks/interpolation.rst
    docs_talks/kerning_building_glyphs.rst
-   docs_talks/nonelab.rst
+   docs_talks/interpolation.rst
    docs_talks/production.rst
+   docs_talks/nonelab.rst
+   docs_talks/DialogKit.rst
 
 --------
 How-To's
@@ -97,9 +88,19 @@ Objects
    docs_objects/psHintsGlyph.rst
    docs_objects/psHints.rst
 
---------
-Contents
---------
+-----
+Tools
+-----
+
+.. toctree::
+   :maxdepth: 1
+
+   docs_intro/dialogs.rst
+   docs_intro/tools.rst
+
+---
+API
+---
 
 .. toctree::
    :maxdepth: 1

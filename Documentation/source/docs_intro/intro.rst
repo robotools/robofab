@@ -2,7 +2,7 @@
 RoboFab Intro
 =============
 
-RoboFab is a library of Python code for manipulation and storage of font and glyph related data. RoboFab implements a new font file format, the Unified Font Objects or .ufo for short. UFO is a format for font sources (similar to something like .fog or .vfb) except that UFO is XML based (see Glyph Interchange Format), readable, well documented and easily extended to contain different kinds of data.
+RoboFab is a **library** of Python code for manipulation and storage of font and glyph related data. RoboFab implements a new font file format, the :doc:`Unified Font Objects <ufo>` or .ufo for short. UFO is a format for **font sources** (similar to something like .fog or .vfb) except that UFO is XML based (see :doc:`Glyph Interchange Format <ufo>`), readable, well documented and easily extended to contain different kinds of data.
 
 -----------------
 Long term sources
@@ -20,13 +20,15 @@ RoboFab reads and writes UFO, but it also provides a range of Python objects to 
 RoboFab environments
 --------------------
 
-Parts of RoboFab can be used in FontLab, other parts work outside FontLab, in normal Python interpreters. Some parts work in both. This is a powerful feature of RoboFab, but it can sometimes be a bit confusing. Have a look at the world module for some help in making scripts that work everywhere.
+Parts of RoboFab can be used in FontLab, other parts work outside FontLab, in normal Python interpreters. Some parts work in both. This is a powerful feature of RoboFab, but it can sometimes be a bit confusing. Have a look at :doc:`the world module <../docs_howtos/world>` for some help in making scripts that work everywhere.
 
 ^^^^^^^^^^^^^^^^^^^^^^^
 RoboFab in plain Python
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-After RoboFab is installed you can write plain non-FontLab Python scripts that open, manipulate and save .ufo files. Through the RoboFab objects you have access to all data in the font: names, glyphs, contours, widths, kerning, the lot. Use the objects overview or the objects map to get an idea of what these things can do. Plain Python can be a Python IDE, or a python command line interpreter. RoboFab runs on any Python 2.2.1+ installation, Linux, Unix, Mac OSX, MacOS9, Windows. Python ports to lots of platforms and so does RoboFab.
+After RoboFab is installed you can write plain non-FontLab Python scripts that open, manipulate and save .ufo files. Through the RoboFab :doc:`objects <../docs_objects/objects>` you have access to all data in the font: names, glyphs, contours, widths, kerning, the lot. Use the :doc:`objects overview <../docs_objects/objects>` or the :doc:`objects map <../docs_objects/model>` to get an idea of what these things can do. Plain Python can be a Python IDE, or a python command line interpreter. RoboFab runs on any Python 2.2.1+ installation, Linux, Unix, Mac OSX, MacOS9, Windows. `Python ports to lots of platforms`_ and so does RoboFab.
+
+.. _Python ports to lots of platforms: http://python.org/download/
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 RoboFab in FontLab's Python
@@ -48,7 +50,7 @@ What RoboFab is not..
 Not entirely RoboFog MkII
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-RoboFab is not a port of RoboFog to OSX, nor is it a complete font editor with interfaces, font and glyph windows etc. It is a toolkit that you can use to build your tools with. You can start by using RoboFab to make scripting in FontLab easier. But you can also use RoboFab to build elaborate tools (for instance MetricsMachine) that read and write UFO fonts and work on the data. Other RoboFab based tools are under construction.
+RoboFab is not a port of **RoboFog** to OSX, nor is it a complete font editor with interfaces, font and glyph windows etc. It is a toolkit that you can use to build your tools with. You can start by using RoboFab to make scripting in FontLab easier. But you can also use RoboFab to build elaborate tools (for instance **MetricsMachine**) that read and write UFO fonts and work on the data. Other RoboFab based tools are under construction.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Not entirely RoboFog Compatible
@@ -60,4 +62,4 @@ We've poured all our experience from writing RoboFog into the RoboFab objects. Y
 Where next?
 -----------
 
-First you could download the library and install it. Then you could browse through this documentation and see what the various objects are, what they can do etc. You could have a look at a discussion on scripting.
+First you could :doc:`download` the library and install it. Then you could browse through this documentation and see what the various :doc:`objects <../docs_objects/objects>` are, what they can do etc. You could have a look at :doc:`a discussion on scripting <../docs_howtos/scripting>`.

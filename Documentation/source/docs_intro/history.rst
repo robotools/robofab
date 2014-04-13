@@ -22,9 +22,9 @@ January 8, 2006 - version 1.1.2
 
 RoboFab is now available from a public svn server at ``code.robofab.com``. A couple of fixes and changes were waiting to be checked in. Please look at the svn change log for a detailed list of changes.
 
-- In FontLab, ``AllFonts()`` will return a list of :py:class`RFont` objects for all open font windows. In NoneLab, ``AllFonts`` will raise a ``NonImplementedError``. ``AllFonts()`` can be imported from :py:mod:`robofab.world`. The class magic which would also attempt to count font instances without a FontLab window has been removed.
+- In FontLab, ``AllFonts()`` will return a list of ``robofab.world.RFont`` objects for all open font windows. In NoneLab, ``AllFonts`` will raise a ``NonImplementedError``. ``AllFonts()`` can be imported from ``robofab.world``. The class magic which would also attempt to count font instances without a FontLab window has been removed.
 
-- When exporting to UFO in FontLab, the features are stored in the :py:attr:`font.lib`. The order of the features is now also recorded. When a UFO is imported into FontLab, the features will be inserted in this order. If the order information is not present (as in all UFOs at the moment), the features are imported in alphanetical order like before.
+- When exporting to UFO in FontLab, the features are stored in the ``font.lib``. The order of the features is now also recorded. When a UFO is imported into FontLab, the features will be inserted in this order. If the order information is not present (as in all UFOs at the moment), the features are imported in alphanetical order like before.
 
 - Some updates to URLs in the documentation.
 
@@ -34,7 +34,7 @@ RoboFab is now available from a public svn server at ``code.robofab.com``. A cou
 February 7, 2006 - version 1.1.1
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Some changes in the online documentation. Note these changes are not part of the bundled documentation in the 1.1.1 release.
+Some changes in the **online** documentation. Note these changes are not part of the bundled documentation in the 1.1.1 release.
 
 - The default value for clear in ``font.newGlyph(glyphName, clear=True)``. This value is set to ``False`` in the ``objectsFL`` (FontLab) implementaion, but it is set to True in the NoneLab implementation. The documentation reflected the ``objectsRF`` version which led to confusion. The documentation has been updated. The default value for clear in the ``objectsFL`` implementation has been changed to ``True``.
 

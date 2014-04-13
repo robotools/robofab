@@ -6,7 +6,7 @@ RFont
 Usage
 -----
 
-::
+.. code::
 
     # robofab manual
     # Font object

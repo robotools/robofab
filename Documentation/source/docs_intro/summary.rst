@@ -6,7 +6,7 @@ RoboFab is the result of over 6 man-years of concentrated coding. The package co
 
 The Font/Glyph/Contour/Point model can be tailored to the needs of the scripter, manipulating data from glyph to glyph or font to font and addressing the outline data point by point, as offcurve/oncurve segments or as conventional knots with incoming / oncurve / outgoing attributes. RoboFab's Kerning object delivers the kerning data as a standard Python dictionary object. The Lib objects will soon take advantage of FontLab's new PythonDict field for storing Python data inside FontLab .vfb sources.
 
-RoboFab's pen objects (an implementation of ``fontTools``' pen classes) provide a powerful method to interface with glyph data, either for actual drawing (for instance on screen, or some sort of vector based file format), complex comparisons, transformations and filtering.
+RoboFab's pen objects (an implementation of fontTools' pen classes) provide a powerful method to interface with glyph data, either for actual drawing (for instance on screen, or some sort of vector based file format), complex comparisons, transformations and filtering.
 
 RoboFab offers a large selection of standardised UI dialogs, ranging from plain messaging to very powerful font and glyph retrieval functionality.
 

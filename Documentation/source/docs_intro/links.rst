@@ -7,8 +7,8 @@ Online resources
 ----------------
 
 - `Join the RoboFab Google group <http://groups.google.com/group/robofab>`_
-- `The FontLab Python page <http://fontlab.com/Font-utilities/The-Python-Page/>`_
-- `Unofficial FontLab Python documentation <http://dev.fontlab.net/flpydoc/>`_
+- `The FontLab Python page <http://fontlab.com/python-scripting/>`_
+- `Unofficial FontLab Python documentation <http://e-font.de/flpydoc/>`_
 
 -----
 Tools

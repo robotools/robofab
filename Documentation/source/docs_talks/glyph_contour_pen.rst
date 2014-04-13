@@ -139,11 +139,15 @@ So a ``Glyph`` object contains zero, one or more ``Contour`` objects. Let's see 
 
 Let's have a look at these different attributes. In the end, they're all describing the same shape, the same actual points. It's just sorted in different ways for different purposes.
 
-- ``contour.points``: This is a list of all points on a contour. off-curve and on-curve points are presented as ``RPoint`` objects. Each ``RPoint`` has ``x``, ``y``, ``type`` and ``smooth`` attributes. On-cuve and off-curve points are treated as equals.
+``contour.points``
+    This is a list of all points on a contour. off-curve and on-curve points are presented as ``RPoint`` objects. Each ``RPoint`` has ``x``, ``y``, ``type`` and ``smooth`` attributes. On-cuve and off-curve points are treated as equals.
 
-- ``contour.segments``: A segment is an object which represents a series of off-curve points and finally one on-curve point. Though kind of abstract, segments are needed to deal with quadratic curves which can have several off-curves on a row.
+``contour.segments``
+    A segment is an object which represents a series of off-curve points and finally one on-curve point. Though kind of abstract, segments are needed to deal with quadratic curves which can have several off-curves on a row.
 
-- ``contour.bPoints``: ``bPoint`` are objects which look more or less like the curve points you know from editing Beziers. One main on-curve point and two satellite off-curve points or **bcps**: an incoming one and an outgoing one. This is more or less the kind of point that was used in **RoboFog** code.
+``contour.bPoints``
+    bPoints are objects which look more or less like the curve points you know from editing Beziers. One main on-curve point and two satellite off-curve points or **bcps**: an incoming one and an outgoing one. This is more or less the kind of point that was used in **RoboFog** code.
+
 Again, please refer to the :doc:`Understanding Contours and Segments <../docs_howtos/understanding_contours>` to make sense of these things visually.
 
 Finally, when you iterate through the ``contour.points``, you get to see :doc:`RPoint <../docs_objects/RPoint>` objects with familiar things like ``x``, ``y``, and ``type`` attributes::

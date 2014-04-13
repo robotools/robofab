@@ -22,18 +22,25 @@ Python is a modern, open source, programming language which is relatively easy t
 
 There are several places where you can write your code. Each with their own purpose and use. We'll look at some of them:
 
-- **FontLab's Macro panel**: a simple code editor in FontLab where you can edit and run scripts. The advantage is that you're in FontLab and can start work immediately, manipulating fonts and glyphs which are open. But the panel is lacking features which are useful when writing a lot of code, which is why FontLab includes the:
+FontLab's Macro panel
+    A simple code editor in FontLab where you can edit and run scripts. The advantage is that you're in FontLab and can start work immediately, manipulating fonts and glyphs which are open. But the panel is lacking features which are useful when writing a lot of code, which is why FontLab includes the:
 
-- **FontLab with "external editor"**: in the FontLab preferences panel you can select another application as your python editor of choice. So when you hit the Macros button, this editor will pop up. This requires that your script is saved in a file somewhere on disk. You can use the editor to write the code, but FontLab will still run the program. FontLab doesn't actually execute the Python code, but uses a system installed interpreter.
+FontLab with "external editor"
+    In the FontLab preferences panel you can select another application as your python editor of choice. So when you hit the Macros button, this editor will pop up. This requires that your script is saved in a file somewhere on disk. You can use the editor to write the code, but FontLab will still run the program. FontLab doesn't actually execute the Python code, but uses a system installed interpreter.
 
-- **Python IDE, Win, Mac OSX**: There are several IDE ("Integrated Development Environment") programs for Python on Mac and Windows. This means basically a Python code editor which can also run your code. Some of them offer debugging tools, module browsers or even complete interface toolkits. These IDE's are general programming tools and don't know much about type specific things. More and more code editors offer Python execution, for instance in **BBEdit** and **Textmate** on OSX you can edit your code, hit a cmd key and have the code run in the OSX Python interpreter. This is similar to the FontLab-with-external-editor option.
+Python IDE, Win, Mac OSX
+    There are several IDE ("Integrated Development Environment") programs for Python on Mac and Windows. This means basically a Python code editor which can also run your code. Some of them offer debugging tools, module browsers or even complete interface toolkits. These IDE's are general programming tools and don't know much about type specific things. More and more code editors offer Python execution, for instance in **BBEdit** and **Textmate** on OSX you can edit your code, hit a cmd key and have the code run in the OSX Python interpreter. This is similar to the FontLab-with-external-editor option.
 
-- **Command-line Python interpreter**: a form of Python where you write a line of code at a prompt and it is immediately executed. Useful to test simple problems, but not for anything over a couple of lines of code.
+Command-line Python interpreter
+    A form of Python where you write a line of code at a prompt and it is immediately executed. Useful to test simple problems, but not for anything over a couple of lines of code.
 
-- **Command-line python**: use the installed command-line Python interpreter to execute files. The interpreter is called with the filename as an argument.
+Command-line Python
+    Use the installed command-line Python interpreter to execute files. The interpreter is called with the filename as an argument:
 
-  >>> python myCode.py
-  ..does stuff..
+    .. code::
+
+        >>> python myCode.py
+        ...does stuff...
 
 -------
 Objects
@@ -41,9 +48,11 @@ Objects
 
 Perhaps the most useful invention in programming since the paper-punch card is called **object oriented programming**. The term is used to describe a way of programming in which the data you're working on, and the code which belongs to that data are kept together, much like a person holding a handful of balloons on strings, in a single **object**, the cluster of balloons. This may sound a bit abstract. But it's a way to keep all the code and data sorted in a useful way. Otherwise there will be too much stuff very quickly. More terminology:
 
-- **attributes**: the things an object knows about, its data or value. An object's data is stored in its attributes.
+attributes
+    The things an object knows about, its data or value. An object's data is stored in its attributes.
 
-- **methods**: the things an object can do. The code to manipulate an object, its functions.
+methods
+    The things an object can do. The code to manipulate an object, its functions.
 
 Risking an example: an object of the class **car** has an attribute **color** (blue) and a method **drive** (slow). Big objects are usually split up into smaller, more specific objects. For instance, a **Font** object offers access to **Glyph** objects. The way the various objects relate, wich object contains what etc. — the way something is abstracted — is called an **object model**. A map of the object model used in RoboFab is in :doc:`the Fab docs <../docs_objects/model>`. An object model is also called **API** for Application Programming Interface.
 

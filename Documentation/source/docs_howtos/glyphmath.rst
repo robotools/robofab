@@ -2,7 +2,7 @@
 Glyph Math
 ==========
 
-:py:class:`RGlyph` objects have methods that allow the objects to behave a bit like variables in simple math. These methods do not do additions or substractions of the surface area of the glyphs, like layering two glyphs on top of each other and than doing "remove overlap". Instead, they return new glyph objects in which each coordinate in each contour is the product of the two glyphs.
+``RGlyph`` objects have methods that allow the objects to behave a bit like variables in simple math. These methods do not do additions or substractions of the surface area of the glyphs, like layering two glyphs on top of each other and than doing "remove overlap". Instead, they return new glyph objects in which each coordinate in each contour is the product of the two glyphs.
 
 -------
 Objects
@@ -10,14 +10,13 @@ Objects
 
 All glyph math operations in have new, orphaned, objects as result. For instance a substraction of two FontLab RoboFab glyphs will result in a new glyph object, but it won't be part of the font. If you want the result to be part of the font you have to add it explicitly, see the example at the bottom of this page. There are several reasons for this:
 
-- the result might not even come from glyphs in the same font, i.e. you can substract a glyph in one font from a glyph in another font. Where should the result live? you decide.
+- The result might not even come from glyphs in the same font, i.e. you can substract a glyph in one font from a glyph in another font. Where should the result live? You decide.
 
 - You might not want the result to be part of your font when you're using it for further calculations. So: results from glyphmath operations are orphan glyphs that do not belong to any font.
 
-- the results need to use floating point (19.234943) numbers for precision, FontLab only stores integer numbers (19)
-If you want to add a glyph (of any flavor, FontLab or UFO) to a font use the appendGlyph method:
+- The results need to use floating point (``19.234943``) numbers for precision, FontLab only stores integer numbers (``19``).
 
-::
+If you want to add a glyph (of any flavor, FontLab or UFO) to a font use the appendGlyph method::
 
     someNewGlyph = aFont.newGlyph("someNewGlyph")
     someNewGlyph.appendGlyph(restultFromGlyphMath)
@@ -26,17 +25,17 @@ If you want to add a glyph (of any flavor, FontLab or UFO) to a font use the app
     # take the value.
     someNewGlyph.width = restultFromGlyphMath.width
 
-------------
-Substraction
-------------
+-----------
+Subtraction
+-----------
 
-Substraction returns a new glyph object with contours which represent the difference between the two previous glyphs. As a glyph itself, it's not much to look at. If you draw the result of a substraction it will probably look like a crumpled outline.
+Substraction returns a new glyph object with contours which represent the **difference** between the two previous glyphs. As a glyph itself, it's not much to look at. If you draw the result of a substraction it will probably look like a crumpled outline.
 
-^^^^^^^^^^^^^^^^^^^^
-Example Substraction
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
+Example Subtraction
+^^^^^^^^^^^^^^^^^^^
 
-:: 
+.. code::
 
     f = CurrentFont()
     g = f["a"]
@@ -54,7 +53,7 @@ Addition returns a new glyph object with the contours which is the product of th
 Example Addition
 ^^^^^^^^^^^^^^^^
 
-:: 
+.. code::
 
     # continue with myRelativeGlyph from the previous example
     newglyph = f["x"] + myRelativeGlyph
@@ -69,7 +68,7 @@ When a normal glyph is multiplied it looks as if the glyph has been scaled. For 
 Example Multiplication
 ^^^^^^^^^^^^^^^^^^^^^^
 
-:: 
+.. code:: 
 
     # continue with myRelativeGlyph from the previous example
     newglyph = f["x"] + 0.25 * myRelativeGlyph
@@ -84,7 +83,7 @@ Divisions works just like multiplications, you just need to make sure not to div
 Example Division
 ^^^^^^^^^^^^^^^^
 
-::
+.. code::
 
     # continue with myRelativeGlyph from the previous example
     newglyph = f["x"] + myRelativeGlyph / 4
@@ -99,7 +98,7 @@ These examples are simple enough, but when you combine them the operations can b
 All together now
 ^^^^^^^^^^^^^^^^
 
-This is from the ``demo_GlyphMath.py`` which should be in the ``Scripts/RoboFabIntro`` folder.::
+This is from the ``demo_GlyphMath.py`` which should be in the ``Scripts/RoboFabIntro`` folder::
 
     # robofab manual
     # Glyphmath howto
@@ -134,4 +133,4 @@ This is from the ``demo_GlyphMath.py`` which should be in the ``Scripts/RoboFabI
 Implementation limits
 ---------------------
 
-In :py:mod:`objectsFL` (for use in FontLab), only :py:class:`RGlyph` has glyphmath operators implemented. The result of a glyphmath operation in FontLab is always an object from :py:mod:`objectsRF`. In :py:mod:`ObjectsRF` most objects have ``*``, ``+`` and ``-`` implemented. But considering the operators are mainly used for Glyph stuff, the :py:class:`RGlyph` object is a bit more kitted out with division as well.
+In ``objectsFL`` (for use in FontLab), only ``RGlyph`` has glyphmath operators implemented. The result of a glyphmath operation in FontLab is **always** an object from ``objectsRF``. In ``ObjectsRF`` most objects have ``*``, ``+`` and ``-`` implemented. But considering the operators are mainly used for Glyph stuff, the ``RGlyph`` object is a bit more kitted out with division as well.

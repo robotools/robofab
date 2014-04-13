@@ -6,21 +6,23 @@ RAnchor
 Usage
 -----
 
->>> # robofab manual
->>> # Anchor object
->>> # usage examples 
->>> f = CurrentFont()
->>> for g in f:
->>>     if len(g.anchors) > 0:
->>>         print g, g.anchors
-< RGlyph for RoboFab Demo Font.A >
-[< RAnchor for RoboFab Demo Font.A.anchors[0] >]
+.. code::
+
+    >>> # robofab manual
+    >>> # Anchor object
+    >>> # usage examples 
+    >>> f = CurrentFont()
+    >>> for g in f:
+    >>>     if len(g.anchors) > 0:
+    >>>         print g, g.anchors
+    < RGlyph for RoboFab Demo Font.A >
+    [< RAnchor for RoboFab Demo Font.A.anchors[0] >]
 
 -----------
 Description
 -----------
 
-Anchors are single points in a glyph which are not part of a contour. Anchors have a name and a position, and they're used as connection points for ``Components``. In FontLab the anchors have a special appearance and can be edited. Anchors are stored in GLIF as single, named, ``moveto``'s. i.e. any single, named ``moveto`` in GLIF will become an anchor in FontLab. RoboFab's own ``font.generateGlyph()`` also uses the anchors to assemble the components.
+Anchors are single points in a glyph which are not part of a contour. Anchors have a name and a position, and they're used as connection points for :doc:`Components <RComponent>`. In FontLab the anchors have a special appearance and can be edited. Anchors are stored in GLIF as single, named, ``moveto``'s. i.e. any single, named ``moveto`` in GLIF will become an anchor in FontLab. RoboFab's own ``font.generateGlyph()`` also uses the anchors to assemble the components.
 
 ----------
 Attributes
@@ -50,7 +52,7 @@ The name of the anchor.
 Attribute examples
 ------------------
 
-::
+.. code::
 
     # robofab manual
     # Anchor object
@@ -86,17 +88,17 @@ Draw the object with a RoboFab segment pen.
 
 .. py:function:: drawPoints(aPen)
 
-Draw the object with a point pen. See `how to use pens`_.
+Draw the object with a point pen. See :doc:`how to use pens <../docs_howtos/use_pens>`.
 
 .. py:function:: transform(matrix)
 
-Transform this point. Use a Transform matrix object to mess with the point. See `how to use transformations`_.
+Transform this point. Use a Transform matrix object to mess with the point. See :doc:`how to use transformations <../docs_howtos/use_transformations>`.
 
 ---------------
 Method examples
 ---------------
 
-::
+.. code::
 
     # robofab manual
     # Font object

@@ -6,22 +6,27 @@ RGlyph
 Usage
 -----
 
-::
+.. code::
 
     # robofab manual
     # Glyph object
     # Usage examples
+
     # start using the current font
     from robofab.world import CurrentGlyph
     g = CurrentGlyph()
+
     # suppose you've done the right imports
     # different ways of creating glyphs
     # a new empty glyph object
     g = robofab.world.RGlyph()
+
     # a new empty fontlab glyph object
     g = robofab.objects.objectsFL.RGlyph()
+
     # a new empty robofab glyph object
     g = robofab.objects.objectsRF.RGlyph()
+
     # the easiest way to get a new glyph
     # is to ask a font to make you one:
     g = aFontObject[glyphName]
@@ -30,7 +35,7 @@ Usage
 Description
 -----------
 
-The :py:class:`RGlyph` object represents a glyph, its parts and associated data. In FontLab :py:class:`RGlyph` talks directly to a glyph in an open font. In NoneLab the :py:class:`RGlyph` refers to data read from (and written to) a specific glif file in a UFO. :py:class:`RGlyph` can be used as a list of :py:class:`RContour`. When :py:class:`RGlyph` is obtained from a RoboFab font object (see examples), the font is the parent object of the glyph.
+The ``RGlyph`` object represents a glyph, its parts and associated data. In FontLab ``RGlyph`` talks directly to a glyph in an open font. In NoneLab the ``RGlyph`` refers to data read from (and written to) a specific glif file in a UFO. ``RGlyph`` can be used as a list of ``RContour``. When ``RGlyph`` is obtained from a RoboFab font object (see examples), the font is the parent object of the glyph.
 
 ----------
 Attributes
@@ -38,11 +43,11 @@ Attributes
 
 .. py:attribute:: components
 
-A list of the Components in this glyph.
+A list of the :doc:`Components <RComponent>` in this glyph.
 
 .. py:attribute:: anchors
 
-A list of the Anchors in this glyph.
+A list of the :doc:`Anchors <RAnchor>` in this glyph.
 
 .. py:attribute:: len(aGlyph)
 
@@ -50,7 +55,7 @@ The number of contours.
 
 .. py:attribute:: aGlyph[index]
 
-Get the Contour object at index.
+Get the :doc:`Contour <RContour>` object at index.
 
 .. py:attribute:: width
 
@@ -86,46 +91,60 @@ The bounding box. The values are ``(xMin, yMin, xMax, yMax)``. Note: these value
 
 .. py:attribute:: + - *
 
-Math operators work on glyphs. See `how to glyphmath`_.
+Math operators work on glyphs.
+
+.. seealso::  :doc:`how to glyphmath <../docs_howtos/glyphmath>`.
 
 .. py:attribute:: lib
 
-The glyph's lib, an :py:class:`RLib`. See also `how to use the lib`_.
+The glyph's lib, an :doc:`RLib <libs>`.
+
+.. seealso:: :doc:`how to use the lib <../docs_howtos/use_lib>`.
 
 .. py:attribute:: psHints
 
-A :py:class:`PostScriptGlyphHintValues` object with all glyph level PostScript hints, vertical and horizontal.
+A :doc:`PostScriptGlyphHintValues <psHintsGlyph>` object with all glyph level PostScript hints, vertical and horizontal.
 
 ------------------
 Attribute examples
 ------------------
 
->>> # robofab manual
->>> # Glyph object
->>> # attribute examples
->>> from robofab.world import CurrentFont, CurrentGlyph
->>> f = CurrentFont()
->>> # create a glyph object by asking the font
->>> g = f["Adieresis"]
->>> # alternatively, create a glyph object for the current glyph
->>> g = CurrentGlyph()
->>> # get the width
->>> print g.width
->>> # get the name
->>> print g.name
->>> # a  list of unicode values for this glyph. Can be more than 1!
->>> print g.unicodes
->>> # set the width
->>> g.width = 1000
->>> print g.width
->>> # get the number of contours in a glyph
->>> # by getting  its length
->>> print len(g)
-230
-Adieresis
-[123, 345]
-1000
-4
+.. code::
+
+    >>> # robofab manual
+    >>> # Glyph object
+    >>> # attribute examples
+
+    >>> from robofab.world import CurrentFont, CurrentGlyph
+    >>> f = CurrentFont()
+
+    >>> # create a glyph object by asking the font
+    >>> g = f["Adieresis"]
+
+    >>> # alternatively, create a glyph object for the current glyph
+    >>> g = CurrentGlyph()
+
+    >>> # get the width
+    >>> print g.width
+
+    >>> # get the name
+    >>> print g.name
+
+    >>> # a  list of unicode values for this glyph. Can be more than 1!
+    >>> print g.unicodes
+
+    >>> # set the width
+    >>> g.width = 1000
+    >>> print g.width
+
+    >>> # get the number of contours in a glyph
+    >>> # by getting  its length
+    >>> print len(g)
+    230
+    Adieresis
+    [123, 345]
+    1000
+    4
 
 -------
 Methods
@@ -191,23 +210,27 @@ Get this glyph to draw itself with the pen on offer.
 
 .. py:function:: drawPoints(aPointsPen)
 
-Get this glyph to draw itself with the points pen on offer. For differences between :py:class:`Pen` and :py:class:`PointsPen` see here `Pens`_.
+Get this glyph to draw itself with the points pen on offer. For differences between ``Pen`` and ``PointsPen`` see here :doc:`Pens <pen>`.
 
 .. py:function:: getPen()
 
-Returns an appropriate Pen object to draw in this glyph.
+Returns an appropriate ``Pen`` object to draw in this glyph.
 
 .. py:function:: getPointPen()
 
-Returns an appropriate Point Pen object to draw in this glyph.
+Returns an appropriate ``PointPen`` object to draw in this glyph.
 
 .. py:function:: interpolate(factor, minGlyph, maxGlyph, suppressError=True, analyzeOnly=False)
 
-Make this glyph the interpolation between ``minGlyph`` and ``maxGlyph`` by factor. When ``suppressError`` is ``True`` (the default value) this method will not complain if the interpolation is not possible. When ``analyzeOnly`` is ``True`` (default is ``False``), this method will only analyze if the interpolation is possible and provide a report if something is wrong. See also `how to interpolate`_.
+Make this glyph the interpolation between ``minGlyph`` and ``maxGlyph`` by factor. When ``suppressError`` is ``True`` (the default value) this method will not complain if the interpolation is not possible. When ``analyzeOnly`` is ``True`` (default is ``False``), this method will only analyze if the interpolation is possible and provide a report if something is wrong.
+
+.. seealso:: :doc:`how to interpolate <../docs_howtos/interpolate>`.
 
 .. py:function:: isCompatible(anotherGlyph, report=True)
 
-Returns ``True`` if the glyph has a compatible point structure as ``anotherGlyph``. When report is ``True``, ``isCompatible`` also returns a report on what the problems could be. See also `how to interpolate`_.
+Returns ``True`` if the glyph has a compatible point structure as ``anotherGlyph``. When report is ``True``, ``isCompatible`` also returns a report on what the problems could be. 
+
+.. seealso:: :doc:`how to interpolate <../docs_howtos/interpolate>`.
 
 .. py:function:: isEmpty()
 
@@ -237,16 +260,20 @@ Slice the glyph into a grid based on the cell size. It returns a list of lists c
 Method examples
 ---------------
 
->>> # robofab manual
->>> #    Glyph object
->>> #    method examples
->>> # get a glyph object from a font
->>> f = CurrentFont()
->>> g = f["A"]
->>> print g
->>> # move the glyph 10 units to the right, and 200 units up:
->>> g = f["a"]
->>> g.move((10, 200))
+.. code::
+
+    # robofab manual
+    # Glyph object
+    # method examples
+
+    # get a glyph object from a font
+    f = CurrentFont()
+    g = f["A"]
+    print g
+
+    # move the glyph 10 units to the right, and 200 units up:
+    g = f["a"]
+    g.move((10, 200))
 
 -------
 FontLab
@@ -268,51 +295,56 @@ Return the wrapped FontLab glyph object itself. This can be useful if you want t
 
 .. py:function:: update
 
-Tell FontLab to update all references to this glyph. Call this after you've changed something in the glyph object and you want these changes to be seen in the application. If you're calling ``glyph.update()`` a lot, for instance in a loop, consider calling it only once after the loop is done. You can also call font.``update()`` if you've changed several glyphs at once. Calling ``update()`` makes a script slower.
+Tell FontLab to update all references to this glyph. Call this after you've changed something in the glyph object and you want these changes to be seen in the application. If you're calling ``glyph.update()`` a lot, for instance in a loop, consider calling it only once after the loop is done. You can also call ``font.update()`` if you've changed several glyphs at once. Calling ``update()`` makes a script slower.
 
 .. py:function:: getVGuides
 
-Return a list of wrapped vertical guides in this :py:class:`RGlyph`.
+Return a list of wrapped vertical guides in this ``RGlyph``.
 
 .. py:function:: getHGuides
 
-Return a list of wrapped horizontal guides in this :py:class:`RGlyph`.
+Return a list of wrapped horizontal guides in this ``RGlyph``.
 
 .. py:function:: appendVGuide(x)
 
-Add a vertical guide at ``x`` in this :py:class:`RGlyph`.
+Add a vertical guide at ``x`` in this ``RGlyph``.
 
 .. py:function:: appendHGuide(y)
 
-Add a horizontal guide at ``y`` in this :py:class:`RGlyph`.
+Add a horizontal guide at ``y`` in this ``RGlyph``.
 
 .. py:function:: clearVGuides()
 
-Remove vertical guides from this :py:class:`RGlyph`.
+Remove vertical guides from this ``RGlyph``.
 
 .. py:function:: clearHGuides()
 
-Remove horizontal guides from this :py:class:`RGlyph`.
+Remove horizontal guides from this ``RGlyph``.
 
 ------
 Useful
 ------
 
->>> # robofab manual
->>> # Glyph object
->>> # method examples
->>> # In FontLab the baseglyph of a component can't be changed easily.
->>> # This assumes that there will only be
->>> # one component that needs to be remapped.
->>> def remapComponent(glyph, oldBaseGlyph, newBaseGlyph):
->>>     foundComponent = None
->>>     for component in glyph.components:
->>>         if component.baseGlyph = oldBaseGlyph:
->>>             foundComponent = component
->>>             break
->>>     if foundComponent is None:
->>>         return
->>>     offset = foundComponent.offset
->>>     scale = foundComponent.scale
->>>     glyph.removeComponent(component)
->>>     glyph.appendComponent(newBaseGlyph, offset=offset, scale=scale)
+.. code:: python
+
+    # robofab manual
+    # Glyph object
+    # method examples
+
+    # In FontLab the baseglyph of a component can't be changed easily.
+    # This assumes that there will only be
+    # one component that needs to be remapped.
+
+    def remapComponent(glyph, oldBaseGlyph, newBaseGlyph):
+        foundComponent = None
+        for component in glyph.components:
+            if component.baseGlyph = oldBaseGlyph:
+                foundComponent = component
+                break
+        if foundComponent is None:
+            return
+        offset = foundComponent.offset
+        scale = foundComponent.scale
+        glyph.removeComponent(component)
+        glyph.appendComponent(newBaseGlyph, offset=offset, scale=scale)
+

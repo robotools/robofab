@@ -11,14 +11,18 @@ Usage
     # robofab manual
     # Font object
     # Usage examples
+
     # start using the current font
     from robofab.world import CurrentFont
     f = CurrentFont()
+
     # get a clean, empty new font object,
     # appropriate for the current environment
     f = robofab.world.RFont()
+
     # get an open dialog and start a new font
     f = OpenFont()
+
     # open the font at path
     f = OpenFont(path)
 
@@ -26,27 +30,29 @@ Usage
 Description
 -----------
 
-Perhaps the first object you get to play with. The :py:class:`RFont` object is the central part that connects all glyphs with font information (like names, key dimensions etc.). In FontLab the :py:class:`RFont` object talks directly to the glyphs and font data in the FontLab font it belongs to. In UFO or NoneLab use, the :py:class:`RFont` object contains the data and saves it to UFO. :py:class:`RFont` object behave like dictionaries: the glyphname is the key and the returned value is a :py:class:`RGlyph` object for that glyph. If the glyph does not exist :py:class:`RFont` will raise an ``IndexError``.
+Perhaps the first object you get to play with. The ``RFont`` object is the central part that connects all glyphs with font information (like names, key dimensions etc.). In FontLab the ``RFont`` object talks directly to the glyphs and font data in the FontLab font it belongs to. In UFO or NoneLab use, the ``RFont`` object contains the data and saves it to UFO. ``RFont`` object behave like dictionaries: the glyphname is the key and the returned value is a :doc:`RGlyph` object for that glyph. If the glyph does not exist ``RFont`` will raise an ``IndexError``.
 
-:py:class:`RFont` has a couple of important sub-objects which are worth checking out. The font's kerning is stored in a :py:class:`RKerning` object and can be reached as an attribute at :py:attr:`RFont.kerning`. Fontnames, key dimensions, flags etc are stored in a :py:class:`RInfo` object which is available through :py:attr:`RFont.info`. The :py:attr:`RFont.lib` is an :py:class:`RLib` object which behaves as a dictionary.
+``RFont`` has a couple of important sub-objects which are worth checking out. The font's kerning is stored in a :doc:`RKerning` object and can be reached as an attribute at ``RFont.kerning``. Fontnames, key dimensions, flags etc are stored in a :doc:`RInfo` object which is available through ``RFont.info``. The ``RFont.lib`` is an :doc:`RLib <libs>` object which behaves as a dictionary.
 
 ---------
 Iterating
 ---------
 
-One of the most important uses of the :py:class:`RFont` object is that it makes it really easy to iterate ("step through") the glyphs in the font.
+One of the most important uses of the ``RFont`` object is that it makes it really easy to iterate ("step through") the glyphs in the font.
 
->>> # robofab manual
->>> # Font object
->>> # Iterate through the font object
->>> # to get to the glyphs.
->>> f = CurrentFont()
->>> for glyph in f:
->>>     print glyph.name
-a
-b
-c
-..etc..
+.. code::
+
+    >>> # robofab manual
+    >>> # Font object
+    >>> # Iterate through the font object
+    >>> # to get to the glyphs.
+    >>> f = CurrentFont()
+    >>> for glyph in f:
+    >>>     print glyph.name
+    a
+    b
+    c
+    ..etc..
 
 This makes the code clear and simple.
 
@@ -54,7 +60,7 @@ This makes the code clear and simple.
 FontLab / UFO
 -------------
 
-All basic attributes, methods and behaviour for :py:class:`RFont` objects created in FontLab or in NoneLab are identical. However, the :py:class:`RFont` objects in FontLab have some additional attributes and methods that make special FontLab functionality available. These extra methods and attributes are listed seperately below.
+All basic attributes, methods and behaviour for ``RFont`` objects created in FontLab or in NoneLab are identical. However, the ``RFont`` objects in FontLab have some additional attributes and methods that make special FontLab functionality available. These extra methods and attributes are listed seperately below.
 
 ----------------
 RFont Attributes
@@ -66,7 +72,7 @@ The path to the font. (read only)
 
 .. py:attribute:: kerning
 
-The :py:class:`RKerning` object. Cache the :py:attr:`font.kerning` object to optimise your script for speed::
+The :doc:`RKerning` object. Cache the ``font.kerning`` object to optimise your script for speed::
 
     # cache the kerning object for speed
     from robofab.world import CurrentFont
@@ -76,7 +82,7 @@ The :py:class:`RKerning` object. Cache the :py:attr:`font.kerning` object to opt
 
 .. py:attribute:: info
 
-The :py:class:`RInfo` object with all the font's names and key dimensions.
+The :doc:`RInfo` object with all the font's names and key dimensions.
 
 .. py:attribute:: lib
 
@@ -88,29 +94,31 @@ The filename and path of this font.
 
 .. py:attribute:: psHints
 
-A :py:class:`PostScriptFontHintValues` object with all font level PostScript hinting information, such as the blues values and stems.
+A :doc:`PostScriptFontHintValues <psHints>` object with all font level PostScript hinting information, such as the blue values and stems.
 
 ------------------
 Attribute examples
 ------------------
 
->>> # robofab manual
->>> # Font object
->>> # attribute examples
->>> # Most useful attributes of RFont are
->>> # actually stored in <a href="objects/info.html">RFont.info</a>
->>> f = CurrentFont()
->>> print f.info.unitsPerEm
->>> # kerning data is available in the kerning object:
->>> print f.kerning
->>> # len() gives you the "length" of the font, i.e. the number of glyphs
->>> print "glyphs in this font:", len(f)
->>> # treat a font object as a dictionary to get to the glyphs
->>> print f["A"]
-2048
-<RKerning for MyFont>
-glyphs in this font: 1120
-<Glyph for MyFont.A>
+.. code::
+
+    >>> # robofab manual
+    >>> # Font object
+    >>> # attribute examples
+    >>> # Most useful attributes of RFont are
+    >>> # actually stored in <a href="objects/info.html">RFont.info</a>
+    >>> f = CurrentFont()
+    >>> print f.info.unitsPerEm
+    >>> # kerning data is available in the kerning object:
+    >>> print f.kerning
+    >>> # len() gives you the "length" of the font, i.e. the number of glyphs
+    >>> print "glyphs in this font:", len(f)
+    >>> # treat a font object as a dictionary to get to the glyphs
+    >>> print f["A"]
+    2048
+    <RKerning for MyFont>
+    glyphs in this font: 1120
+    <Glyph for MyFont.A>
 
 ------------------------------------------
 RFont Methods available in FontLab and UFO
@@ -130,7 +138,9 @@ Return a list of all glyph names in this font.
 
 .. py:function:: newGlyph(glyphName, clear=True)
 
-Create a new, empty glyph in the font with ``glyphName``. If clear is ``True`` (by default) this will clear the glyph if it already exists under this name. Note: ``clear=True`` is now default in both FontLab and NoneLab implementations.
+Create a new, empty glyph in the font with ``glyphName``. If clear is ``True`` (by default) this will clear the glyph if it already exists under this name.
+
+.. note:: ``clear=True`` is now default in both FontLab and NoneLab implementations.
 
 .. py:function:: removeGlyph(glyphName)
 
@@ -138,28 +148,38 @@ Remove a glyph from the font. This method will show a slightly different behavio
 
 .. py:function:: insertGlyph(aGlyph, name=None)
 
-Inserts ``aGlyph`` in the font, the new glyph object is returned. If the font already has a glyph with the same name the exisiting data is deleted. The optional as parameter is an alternative glyph name, to be used if you want to insert the glyph with a different name. Note: as of robofab svn version 200, the ``as`` argument in ``insertGlyph`` has changed to ``name``. Python2.6+ uses ``as`` as a keyword so it can no longer be used.
+Inserts ``aGlyph`` in the font, the new glyph object is returned. If the font already has a glyph with the same name the exisiting data is deleted. The optional as parameter is an alternative glyph name, to be used if you want to insert the glyph with a different name. 
+
+.. note:: As of robofab svn version 200, the ``as`` argument in ``insertGlyph`` has changed to ``name``. Python2.6+ uses ``as`` as a keyword so it can no longer be used.
 
 .. py:function:: compileGlyph(glyphName, baseName, accentNames, adjustWidth=False, preflight=False, printErrors=True)
 
 Compile components into a new glyph using components and anchorpoints. 
 
-- ``glyphName``: the name of the glyph where it all needs to go.
-- ``baseName``: the name of the base glyph.
-- ``accentNames``: a list of ``accentName``, ``anchorName`` tuples: ``[('acute', 'top'), etc]``
+``glyphName``
+    The name of the glyph where it all needs to go.
+
+``baseName``
+    The name of the base glyph.
+
+``accentNames``
+    A list of ``accentName``, ``anchorName`` tuples: ``[('acute', 'top'), etc]``.
 
 .. py:function:: generateGlyph(glyphName, replace=True, preflight=False, printErrors=True)
 
 Generate a glyph and return it. Assembled from ``GlyphConstruction.txt``.
 
-- ``replace=True`` the font will replace the glyph if there is already one with this name.
-- ``preflight=True``: the font will attempt to generate the glyph without adding it to the font.
+``replace=True``
+    The font will replace the glyph if there is already one with this name.
 
-Do this to find out if there are any problems to make this glyph. For instance missing glyphs or components could be a problem. See `building accents`_.
+``preflight=True``
+    The font will attempt to generate the glyph without adding it to the font.
+
+Do this to find out if there are any problems to make this glyph. For instance missing glyphs or components could be a problem. See :doc:`building accents <../docs_howtos/building_accents>`.
 
 .. py:function:: getReverseComponentMapping
 
-Get a reversed map of component references in the font.::
+Get a reversed map of component references in the font::
 
     {
         'A' : ['Aacute', 'Aring']
@@ -178,7 +198,7 @@ Using ``fontTools.agl``, assign Unicode lists to all glyphs in the font.
 
 .. py:function:: interpolate
 
-See how to interpolate for a detailed description of the interpolate method in :py:class:`RFont`.
+See :doc:`how to interpolate <../docs_howtos/interpolate>` for a detailed description of the interpolate method in ``RFont``.
 
 .. py:function:: round
 
@@ -186,7 +206,7 @@ Round all of the coordinates in all of the glyphs to whole integer numbers. For 
 
 .. py:function:: update
 
-Call to FontLab to refresh the font. You call ``update()`` after doing lots of manipulating and editing. In UFO based :py:class:`RFont` objects ``update()`` doesn't do anything, but it exists.
+Call to FontLab to refresh the font. You call ``update()`` after doing lots of manipulating and editing. In UFO based ``RFont`` objects ``update()`` doesn't do anything, but it exists.
 
 .. py:function:: copy
 
@@ -200,16 +220,18 @@ Returns a dict of unicode values to glyph names.
 Method examples
 ---------------
 
->>> # robofab manual
->>> # Font object
->>> # method examples
->>> from robofab.world import CurrentFont
->>> f = CurrentFont()
->>> # the keys() method returns a list of glyphnames:
->>> print f.keys()
->>> # find unicodes for each glyph by using the postscript name:
->>> f.autoUnicodes()
-['A', 'B', 'space', 'adieresis.alt1']
+.. code::
+
+    >>> # robofab manual
+    >>> # Font object
+    >>> # method examples
+    >>> from robofab.world import CurrentFont
+    >>> f = CurrentFont()
+    >>> # the keys() method returns a list of glyphnames:
+    >>> print f.keys()
+    >>> # find unicodes for each glyph by using the postscript name:
+    >>> f.autoUnicodes()
+    ['A', 'B', 'space', 'adieresis.alt1']
 
 -------
 FontLab
@@ -229,8 +251,11 @@ Return the wrapped fontlab font object itself. This can be useful if you want to
 
 Write the font to UFO at path.
 
-- ``doProgress=True`` gives you a progressbar if you want.
-- ``glyphNameToFileNameFunc`` is an optional callback for alternative naming schemes. See `How to use glyph naming schemes`_.
+``doProgress=True``
+    Gives you a progressbar if you want.
+
+``glyphNameToFileNameFunc``
+    An optional callback for alternative naming schemes. See :doc:`How to use glyph naming schemes <../docs_howtos/glifnames>`.
 
 The other flags are new in RoboFab 1.2 and give you detailed control of what should and should not be written to UFO. The ``formatVersion`` flag determines the format of the UFO, ``1`` for UFO1, ``2`` for UFO2.
 
@@ -248,15 +273,15 @@ Append a vertical guide.
 
 .. py:function:: clearHGuides()
 
-Clear all horizontal guides
+Clear all horizontal guides.
 
 .. py:function:: clearVGuides()
 
-Clear all vertical guides
+Clear all vertical guides.
 
 .. py:function:: generate(outputType, path=None)
 
-Call FontLab to generate fonts with these parameters and location. Have a look at `generate fonts`_ for a more detailed description of this method and how to use it.
+Call FontLab to generate fonts with these parameters and location. Have a look at :doc:`generate fonts <../docs_howtos/generating_fonts>` for a more detailed description of this method and how to use it.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 RFont Attributes available in FontLab only
@@ -270,13 +295,15 @@ A list of selected glyph names in the font window.
 Attribute examples
 ^^^^^^^^^^^^^^^^^^
 
->>> # robofab manual
->>> # Font object
->>> # method examples, available in FontLab
->>> from robofab.world import CurrentFont
->>> f = CurrentFont()
->>> # the keys() method returns a list of glyphnames:
->>> print f.selection
->>> # generate font binaries
->>> f.generate('otfcff')
-['A', 'B']
+.. code::
+
+    >>> # robofab manual
+    >>> # Font object
+    >>> # method examples, available in FontLab
+    >>> from robofab.world import CurrentFont
+    >>> f = CurrentFont()
+    >>> # the keys() method returns a list of glyphnames:
+    >>> print f.selection
+    >>> # generate font binaries
+    >>> f.generate('otfcff')
+    ['A', 'B']

@@ -17,8 +17,8 @@ RoboFab Unified Font Objects
 ----------------------------
 
 - :doc:`Map <model>`: The objects and their relations.
-- :doc:`Pen objects <pens>`: About Pen objects
-- :doc:`PostScript Glyph Hints <psHints>`: Glyph attribute, contains glyph level PostScript hint data.
+- :doc:`Pen objects <pens>`: About Pen objects.
+- :doc:`PostScript Glyph Hints <psHintsGlyph>`: Glyph attribute, contains glyph level PostScript hint data.
 - :doc:`RAnchor <RAnchor>`: A connection point for Components.
 - :doc:`RComponent <RComponent>`: Belongs to a Glyph, refers to other Glyphs.
 - :doc:`RContour <RContour>`: Belongs to a Glyph, contains Segments.
@@ -26,7 +26,7 @@ RoboFab Unified Font Objects
 - :doc:`RGlyph <RGlyph>`: Belongs to a Font, contains contours, components etc.
 - :doc:`RInfo <RInfo>`: Part of a Font, contains all names, dimensions.
 - :doc:`RKerning <RKerning>`: Part of a Font, contains all kerning data.
-- :doc:`RLib <RLib>`: Part of a Font, contains all arbitrary data.
+- :doc:`RLib <libs>`: Part of a Font, contains all arbitrary data.
 - :doc:`RPoint <RPoint>`: A point on a Contour.
 - :doc:`RSegment <RSegment>`: A part of a Contour, a series of severall off and one oncurve Points.
 - :doc:`bPoint <bPoint>`: A point on a Contour with attributes for ``bcpIn``, ``bcpOut`` and ``anchor``.

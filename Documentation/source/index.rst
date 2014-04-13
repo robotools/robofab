@@ -42,6 +42,39 @@ Talks
    docs_talks/nonelab.rst
    docs_talks/DialogKit.rst
 
+-------
+Objects
+-------
+
+.. toctree::
+   :maxdepth: 1
+
+   docs_objects/objects.rst
+   docs_objects/pens.rst
+   docs_objects/psHintsGlyph.rst
+   docs_objects/RAnchor.rst
+   docs_objects/RComponent.rst
+   docs_objects/RContour.rst
+   docs_objects/RFont.rst
+   docs_objects/RGlyph.rst
+   docs_objects/RInfo.rst
+   docs_objects/RKerning.rst
+   docs_objects/libs.rst
+   docs_objects/RPoint.rst
+   docs_objects/RSegment.rst
+   docs_objects/bPoint.rst
+   docs_objects/psHints.rst
+
+-----
+Tools
+-----
+
+.. toctree::
+   :maxdepth: 1
+
+   docs_intro/dialogs.rst
+   docs_intro/tools.rst
+
 --------
 How-To's
 --------
@@ -66,41 +99,9 @@ How-To's
    docs_howtos/use_lib.rst
    docs_howtos/use_transformations.rst
 
--------
-Objects
--------
-
-.. toctree::
-   :maxdepth: 1
-
-   docs_objects/objects.rst
-   docs_objects/pens.rst
-   docs_objects/RAnchor.rst
-   docs_objects/RComponent.rst
-   docs_objects/RContour.rst
-   docs_objects/RFont.rst
-   docs_objects/RGlyph.rst
-   docs_objects/RInfo.rst
-   docs_objects/RKerning.rst
-   docs_objects/RPoint.rst
-   docs_objects/bPoint.rst
-   docs_objects/RSegment.rst
-   docs_objects/psHintsGlyph.rst
-   docs_objects/psHints.rst
-
------
-Tools
------
-
-.. toctree::
-   :maxdepth: 1
-
-   docs_intro/dialogs.rst
-   docs_intro/tools.rst
-
----
-API
----
+--------
+API Docs
+--------
 
 .. toctree::
    :maxdepth: 1
@@ -108,21 +109,17 @@ API
    glifLib.rst
    glifLib2.rst
    gString.rst
-   plistFromTree.rst
-   plistlib.rst
-   ufoLib.rst
-   world.rst
-   xmlTreeBuilder.rst
-
-.. toctree::
-   :maxdepth: 1
-
    interface/interface.rst
    misc/misc.rst
    objects/objects.rst
    pens/pens.rst
+   plistFromTree.rst
+   plistlib.rst
    test/test.rst
    tools/tools.rst
+   ufoLib.rst
+   world.rst
+   xmlTreeBuilder.rst
 
 ------------------
 Indices and tables

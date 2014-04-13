@@ -12,51 +12,67 @@ Availability:
 
 .. py:function:: Message(message, title='RoboFab')
 
-A simple message dialog with just one OK button. It does not return any values.::
+A simple message dialog with just one OK button. It does not return any values:
+
+.. code::
 
     from robofab.interface.all.dialogs import Message
     Message("A Message From RoboFab")
 
 Available on FontLab, Macintosh.
 
+*[img]*
+
 .. py:function:: AskString(prompt, value='', title='RoboFab')
 
 Asks for a string and return it. Returns ``None`` if the user cancelled.
 
->>> from robofab.interface.all.dialogs import AskString
->>> print AskString("Text for preview?")
-"hello"
+.. code::
+
+    >>> from robofab.interface.all.dialogs import AskString
+    >>> print AskString("Text for preview?")
+    "hello"
 
 Available on FontLab, Macintosh.
 
+*[img]*
+
 .. py:function:: AskYesNoCancel(prompt, title='RoboFab', default=0)
 
-Returns ``1`` for 'Yes', ``0`` for 'No' and ``-1`` for 'Cancel'. ``default`` argument only available on Macintosh.)
+Returns ``1`` for 'Yes', ``0`` for 'No' and ``-1`` for 'Cancel'. ``default`` argument only available on Macintosh.
 
->>> from robofab.interface.all.dialogs import AskYesNoCancel
->>> print AskYesNoCancel("Do you really want to continue?", 
->>>       title='RoboFab', default=0)
--1
+.. code::
 
-Available on FontLab, Macintosh
+    >>> from robofab.interface.all.dialogs import AskYesNoCancel
+    >>> print AskYesNoCancel("Do you really want to continue?", 
+    >>>       title='RoboFab', default=0)
+    -1
+
+Available on FontLab, Macintosh.
+
+*[img]*
 
 .. py:function:: GetFile(message=None)
 
-A standard select file dialog. Returns path if one is selected. Otherwise it returns None.
+A standard select file dialog. Returns path if one is selected. Otherwise it returns ``None``.
 
->>> from robofab.interface.all.dialogs import GetFile
->>> print GetFile("Open Master")
-path/folder/something
+.. code::
+
+    >>> from robofab.interface.all.dialogs import GetFile
+    >>> print GetFile("Open Master")
+    path/folder/something
 
 Available on FontLab, Macintosh, PC.
 
 .. py:function:: GetFolder(message=None)
 
-A standard select folder dialog. Returns path if one is selected. Otherwise it returns None.
+A standard select folder dialog. Returns path if one is selected. Otherwise it returns ``None``.
 
->>> from robofab.interface.all.dialogs import GetFolder
->>> print GetFolder("Pick a directory...")
-path/folder/something
+.. code::
+
+    >>> from robofab.interface.all.dialogs import GetFolder
+    >>> print GetFolder("Pick a directory...")
+    path/folder/something
 
 Available on FontLab, Macintosh, PC.
 
@@ -64,9 +80,11 @@ Available on FontLab, Macintosh, PC.
 
 Save file dialog. Returns path if one is entered. Otherwise it returns ``None``.
 
->>> from robofab.interface.all.dialogs import PutFile
->>> print PutFile("Save this file as..")
-path/folder/something
+.. code::
+
+    >>> from robofab.interface.all.dialogs import PutFile
+    >>> print PutFile("Save this file as..")
+    path/folder/something
 
 Available on FontLab, Macintosh, PC.
 
@@ -74,37 +92,49 @@ Available on FontLab, Macintosh, PC.
 
 Returns font instance if there is one, otherwise it returns ``None``.
 
->>> from robofab.interface.all.dialogs import SelectFont
->>> print SelectFont("Select a font:")
-< the font you selected >
+.. code::
+
+    >>> from robofab.interface.all.dialogs import SelectFont
+    >>> print SelectFont("Select a font:")
+    < the font you selected >
 
 Available on FontLab.
+
+*[img]*
 
 .. py:function:: SelectGlyph(font, message="Select a glyph:", title='RoboFab')
 
 Returns glyph instance from font if a glyph is selected. Otherwise it returns ``None``.
 
->>> from robofab.world import CurrentFont
->>> from robofab.interface.all.dialogs import SelectGlyph
->>> f = CurrentFont()
->>> if f is not None:
->>>     print SelectGlyph(f, "select a glyph")
-< the glyph you selected >
+.. code::
+
+    >>> from robofab.world import CurrentFont
+    >>> from robofab.interface.all.dialogs import SelectGlyph
+    >>> f = CurrentFont()
+    >>> if f is not None:
+    >>>     print SelectGlyph(f, "select a glyph")
+    < the glyph you selected >
 
 Available on FontLab.
+
+*[img]*
 
 .. py:function:: FindGlyph(aFont, message="Search for a glyph:", title='RoboFab')
 
 The ``FindGlyph`` dialog offers a list of the glyphs present in a font. A name or partial name can be types to navigate to the wanted glyph quickly.
 
->>> from robofab.world import CurrentFont
->>> from robofab.interface.all.dialogs import FindGlyph
->>> f = CurrentFont()
->>> if f is not None:
->>>     print FindGlyph(f, "select a glyph")
-< the glyph you selected >
+.. code::
+
+    >>> from robofab.world import CurrentFont
+    >>> from robofab.interface.all.dialogs import FindGlyph
+    >>> f = CurrentFont()
+    >>> if f is not None:
+    >>>     print FindGlyph(f, "select a glyph")
+    < the glyph you selected >
 
 Available on FontLab.
+
+*[img]*
 
 .. py:function:: GetFolder(message=None)
 

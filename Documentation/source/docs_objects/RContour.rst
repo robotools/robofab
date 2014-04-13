@@ -6,28 +6,30 @@ RContour
 Usage
 -----
 
->>> # robofab manual
->>> # Contour object
->>> # usage examples
->>> # take a glyph (one with outlines obviously)
->>> c = CurrentGlyph()
->>> # get to contours by index:
->>> print c[0]
-< RContour for Mailer-Regular.a[0] >
+.. code::
+
+	>>> # robofab manual
+	>>> # Contour object
+	>>> # usage examples
+	>>> # take a glyph (one with outlines obviously)
+	>>> c = CurrentGlyph()
+	>>> # get to contours by index:
+	>>> print c[0]
+	< RContour for Mailer-Regular.a[0] >
 
 -----------
 Description
 -----------
 
-:py:class:`RContour` is an object for, well, contours. A contour is a single path of any number of points and shape. A glyph usually consists of a couple of contours, and this the object that represents each one. The :py:class:`RContour` object offers access to the outline matter in various ways. The parent of :py:class:`RContour` is usually :py:class:`RGlyph`.
+``RContour`` is an object for, well, contours. A contour is a single path of any number of points and shape. A glyph usually consists of a couple of contours, and this the object that represents each one. The ``RContour`` object offers access to the outline matter in various ways. The parent of ``RContour`` is usually ``RGlyph``.
 
 -----------------------------------
 Understanding Contours and outlines
 -----------------------------------
 
-The way outline data is organised in RoboFab, and how the various objects relate is described here: `understanding contours`_.
+The way outline data is organised in RoboFab, and how the various objects relate is described here: :doc:`understanding contours <../docs_howtos/understanding_contours>`.
 
-If you want to add new contours to a glyph it's easier to draw them with a pen than to construct the shapes from segments.
+.. note:: If you want to add new contours to a glyph it's easier to :doc:`draw them with a pen <../docs_howtos/use_pens>` than to construct the shapes from segments.
 
 ----------
 Attributes
@@ -43,7 +45,7 @@ Returns ``1`` if the contour is selected, ``0`` if it isn't.
 
 .. py:attribute:: box
 
-The bounding box for the contour (read only).
+The bounding box for the contour. (read only)
 
 .. py:attribute:: clockwise
 
@@ -51,25 +53,23 @@ Direction of contour: ``1=clockwise``, ``0=counterclockwise``.
 
 .. py:attribute:: points
 
-The contour as a list of :py:class:`Point`s.
+The contour as a list of :doc:`Point <RPoint>`\'s.
 
 .. py:attribute:: bPoints
 
-The contour as a list of :py:class:`bPoint`s.
+The contour as a list of :doc:`bPoint <bPoint>`\'s.
 
 ------------------
 Attribute examples
 ------------------
 
-:: 
-
-    # Examples with contours and points here.
+Examples with contours and points :doc:`here <../docs_howtos/understanding_contours>`.
 
 --------------------
 Methods for segments
 --------------------
 
-For regular drawing in glyphs: please use Pens. If you want to mess with segments on a lower level, be our guest:
+For regular drawing in glyphs: please use :doc:`Pens <../docs_howtos/use_pens>`. If you want to mess with segments on a lower level, be our guest:
 
 .. py:function:: appendSegment(segmentType, points, smooth=False)
 
@@ -93,7 +93,7 @@ Methods for points
 
 .. py:function:: appendBPoint(pointType, anchor, bcpIn=(0, 0), bcpOut=(0, 0))
 
-Append a :py:class:`bPoint` to the contour.
+Append a ``bPoint`` to the contour.
 
 .. py:function:: autoStartSegment
 
@@ -101,7 +101,7 @@ Automatically set the lower left point of the contour as the first point.
 
 .. py:function:: insertBPoint(index, pointType, anchor, bcpIn=(0, 0), bcpOut=(0, 0))
 
-Insert a :py:class:`bPoint` at index on the contour.
+Insert a ``bPoint`` at index on the contour.
 
 -------------
 Other methods
@@ -149,13 +149,13 @@ Skew the contour by ``angle`` (in degrees). Optionally set an ``offset`` value.
 
 .. py:function:: transform(matrix)
 
-Transform this contour. Use a Transform matrix object to mess with the contour. See also `how to use transformations`_.
+Transform this contour. Use a Transform matrix object to mess with the contour. See also :doc:`how to use transformations <../docs_howtos/use_transformations>`.
 
 ---------------
 Method examples
 ---------------
 
-::
+.. code::
 
     # robofab manual
     # Contour object

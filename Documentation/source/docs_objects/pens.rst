@@ -8,7 +8,7 @@ Pens are very useful and powerful objects. The idea is this: a glyph contains dr
 Abstraction
 -----------
 
-Using the pen as an intermediate, the code that just wants to draw a glyph doesn't have to know the internal functions of the glyph, and in turn, the glyph doesn't have to learn anything about specific drawing environments. Different kinds of glyph object (for instance the :py:class:`objectsFL.RGlyph` and the :py:class:`objectsRF.RGlyph`) work very different on the inside. One stores data in FontLab, the other stores the coordinates itself and writes to GLIF. But both :py:class:`RGlyph` objects have a draw method which follows the same abstract drawing procedures. So the code that uses the :py:class:`RGlyph.draw(pen)` is not aware of the difference between the two kinds of glyphs.
+Using the pen as an intermediate, the code that just wants to draw a glyph doesn't have to know the internal functions of the glyph, and in turn, the glyph doesn't have to learn anything about specific drawing environments. Different kinds of glyph object (for instance the ``objectsFL.RGlyph`` and the ``objectsRF.RGlyph``) work very different on the inside. One stores data in FontLab, the other stores the coordinates itself and writes to GLIF. But both ``RGlyph`` objects have a draw method which follows the same abstract drawing procedures. So the code that uses the ``RGlyph.draw(pen)`` is not aware of the difference between the two kinds of glyphs.
 
 ^^^^^^^^^
 Why pens?
@@ -20,15 +20,13 @@ In order to make a glyph draw in for instance a new graphics environment, you on
 Flavors of Pen
 --------------
 
-RoboFab has two different kinds of pen which do different things for different purposes and they're intended for different methods in Glyph. Have a look in robofab/pens/ to see different kinds of pen objects for different purposes. RoboFab already has a fair number of pens in stock, chances are you'll find something you need. Examples of Penmanship at the `How to use Pens`_.
-
-.. _`How to use Pens` : #
+RoboFab has two different kinds of pen which do different things for different purposes and they're intended for different methods in Glyph. Have a look in robofab/pens/ to see different kinds of pen objects for different purposes. RoboFab already has a fair number of pens in stock, chances are you'll find something you need. Examples of Penmanship at the :doc:`How to use Pens <../docs_howtos/use_pens>`.
 
 ^^^^^
 Pen()
 ^^^^^
 
-The normal Pen object and pen that descend from it can be passed to ``aGlyph.draw(aPen)``. The Glyph calls these methods of the pen object to draw. It's very similar to "Drawing like postscript".
+The normal Pen object and pen that descend from it can be passed to ``aGlyph.draw(aPen)``. The Glyph calls these methods of the pen object to draw. It's very similar to "Drawing like PostScript".
 
 .. py:function:: moveTo(pt, smooth=False)
 
@@ -52,7 +50,7 @@ Tell the pen the path is finished.
 
 .. py:function:: addComponent(baseName, offset=(0, 0), scale=(1, 1))
 
-Tell the pen to add a component of baseName, at offset and with scale.
+Tell the pen to add a component of ``baseName``, at ``offset`` and with ``scale``.
 
 .. py:function:: addAnchor(name, (x, y))
 
@@ -74,7 +72,7 @@ Tell the pen the drawing is done.
 PointsPen()
 ^^^^^^^^^^^
 
-Where the normal pen is an easy tool to think about drawing, the ``PointsPen`` is geared towards accessing all the data in the contours of the glyph. A ``PointsPen`` has a very simple interface, it just steps through all the points in a Glyph. Too complicated if you just want your script to draw in a glyph somewhere, but very useful for conversions of one thing to another, and when you're dealing with more elaborate point structures like several consecutive offcurve points. Again, have a look in the robofab/pens to see the available pens. Also the LettError wiki has an in-depth description of the pen protocols. The ``PointsPen`` is passed to the ``aGlyph.drawPoints(aPointsPen)``
+Where the normal pen is an easy tool to think about drawing, the ``PointsPen`` is geared towards accessing all the data in the contours of the glyph. A ``PointsPen`` has a very simple interface, it just steps through all the points in a Glyph. Too complicated if you just want your script to draw in a glyph somewhere, but very useful for conversions of one thing to another, and when you're dealing with more elaborate point structures like several consecutive offcurve points. Again, have a look in the robofab/pens to see the available pens. Also the `LettError wiki <#>`_ has an in-depth description of the pen protocols. The ``PointsPen`` is passed to the ``aGlyph.drawPoints(aPointsPen)``
 
 .. py:function:: beginPath
 
@@ -96,7 +94,7 @@ Add a sub glyph.
 Need a pen?
 -----------
 
-If you need a pen to do some drawing in a Glyph object, you can ask the glyph to get you one. Depending on the environment you're in RoboFab will get you the right kind of pen object to do the drawing.::
+If you need a pen to do some drawing in a ``Glyph`` object, you can ask the glyph to get you one. Depending on the environment you're in RoboFab will get you the right kind of pen object to do the drawing::
 
     # robofab manual
     # Pen object
@@ -106,4 +104,4 @@ If you need a pen to do some drawing in a Glyph object, you can ask the glyph to
     pen = newGlyph.getPen()
     # do stuff with the pen to draw in this glyph
  
-See also a more in depth look at pens here_.
+See also a more in depth look at pens :doc:`here <../docs_howtos/use_pens>`.

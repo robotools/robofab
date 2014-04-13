@@ -6,29 +6,31 @@ RKerning
 Usage
 -----
 
->>> # robofab manual
->>> # Kerning object
->>> # usage examples
->>> f = CurrentFont()
->>> print f.kerning
->>> # getting a value from the kerning dictionary
->>> print f.kerning[('V', 'A')]
->>> print f.kerning[('T', 'X')]
->>> print f.kerning.keys()
-< RKerning for Mailer-Regular >
- -123
- None
- [('X', 'emdash'), 
-    ('K', 'v'),
-    ('two', 'perthousand'),
-    ('guilsinglleft', 'a'),
-    ... etc.]
+.. code::
+
+	>>> # robofab manual
+	>>> # Kerning object
+	>>> # usage examples
+	>>> f = CurrentFont()
+	>>> print f.kerning
+	>>> # getting a value from the kerning dictionary
+	>>> print f.kerning[('V', 'A')]
+	>>> print f.kerning[('T', 'X')]
+	>>> print f.kerning.keys()
+	< RKerning for Mailer-Regular >
+	 -123
+	 None
+	 [('X', 'emdash'), 
+	    ('K', 'v'),
+	    ('two', 'perthousand'),
+	    ('guilsinglleft', 'a'),
+	    ... etc.]
 
 -----------
 Description
 -----------
 
-:py:class:`RKerning` is a dictionary of kerning values. :py:class:`RFont` makes a :py:class:`RKerning` object when it is created and makes available as ``aFont.kerning`` attribute. The keys are tuples of the glyphs listed by their names: ``('T', 'e')``, ``('V', 'A')`` etc. ``None`` is returned if the pair does not exist, rather than raising an ``IndexError``. The parent of a kerning object is usually a Font.
+``RKerning`` is a dictionary of kerning values. ``RFont`` makes a ``RKerning`` object when it is created and makes available as ``aFont.kerning`` attribute. The keys are tuples of the glyphs listed by their names: ``('T', 'e')``, ``('V', 'A')`` etc. ``None`` is returned if the pair does not exist, rather than raising an ``IndexError``. The parent of a kerning object is usually a Font.
 
 -------
 Methods
@@ -108,7 +110,7 @@ Eliminate pairs with value less than minimum.
 
 .. py:function:: occurrenceCount(glyphsToCount)
 
-Return a dict with glyphs as keys and the number of occurances of that glyph in the kerning pairs as the value ``glyphsToCount`` can be a string: ``'a'`` or list: `['a', 'b']``
+Return a dict with glyphs as keys and the number of occurances of that glyph in the kerning pairs as the value ``glyphsToCount`` can be a string: ``'a'`` or list: ``['a', 'b']``
 
 .. py:function:: remove(pair)
 

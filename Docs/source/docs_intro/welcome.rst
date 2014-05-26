@@ -22,10 +22,10 @@ This documentation
 - :doc:`Download RoboFab <download>`: download options and installers.
 - :doc:`RoboFab Getting Started <gettingstarted>`: simple stuff.
 - :doc:`Glossary <glossary>`: index of words and terminology.
-- :doc:`How To <../docs_howtos/howtos>`: A couple of cases and examples.
+- :doc:`How To <../docs_howtos/index>`: A couple of cases and examples.
 - :doc:`Links <links>`: Relevant links for RoboFab, Font tools and editors.
 - :doc:`Objects <../docs_objects/objects>`: Overview of the objects, their methods and attributes
-- :doc:`Step by step <../docs_talks/talks>`: An overview of step by step explanations of common procedures and objects.
+- :doc:`Step by step <../docs_talks/index>`: An overview of step by step explanations of common procedures and objects.
 - :doc:`RoboFab Tools <tools>`: overview of the tools and miscellaneous code.
 - :doc:`UFO <ufo>`: About the UFO tools
 

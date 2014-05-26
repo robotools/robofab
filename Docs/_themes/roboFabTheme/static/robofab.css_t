@@ -1,0 +1,235 @@
+/* --- RoboFab Docs --- */
+
+body {
+    background-color: #FFF;
+    padding: 0;
+    margin: 0;
+    font-family: Lucida Grande, Geneva, Arial, Verdana, sans-serif;
+    font-size: 11pt;
+    line-height: 1.4em;
+}
+p {
+    margin-top: 0;
+    padding: 0;
+}
+hr {
+    color: none;
+    background-color: none;
+    border: none;
+    border-top: 1px dotted #BBB;
+    height: 1px;
+    margin: 2em 0;
+}
+pre,
+code {
+    font-family: 'Menlo', 'Andale Mono', 'Monaco', 'Consolas', 'Courier';
+}
+a,
+a:active {
+    text-decoration: none;
+    color: #339;
+}
+::selection {
+    color: #F30;
+    background-color: none;
+}
+
+/* ---------- links hover ---------- */
+
+#content a:hover,
+.navbar a:hover,
+.sphinxsidebar a:hover {
+    text-decoration: none;
+    position: relative;
+    top: +1px;
+    left: +1px;
+}
+
+/* ---------- content ---------- */
+
+#content {
+    padding: 0;
+    width: 36em;
+    margin: 0 0 5em 0;
+    font-size: .9em;
+    float: left;
+}
+#content h1 {
+    color: #666;
+    font-size: 1.4em;
+}
+#content h2,
+#content h3 {
+    font-family: 'Menlo', 'Andale Mono', 'Monaco', 'Consolas', 'Courier';
+}
+#content h2 {
+    color: #333;
+    border-top: 1px dotted #BBB;
+    margin-top: 2em;
+    padding-top: .5em;
+    font-size: 1.1em;
+    white-space: pre-wrap;
+}
+#content h3 {
+    color: #999;
+    padding: 0;
+    margin-bottom: 0;
+    font-size: 1em;
+}
+#content ul,
+#content ol {
+    margin-left: 1.35em;
+    padding-left: 0; 
+}
+#content ul {
+    list-style: square;
+}
+#content code {
+    padding: .2em .4em .2em 0 0;
+    border-radius: 2px;
+    white-space: pre-wrap;
+}
+#content pre {
+    border-radius: 4px;
+    background-color: #EEE;
+    padding: 1em;
+    font-size: .9em;
+}
+#content p,
+#content ul {
+    font-size: .9em;
+}
+#content p > em,
+#content li > em {
+    font-family: Georgia, Lucida Grande, Geneva, Arial, Verdana, sans-serif;
+    font-size: 1.1em;
+}
+#content p > code {
+    background-color: #EEE;
+    color: #666;
+    padding: .2em .3em;
+}
+
+#content a.headerlink,
+#content a.headerlink:visited  {
+    visibility: hidden;
+}
+
+#content h1:hover > a.headerlink,
+#content h2:hover > a.headerlink,
+#content h3:hover > a.headerlink,
+#content h4:hover > a.headerlink,
+#content h5:hover > a.headerlink,
+#content h6:hover > a.headerlink,
+#content dt:hover > a.headerlink {
+    visibility: visible;
+}
+
+/* ---------- header ---------- */
+
+#header {
+    background-image: url('http://robofab.org/img/drawmodel_header.jpg');
+    background-repeat: no-repeat;
+    height: 5em;
+    padding: 1em 1.4em;
+    margin: 0;
+}
+#header img {
+    margin-top: 1em;
+}
+
+/* ---------- quick nav & search ---------- */
+
+.navbar,
+.footer {
+    font-size: .75em;
+    padding: .1em 1.45em;
+    margin: 0 0 2em 0;
+}
+
+.navbar {
+    border-bottom: 1px dotted #BBB;
+    padding-bottom: 1em;
+}
+
+.navbar ul {
+    margin: 0;
+    padding: 0 1.6em 0 0;
+    float: left;
+}
+.navbar li {
+    display: inline;
+    padding: 0 .5em;
+}
+
+/* ---------- sidebar ---------- */
+
+.sphinxsidebar {
+    float: left;
+    margin: 1.4em 0 0 2em;
+    font-size: .75em;
+    line-height: 1.5em;
+    width: 14em;
+    padding: 0 3em 0 0;
+}
+.sphinxsidebar a:hover {
+    background-color: #EEE;
+}
+.sphinxsidebar code {
+    font-family: Lucida Grande, Geneva, Arial, Verdana, sans-serif;
+}
+.sphinxsidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.sphinxsidebar h3 {
+    font-size: 11px;
+    margin: 0;
+    padding: 0;
+}
+.sphinxsidebar ul + h3 {
+    margin-top: 1em;    
+}
+.sphinxsidebar hr {
+    margin: .6em;
+    border-top: 0px solid #BBB; 
+}
+
+/* ---------- footer ---------- */
+
+.footer {
+    clear: both;
+    width: 100%;
+    border-top: 1px dotted #BBB;
+    padding-top: 1em;
+}
+.footer p {
+    margin-bottom: 0;
+}
+
+/* ---------- object map ---------- */
+
+#map-link {
+    position: absolute;
+    top: 7px;
+    left: 740px;
+}
+#map {
+    width: 36em;
+    padding-left: 28em;
+    margin-top: 130px;
+}
+#tree { position: absolute; left: 150px; top: 120px; }
+#lib1 { position: absolute; left: 386px; top: 120px; width: 114px; height: 66px; }
+#info { position: absolute; left: 570px; top: 145px; width: 114px; height: 66px; }
+#font { position: absolute; left: 386px; top: 190px; width: 140px; height: 96px; }
+#kerning { position: absolute; left: 538px; top: 245px; width: 114px; height: 66px; }
+#lib2 { position: absolute; left: 150px; top: 261px; width: 114px; height: 66px; }
+#glyph { position: absolute; left: 281px; top: 306px; width: 140px; height: 96px; }
+#anchor { position: absolute; left: 150px; top: 327px; width: 114px; height: 66px; }
+#point { position: absolute; left: 555px; top: 375px; width: 114px; height: 66px; }
+#component { position: absolute; left: 150px; top: 414px; width: 114px; height: 66px; }
+#bpoint { position: absolute; left: 555px; top: 449px; width: 114px; height: 66px; }
+#contour { position: absolute; left: 390px; top: 455px; width: 114px; height: 66px; }
+#segment { position: absolute; left: 233px; top: 506px; width: 114px; height: 66px; } 

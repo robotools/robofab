@@ -12,11 +12,12 @@
 # serve to show the default.
 
 import sys, os
+import time
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -25,7 +26,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.ifconfig', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -41,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'RoboFab'
-copyright = u'2013, Erik van Blokland, Tal Leming, Just van Rossum'
+copyright = u'%s, Erik van Blokland, Tal Leming, Just van Rossum' % (time.strftime('%Y'))
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -64,7 +65,7 @@ release = '599'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['build']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -81,7 +82,7 @@ exclude_patterns = []
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'autumn'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -94,34 +95,16 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'roboFabTheme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {
-#     # fonts
-      # "headfont" : "Lucida Grande",
-      # "bodyfont" : "Lucida Grande",
-#     # layout
-      "collapsiblesidebar" : True,
-      # "stickysidebar" : True,
-#     # text 
-#     "relbartextcolor" : '#DDD',
-#     "sidebartextcolor" : '#777',
-#     # links
-#     "linkcolor" : '#20435C',
-#     "relbarlinkcolor" : '#FFF',
-#     "sidebarlinkcolor" : '#FFF',
-#     # colors
-#     "sidebarbgcolor" : '#CCC',
-#     "headbgcolor" : '#EEE',
-#     "relbarbgcolor" : '#AAA',
-#     "footerbgcolor" : '#999',
-}
+html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+sys.path.append(os.path.abspath('_themes'))
+html_theme_path = ['../_themes']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -146,11 +129,11 @@ html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
-#html_use_smartypants = True
+html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
@@ -169,10 +152,10 @@ html_static_path = ['_static']
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-#html_show_sphinx = True
+html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 #html_show_copyright = True
@@ -186,7 +169,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'RoboFabdoc'
+htmlhelp_basename = 'RoboFabDocs'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -205,7 +188,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'RoboFab.tex', u'RoboFab Documentation',
+  ('index', 'RoboFab.tex', u'RoboFab',
    u'Erik van Blokland, Tal Leming, Just van Rossum', 'manual'),
 ]
 
@@ -235,7 +218,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'robofab', u'RoboFab Documentation',
+    ('index', 'RoboFab', u'Documentation',
      [u'Erik van Blokland, Tal Leming, Just van Rossum'], 1)
 ]
 
@@ -249,9 +232,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'RoboFab', u'RoboFab Documentation',
-   u'Erik van Blokland, Tal Leming, Just van Rossum', 'RoboFab', 'One line description of project.',
-   'Miscellaneous'),
+  ('index', 'RoboFab', u'RoboFab',
+   u'Erik van Blokland, Tal Leming, Just van Rossum', 'RoboFab',
+   'A Python library for dealing with data usually associated with fonts and type design.',
+   'Font production tools'),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -266,6 +250,10 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
 
+# auto doc
+
+add_module_names = False
+autodoc_member_order = 'bysource'
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}

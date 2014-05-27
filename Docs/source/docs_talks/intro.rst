@@ -2,9 +2,7 @@
 Step-by-step
 ============
 
-Almost completely updated for UFO2.
-
-These are chapters about scripting in Python, where and how to make your code and how to use RoboFab objects. Illustrated with many examples. These documents started out as conference notes for the Robothon09 Conference. It has been updated for UFO2.
+These are chapters about scripting in Python, where and how to make your code and how to use RoboFab objects. Illustrated with many examples. These documents started out as conference notes for the Robothon09 Conference. They have been updated for UFO2.
 
 --------
 Sections

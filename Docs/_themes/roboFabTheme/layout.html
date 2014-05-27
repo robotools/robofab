@@ -5,17 +5,17 @@
 <div class="navbar">
 
 <ul>
-<!--<li><a href="{{ pathto(master_doc) }}">{{ project|e }}</a> <span>{{ version|e }}</span></li>-->
 <li><a href="{{ pathto(master_doc) }}">home</a> </li>
+<!--
 <li><a href="{{ pathto('content/quickReference.html', 1) }}">reference</a></li>
-<li><a href="{{ pathto('content/download.html', 1) }}">download</a></li>
+-->
+<li><a href="{{ pathto('docs_intro/download.html', 1) }}">download</a></li>
 <li><a href="{{ pathto('genindex.html', 1) }}">index</a></li>
 </ul>
 
 {%- include "searchbox.html" %}
 
 </div>
-
 {%- endmacro %}
 
 {%- block extrahead %}
@@ -50,38 +50,48 @@
 
 <!-- vertical : right -->
 
-{%- block sidebar2 %}
-{% endblock %}
+{%- block sidebar2 %}{% endblock %}
 
 {% block sidebartoc %}
 {{ toctree(includehidden=True) }}
 {% endblock %}
 
 {% block document %}
-
 <div class="documentwrapper">
 {%- if render_sidebar %}
-    <div class="bodywrapper">
+<div class="bodywrapper">
 {%- endif %}
-
 <div class="body" id="content">
-    {% block body %}{% endblock %}
+{% block body %}{% endblock %}
 </div>
-
 {%- if render_sidebar %}
     </div>
 {%- endif %}
-
 </div>
 {% endblock %}
 
 {%- block relbar2 %}
+<div id='tocsidebar'>
+<h3>links</h3>
+<ul>
+<li><a href='#'>robofab source</a></li>
+<li><a href='#'>mailing list</a></li>
+</ul>
+<h3>more links</h3>
+<ul>
+<li><a href='#'>FontTools</a></li>
+<li><a href='#'>TTX</a></li>
+<li><a href='#'>TypeSupply</a></li>
+<li><a href='#'>Superpolator</a></li>
+<li><a href='#'>LettError</a></li>
+</ul>
+</div>
 {% endblock %}
 
 {%- block footer %}
 <div class="footer">
 <p>&copy; Copyright <script>document.write(new Date().getFullYear())</script>
-    <a href="http://letterror.com/">Just van Rossum</a>, <a href="http://letterror.com/">Erik van Blokland</a>, <a href="http://typesupply.com/">Tal Leming</a></p>
+    <a href="http://letterror.com/">Just van Rossum</a>, <a href="http://letterror.com/">Erik van Blokland</a>, <a href="http://typesupply.com/">Tal Leming</a>.</p>
 <p>
 {%- if last_updated %}
 {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}. {% endtrans %}

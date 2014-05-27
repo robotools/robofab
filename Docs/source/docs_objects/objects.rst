@@ -1,16 +1,12 @@
-================
-Objects Overview
-================
-
-The most detailed information about RoboFab objects is available in **robofabDocs** in the RoboFab distribution. This overview here focusses on a couple of the more important objects and offers examples on how to use them.
+========
+Overview
+========
 
 -----
 Model
 -----
 
 Here is a :doc:`handy map <model>` of the RoboFab objects.
-
-*[img]*
 
 ----------------------------
 RoboFab Unified Font Objects

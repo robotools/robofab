@@ -1,6 +1,6 @@
-===========
-RoboFab API
-===========
+========
+API Docs
+========
 
 .. toctree::
    :maxdepth: 1

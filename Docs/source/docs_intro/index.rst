@@ -5,17 +5,15 @@ Introduction
 .. toctree::
    :maxdepth: 1
 
-   index2.rst
-   welcome.rst
    intro.rst
-   install.rst
-   dialogs.rst
+   summary.rst
    download.rst
+   install.rst
    gettingstarted.rst
-   glossary.rst
    history.rst
    limitation.rst
    links.rst
-   summary.rst
    tools.rst
+   dialogs.rst
    ufo.rst
+   glossary.rst

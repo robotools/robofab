@@ -62,4 +62,4 @@ We've poured all our experience from writing RoboFog into the RoboFab objects. Y
 Where next?
 -----------
 
-First you could :doc:`download` the library and install it. Then you could browse through this documentation and see what the various :doc:`objects <../docs_objects/objects>` are, what they can do etc. You could have a look at :doc:`a discussion on scripting <../docs_howtos/scripting>`.
+First you could :doc:`download` the library and install it. Then you could browse through this documentation and see what the various :doc:`objects <../docs_objects/index>` are, what they can do etc. You could have a look at :doc:`a discussion on scripting <../docs_howtos/scripting>`.

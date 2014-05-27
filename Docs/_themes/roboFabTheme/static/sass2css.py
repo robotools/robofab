@@ -1,8 +1,12 @@
 # [h] compile sass into css
 
 import os
+import subprocess
 
-from nelson.modules.sass import compile_sass
+def compile_sass(sass_path):
+    '''Compile a ``.sass`` file (and dependencies) into a single ``.css`` file.'''
+    css_path = os.path.splitext(sass_path)[0] + '.css'
+    subprocess.call(['sass', sass_path, css_path])
 
 base_folder = os.path.dirname(__file__)
 

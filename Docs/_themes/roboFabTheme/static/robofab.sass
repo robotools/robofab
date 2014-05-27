@@ -68,10 +68,8 @@ pre, code, tt
 	color: #F30
 	background-color: none
 
-a
+a, a:active
 	text-decoration: none
-
-a:active
 	color: #339
 
 /* ---------- content ---------- */
@@ -114,18 +112,19 @@ a:active
 		border-radius: $radius
 		background-color: $bgcode
 		padding: 1em
+		white-space: pre-line
 	p > em, li > em
 		font-family: $italicfont
 		font-style: italic
 		font-size: 1.1em
 	p > code, p > tt,
 	li > code, li > tt,
-		color: #555
+		color: #333
 	a.headerlink,
 	a.headerlink:visited
 		visibility: hidden
 	dt
-		color: #999
+		color: #333
 	h1:hover > a.headerlink,
 	h2:hover > a.headerlink,
 	h3:hover > a.headerlink,
@@ -140,7 +139,7 @@ a:active
 			margin: 0
 		.admonition-title
 			font-weight: bold
-			color: #777
+			color: #666
 			margin-bottom: 0.4em
 
 /* ---------- header ---------- */

@@ -7,17 +7,17 @@ Objects
 
    objects.rst
    model.rst
-   pens.rst
-   psHintsGlyph.rst
+   RFont.rst
+   RInfo.rst
+   RGlyph.rst
+   RContour.rst
+   RPoint.rst
+   bPoint.rst
+   RSegment.rst
    RAnchor.rst
    RComponent.rst
-   RContour.rst
-   RFont.rst
-   RGlyph.rst
-   RInfo.rst
    RKerning.rst
+   pens.rst
    libs.rst
-   RPoint.rst
-   RSegment.rst
-   bPoint.rst
    psHints.rst
+   psHintsGlyph.rst

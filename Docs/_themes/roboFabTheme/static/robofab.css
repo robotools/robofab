@@ -144,10 +144,8 @@ pre, code, tt {
   color: #ff3300;
   background-color: none; }
 
-a {
-  text-decoration: none; }
-
-a:active {
+a, a:active {
+  text-decoration: none;
   color: #333399; }
 
 /* ---------- content ---------- */
@@ -187,19 +185,20 @@ a:active {
   #content pre {
     border-radius: 0;
     background-color: #eeeeee;
-    padding: 1em; }
+    padding: 1em;
+    white-space: pre-line; }
   #content p > em, #content li > em {
     font-family: Georgia, serif;
     font-style: italic;
     font-size: 1.1em; }
   #content p > code, #content p > tt,
   #content li > code, #content li > tt {
-    color: #555555; }
+    color: #333333; }
   #content a.headerlink,
   #content a.headerlink:visited {
     visibility: hidden; }
   #content dt {
-    color: #999999; }
+    color: #333333; }
   #content h1:hover > a.headerlink,
   #content h2:hover > a.headerlink,
   #content h3:hover > a.headerlink,
@@ -214,7 +213,7 @@ a:active {
       margin: 0; }
     #content .note .admonition-title {
       font-weight: bold;
-      color: #777777;
+      color: #666666;
       margin-bottom: 0.4em; }
 
 /* ---------- header ---------- */

@@ -84,8 +84,8 @@ exclude_patterns = ['build']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'tango'
 
-from pygments.styles import get_all_styles
-print list(get_all_styles())
+# from pygments.styles import get_all_styles
+# print list(get_all_styles())
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []

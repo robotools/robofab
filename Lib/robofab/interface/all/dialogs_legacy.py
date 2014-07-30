@@ -95,7 +95,22 @@ class _FontLabDialogOneList:
 	
 	def on_ok(self, code):
 		self.d.GetValue('list')
-		self.selected = self.list_index
+		# Since FLS v5.2, the GetValue() method of the Dialog() class returns
+		# a 'wrong' index value from the specified LISTCONTROL.
+		# If the selected index is n, it will return n-1. For example, when
+		# the index is 1, it returns 0; when it's 2, it returns 1, and so on.
+		# If the selection is empty, FLS v5.2 returns -2, while the old v5.0 
+		# returned None.
+		# See also:
+		# - http://forum.fontlab.com/index.php?topic=8807.0
+		# - http://forum.fontlab.com/index.php?topic=9003.0
+		if fl.version == '5.2.1.4868':
+			if self.list_index == -2:
+				self.selected = None
+			else:
+				self.selected = self.list_index + 1
+		else:
+			self.selected = self.list_index
 
 
 class _FontLabDialogSearchList:

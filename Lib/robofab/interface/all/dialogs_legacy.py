@@ -104,7 +104,9 @@ class _FontLabDialogOneList:
 		# See also:
 		# - http://forum.fontlab.com/index.php?topic=8807.0
 		# - http://forum.fontlab.com/index.php?topic=9003.0
-		if fl.version == '5.2.1.4868':
+		#
+		# Edited based on feedback from Adam Twardoch
+		if fl.buildnumber > 4600 and sys.platform == 'win32':
 			if self.list_index == -2:
 				self.selected = None
 			else:
@@ -733,4 +735,3 @@ if __name__=='__main__':
 		b.close()
 	except:
 		traceback.print_exc(limit=0)
-#

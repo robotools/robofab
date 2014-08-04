@@ -47,14 +47,18 @@ How do I install Robofab for use with FS5 on mac?
 The easiest way is to do the following:
 
 1. Download RoboFab and put it wherever you want it to live on your hard drive. Many people make a RoboFab folder in ``/Applications``.
+
 2. Go to your ``Applications/Utilities`` folder.
+
 3. Open Terminal.
+
 4. Once the terminal is open, type ``python`` with a space after it.
+
 5. Drag the ``install.py`` script from the RoboFab folder into the line that you just typed in the terminal. It should now look something like this (with your name, rather than ``Tinkywinky``)::
 
     python /Users/Tinkywinky/RoboFab_1/install.py
 
-  .. note::
+.. note::
 
     If you have installed newer (2.3+) versions of Python, you need to explicitly tell with which version of Python you want to install. The command would look like this::
 

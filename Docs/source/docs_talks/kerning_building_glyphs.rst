@@ -2,9 +2,9 @@
 Kerning and building Glyphs
 ===========================
 
--------
-Kerning
--------
+------------------
+The Kerning object
+------------------
 
 All kerning data of a font is represented by the ``Kerning`` object. This object behaves like a Python dictionary: the key is a tuple of two glyph or groupnames, the dictionary value is the kern distance.
 

@@ -254,7 +254,6 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # auto doc
-
 add_module_names = False
 autodoc_member_order = 'bysource'
 

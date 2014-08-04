@@ -94,9 +94,7 @@
   width: 114px;
   height: 66px; }
 
-*,
-*:before,
-*:after {
+*, *:before, *:after {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
@@ -133,12 +131,9 @@ hr {
 
 pre, code, tt {
   font-family: "Menlo", "Andale Mono", "Monaco", "Consolas", "Courier";
-  font-size: 0.95em;
+  font-size: 0.97em;
   font-style: normal;
-  font-weight: normal;
-  white-space: pre-wrap;
-  white-space: -moz-pre-wrap;
-  white-space: -o-pre-wrap; }
+  font-weight: normal; }
 
 ::selection {
   color: #ff3300;
@@ -180,25 +175,30 @@ a, a:active {
     list-style: square; }
   #content code {
     padding: 0.2em 0.4em 0.2em 0;
-    border-radius: 0;
+    border-radius: 10px;
     white-space: pre-line; }
   #content pre {
-    border-radius: 0;
+    border-radius: 10px;
     background-color: #eeeeee;
     padding: 1em;
-    white-space: pre-line; }
+    white-space: pre-wrap; }
+  #content tt.docutils.literal {
+    color: #333333;
+    background-color: #eeeeee;
+    padding: 0.05em 0.3em; }
+  #content .highlight {
+    background-color: None; }
   #content p > em, #content li > em {
     font-family: Georgia, serif;
     font-style: italic;
     font-size: 1.1em; }
-  #content p > code, #content p > tt,
-  #content li > code, #content li > tt {
-    color: #333333; }
   #content a.headerlink,
   #content a.headerlink:visited {
     visibility: hidden; }
   #content dt {
-    color: #333333; }
+    font-weight: bold; }
+  #content dd {
+    margin: 0 0 1em 1em; }
   #content h1:hover > a.headerlink,
   #content h2:hover > a.headerlink,
   #content h3:hover > a.headerlink,
@@ -207,7 +207,7 @@ a, a:active {
   #content h6:hover > a.headerlink {
     visibility: visible; }
   #content .note {
-    padding: 0.6em 1em;
+    padding: 0.6em 1em 0.8em;
     background-color: #eeeeee; }
     #content .note p {
       margin: 0; }

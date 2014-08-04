@@ -2,9 +2,7 @@
 
 @import objectmap
 
-*,
-*:before,
-*:after
+*, *:before, *:after
 	-moz-box-sizing: border-box
 	-webkit-box-sizing: border-box
 	box-sizing: border-box
@@ -22,7 +20,7 @@ $grid: 6em
 $wsidenav: 2
 $wcol: $wsidenav * $grid
 $wcontent: 7 * $grid
-$radius: 0
+$radius: 10px
 
 .shiftlink
 	a:hover
@@ -57,12 +55,12 @@ hr
 
 pre, code, tt
 	font-family: $monofont
-	font-size: 0.95em
+	font-size: 0.97em
 	font-style: normal
 	font-weight: normal
-	white-space: pre-wrap
-	white-space: -moz-pre-wrap
-	white-space: -o-pre-wrap
+	// white-space: pre-wrap
+	// white-space: -moz-pre-wrap
+	// white-space: -o-pre-wrap
 
 ::selection
 	color: #F30
@@ -112,19 +110,27 @@ a, a:active
 		border-radius: $radius
 		background-color: $bgcode
 		padding: 1em
-		white-space: pre-line
+		white-space: pre-wrap
+	tt.docutils.literal
+		color: #333
+		// font-weight: bold
+		background-color: $bgcode
+		padding: 0.05em 0.3em
+	.highlight
+		background-color: None
 	p > em, li > em
 		font-family: $italicfont
 		font-style: italic
 		font-size: 1.1em
-	p > code, p > tt,
-	li > code, li > tt,
-		color: #333
+	// p > code, p > tt, li > code, li > tt,
+	// 	color: #333
 	a.headerlink,
 	a.headerlink:visited
 		visibility: hidden
 	dt
-		color: #333
+		font-weight: bold
+	dd
+		margin: 0 0 1em 1em
 	h1:hover > a.headerlink,
 	h2:hover > a.headerlink,
 	h3:hover > a.headerlink,
@@ -133,7 +139,7 @@ a, a:active
 	h6:hover > a.headerlink,
 		visibility: visible
 	.note
-		padding: 0.6em 1em
+		padding: 0.6em 1em 0.8em
 		background-color: #EEE
 		p
 			margin: 0

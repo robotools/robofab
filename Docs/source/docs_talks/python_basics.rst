@@ -11,9 +11,9 @@ Conditional statements
 If some condition is met: execute a separate block of your script::
 
     >>> if 1+1 == 2:
-    >>>     print "still true"
+    ...     print "still true"
     >>> else:
-    >>>     print "oops"
+    ...     print "oops"
     still true
 
 -------------------
@@ -23,7 +23,7 @@ Compound statements
 For each item in this list: execute a seperate block of your script::
 
     >>> for item in [1, 2, 3, "a"]:
-    >>>     print item
+    ...     print item
     1
     2
     3

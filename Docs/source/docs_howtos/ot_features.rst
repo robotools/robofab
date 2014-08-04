@@ -8,7 +8,9 @@ The UFO specification does not have an explicit place or format for OpenType fea
 Features
 --------
 
-Feature data in UFO is stored in ``font.lib['com.robofab.features']``. This is a dictionary with the four-letter feature tag as key and the feature text as value. As of RoboFab version 1.1.2, the order of the features is stored in ``font.lib['com.robofab.featureorder']``. Older UFO's without this entry will get their features imported in alphabetical order. OpenType classes are stored in ``font.groups`` (``ufo/groups.plist``)::
+Feature data in UFO is stored in ``font.lib['com.robofab.features']``. This is a dictionary with the four-letter feature tag as key and the feature text as value. As of RoboFab version 1.1.2, the order of the features is stored in ``font.lib['com.robofab.featureorder']``. Older UFO's without this entry will get their features imported in alphabetical order. OpenType classes are stored in ``font.groups`` (``ufo/groups.plist``):
+
+.. code::
 
     >>> # Getting to feature data in a UFO.
     >>> from robofab.world import OpenFont
@@ -38,11 +40,13 @@ Note that the feature data in the lib is used for storage in UFO. This data won'
     [<TagObject: tag=liga, value=feature ln..., parent: 'MyFont'>,
     <TagObject: tag=dlig, value=feature ln..., parent: 'MyFont'>]
 
--------
-Kerning
--------
+------------
+Kerning data
+------------
 
-Kerning is stored in ``font.kerning``, an object which behaves like a dictionary. A ``(name, name)`` tuple is the key. This can either be a glyph name or a group name. A number is the value. Can be floating point or integer::
+Kerning is stored in ``font.kerning``, an object which behaves like a dictionary. A ``(name, name)`` tuple is the key. This can either be a glyph name or a group name. A number is the value. Can be floating point or integer:
+
+.. code::
 
     >>> # showing where the data lives in the RoboFab objects.
     >>> from robofab.world import CurrentFont

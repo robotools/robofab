@@ -1284,7 +1284,6 @@ class BaseGlyph(RBaseObject):
 		return newContours
 
 	def _interpolateComponents(self, factor, minComponents, maxComponents):
-		componentOrder = [componentTuple[0] for componentTuple in minComponents]
 		newComponents = []
 		minComponents, maxComponents = self._mathComponentCompare(minComponents, maxComponents)
 		componentNames = minComponents.keys()
@@ -1299,8 +1298,6 @@ class BaseGlyph(RBaseObject):
 				newYXScale, newYScale = _interpolatePt((minYXScale, minYScale), (maxYXScale, maxYScale), factor)
 				newXOffset, newYOffset = _interpolatePt((minXOffset, minYOffset), (maxXOffset, maxYOffset), factor)
 				newComponents.append((componentName, (newXScale, newXYScale, newYXScale, newYScale, newXOffset, newYOffset)))
-
-		newComponents.sort(key=lambda x: componentOrder.index(x[0]))
 		return newComponents
 
 	def _interpolateAnchors(self, factor, minAnchors, maxAnchors):

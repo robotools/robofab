@@ -9,7 +9,7 @@ from FL import *
 try:
 	from fl_cmd import *
 except ImportError:
-	print "The fl_cmd module is not available here. flPen.py"
+	print("The fl_cmd module is not available here. flPen.py")
 
 from robofab.tools.toolsFL import NewGlyph
 from robofab.pens.pointPen import AbstractPointPen
@@ -153,7 +153,7 @@ class FLPointPen(AbstractPointPen):
 		NewGlyph(self.glyph.parent, baseName, updateFont=False)
 		baseIndex = self.glyph.parent.FindGlyph(baseName)
 		if baseIndex == -1:
-			raise KeyError, "couldn't find or make base glyph"
+			raise KeyError("couldn't find or make base glyph")
 		xx, xy, yx, yy, dx, dy = transformation
 		# XXX warn when xy or yx != 0
 		new = Component(baseIndex, Point(dx, dy), Point(xx, yy))

@@ -44,7 +44,7 @@ class UpdateFromUFODialogDialog(object):
 		self.w.open()
 	
 	def okCallback(self, sender):
-		print 'this final list contains:', list(self.w.list)
+		print('this final list contains:', list(self.w.list))
 	
 	def listHitCallback(self, sender):
 		selection = sender.getSelection()
@@ -53,10 +53,10 @@ class UpdateFromUFODialogDialog(object):
 		else:
 			selectionIndex = selection[0]
 			selectedItem = sender[selectionIndex]
-		print 'selection:', selectedItem
+		print('selection:', selectedItem)
 
 	def updateAllCallback(self, sender):
-		print "Update all glyphs"
+		print("Update all glyphs")
 		names = self.updateNames[:]
 		for n in self.updateNames:
 			self.updateGlyph(n)
@@ -65,7 +65,7 @@ class UpdateFromUFODialogDialog(object):
 		self.w.list.setSelection([-1])
 	
 	def updateCallback(self, sender):
-		print "Update selected glyph"
+		print("Update selected glyph")
 		names = []
 		for index in self.w.list.getSelection():
 			names.append(self.updateNames[index])
@@ -76,14 +76,14 @@ class UpdateFromUFODialogDialog(object):
 		self.w.list.setSelection([-1])
 	
 	def checkCallback(self, sender):
-		print "checking fonts"
+		print("checking fonts")
 		self.analyseFonts()
 
 	def analyseFonts(self):
 		ufoDigests = {}
-		print "calculating UFO digests"
-		ufoNames = self.ufo.keys()
-		vfbNames = self.vfb.keys()
+		print("calculating UFO digests")
+		ufoNames = list(self.ufo.keys())
+		vfbNames = list(self.vfb.keys())
 		self.w.list.set([])
 		self.updateNames = []
 		for n in ufoNames:
@@ -96,7 +96,7 @@ class UpdateFromUFODialogDialog(object):
 		names = list(relevantNames)
 		names.sort()
 		for name in names:
-			print name
+			print(name)
 			ufoDigest = self.ufo[name]._getDigest()
 			vfbDigest = self.vfb[name]._getDigest()
 			if ufoDigest != vfbDigest:
@@ -105,7 +105,7 @@ class UpdateFromUFODialogDialog(object):
 				self.w.list.setSelection([-1])
 	
 	def updateGlyph(self, name):
-		print "importing", name
+		print("importing", name)
 		self.vfb[name].clear()
 		self.vfb.insertGlyph(self.ufo[name], name=name)
 		self.vfb[name].width = self.ufo[name].width
@@ -121,11 +121,11 @@ if __name__ == "__main__":
 	f = CurrentFont()
 	ufoPath = f.path.replace(".vfb", ".ufo")
 	if os.path.exists(ufoPath):
-		print "there is a ufo for this font at", ufoPath
+		print("there is a ufo for this font at", ufoPath)
 		ufo = _RFont(ufoPath)
 		UpdateFromUFODialogDialog(ufo, f)
 	f.update()
 
 
 
-	print "done"
+	print("done")

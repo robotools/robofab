@@ -114,7 +114,7 @@ class MarginPen(BasePen):
 	def getMargins(self):
 		"""Get the horizontal margins for all contours combined, i.e. the whole glyph."""
 		allHits = []
-		for index, pts in self.hits.items():
+		for index, pts in list(self.hits.items()):
 			allHits.extend(pts)
 		if allHits:
 			return min(allHits), max(allHits)
@@ -123,7 +123,7 @@ class MarginPen(BasePen):
 	def getContourMargins(self):
 		"""Get the horizontal margins for each contour."""
 		allHits = {}
-		for index, pts in self.hits.items():
+		for index, pts in list(self.hits.items()):
 			unique = list(Set(pts))
 			unique.sort()
 			allHits[index] = unique
@@ -132,7 +132,7 @@ class MarginPen(BasePen):
 	def getAll(self):
 		"""Get all the slices."""
 		allHits = []
-		for index, pts in self.hits.items():
+		for index, pts in list(self.hits.items()):
 			allHits.extend(pts)
 		unique = list(Set(allHits))
 		unique = list(unique)
@@ -150,6 +150,6 @@ if __name__ == "__main__":
 
 	pen = MarginPen(f, pt[1], isHorizontal=False)
 	g.draw(pen) 
-	print 'glyph Y margins', pen.getMargins()
-	print pen.getContourMargins()
+	print('glyph Y margins', pen.getMargins())
+	print(pen.getContourMargins())
 

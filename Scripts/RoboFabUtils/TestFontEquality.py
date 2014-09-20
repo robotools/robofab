@@ -1,6 +1,6 @@
 from robofab.world import AllFonts
 
-print "Compare all fonts in the  AllFonts list with each other:"
+print("Compare all fonts in the  AllFonts list with each other:")
 
 
 af = AllFonts()
@@ -8,7 +8,7 @@ af = AllFonts()
 results = []
 line = []
 for n in af:
-	line.append(`n.info.postscriptFullName`)
+	line.append(repr(n.info.postscriptFullName))
 results.append(line)
 
 for i in range(len(af)):
@@ -17,12 +17,12 @@ for i in range(len(af)):
 	line.append(af[i].info.postscriptFullName)
 	for j in range(len(af)):
 		other = af[j]
-		line.append(`one==other`)
+		line.append(repr(one==other))
 		if one == other:
-			print "same: ", one.path, other.path
+			print("same: ", one.path, other.path)
 	results.append(line)
 
 for n in results:
-	print n
+	print(n)
 	
 	

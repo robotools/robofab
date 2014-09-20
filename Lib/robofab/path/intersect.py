@@ -10,14 +10,21 @@ def normalise(a1, a2):
 	n = math.sqrt((a1*a1)+(a2*a2))
 	return (a1/n, a2/n)
 
-def inbetween((a1, a2), (b1, b2), (c1, c2)):
+def inbetween(xxx_todo_changeme, xxx_todo_changeme1, xxx_todo_changeme2):
 	"""Return True if point b is in between points a and c."""
+	(a1, a2) = xxx_todo_changeme
+	(b1, b2) = xxx_todo_changeme1
+	(c1, c2) = xxx_todo_changeme2
 	x = (a1-_EPSILON<=b1<=c1+_EPSILON) or (a1+_EPSILON>=b1>=c1-_EPSILON)
 	y = (a2-_EPSILON<=b2<=c2+_EPSILON) or (a2+_EPSILON>=b2>=c2-_EPSILON)
 	return x == y == True
 
-def sectlines((a1, a2), (p1, p2), (b1, b2), (q1, q2)):
+def sectlines(xxx_todo_changeme3, xxx_todo_changeme4, xxx_todo_changeme5, xxx_todo_changeme6):
 	'''Calculate the intersection point of two straight lines. Result in floats.'''
+	(a1, a2) = xxx_todo_changeme3
+	(p1, p2) = xxx_todo_changeme4
+	(b1, b2) = xxx_todo_changeme5
+	(q1, q2) = xxx_todo_changeme6
 	if (a1, a2) == (p1, p2):
 		return None
 	r1 = a1-p1
@@ -66,7 +73,7 @@ def _intersect(flat,  startPt, endPt, segmentLength=10):
 			if sect is None:
 				continue
 			intersections[sect] = 1
-	return intersections.keys()
+	return list(intersections.keys())
 
 def intersectGlyphs(glyphA, glyphB, segmentLength=10):
 	"""Approximate the intersection points between two glyphs by
@@ -104,5 +111,5 @@ def makeTestGlyph():
 
 if __name__ == "__main__":
 	g = makeTestGlyph()
-	print intersect(g, (-10, 200), (650, 150))
-	print intersect(g, (100, 100), (600, 600))
+	print(intersect(g, (-10, 200), (650, 150)))
+	print(intersect(g, (100, 100), (600, 600)))

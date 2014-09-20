@@ -1,5 +1,6 @@
 import robofab.interface.all.dialogs
-reload(robofab.interface.all.dialogs)
+import imp
+imp.reload(robofab.interface.all.dialogs)
 from robofab.interface.all.dialogs import *
 
 import unittest
@@ -36,115 +37,115 @@ class DialogRunner(object):
         
         t = "AskString"
         try:
-            print "About to try", t
-            print "\t>>>", AskString(
+            print("About to try", t)
+            print("\t>>>", AskString(
                 message=prompt%t,
                 value='',
                 title=title%t
-        )
+        ))
         except NotImplementedError:
-            print t, "is not implemented."
+            print(t, "is not implemented.")
         
         t = "AskYesNoCancel"
         try:
-            print "About to try", t
-            print "\t>>>", AskYesNoCancel(
+            print("About to try", t)
+            print("\t>>>", AskYesNoCancel(
                 message=prompt%t+" default set to 0",
                 title=title%t,
                 default=0,
                 informativeText=informativeText%t
-            )
-            print "\t>>>", AskYesNoCancel(
+            ))
+            print("\t>>>", AskYesNoCancel(
                 message=prompt%t+" default set to 1",
                 title=title%t,
                 default=1,
                 informativeText=informativeText%t
-            )
+            ))
         except NotImplementedError:
-            print t, "is not implemented."
+            print(t, "is not implemented.")
         
         t = "GetFile"
         try:
-            print "About to try", t
-            print "\t>>>", GetFile(
-                message=message%t+" Only fileTypes "+`fileTypes`,
+            print("About to try", t)
+            print("\t>>>", GetFile(
+                message=message%t+" Only fileTypes "+repr(fileTypes),
                 title=title%t,
                 directory=None,
                 fileName=fileName,
                 allowsMultipleSelection=False,
                 fileTypes=fileTypes
-            )
-            print "\t>>>", GetFile(
+            ))
+            print("\t>>>", GetFile(
                 message=message%t+" All filetypes, allow multiple selection.",
                 title=title%t,
                 directory=None,
                 fileName=fileName,
                 allowsMultipleSelection=True,
                 fileTypes=None
-            )
+            ))
         except NotImplementedError:
-            print t, "is not implemented."
+            print(t, "is not implemented.")
         
         t = "GetFolder"
         try:
-            print "About to try", t
-            print "\t>>>", GetFolder(
+            print("About to try", t)
+            print("\t>>>", GetFolder(
                 message=message%t,
                 title=title%t,
                 directory=None,
                 allowsMultipleSelection=False
-            )
-            print "\t>>>", GetFolder(
+            ))
+            print("\t>>>", GetFolder(
                 message=message%t + " Allow multiple selection.",
                 title=title%t,
                 directory=None,
                 allowsMultipleSelection=True
-            )
+            ))
         except NotImplementedError:
-            print t, "is not implemented."
+            print(t, "is not implemented.")
          
         t = "GetFileOrFolder"
         try:
-            print "About to try", t
-            print "\t>>>", GetFileOrFolder(
-                message=message%t+" Only fileTypes "+`fileTypes`,
+            print("About to try", t)
+            print("\t>>>", GetFileOrFolder(
+                message=message%t+" Only fileTypes "+repr(fileTypes),
                 title=title%t,
                 directory=None,
                 fileName=fileName,
                 allowsMultipleSelection=False,
                 fileTypes=fileTypes
-            )
-            print "\t>>>", GetFileOrFolder(
+            ))
+            print("\t>>>", GetFileOrFolder(
                 message=message%t + " Allow multiple selection.",
                 title=title%t,
                 directory=None,
                 fileName=fileName,
                 allowsMultipleSelection=True,
                 fileTypes=None
-            )
+            ))
         except NotImplementedError:
-            print t, "is not implemented."
+            print(t, "is not implemented.")
         
         t = "Message"
         try:
-            print "About to try", t
-            print "\t>>>", Message(
+            print("About to try", t)
+            print("\t>>>", Message(
                 message=message%t,
                 title=title%t,
                 informativeText=informativeText%t
-            )
+            ))
         except NotImplementedError:
-            print t, "is not implemented."
+            print(t, "is not implemented.")
         
         t = "PutFile"
         try:
-            print "About to try", t
-            print "\t>>>", PutFile(
+            print("About to try", t)
+            print("\t>>>", PutFile(
                 message=message%t,
                 fileName=fileName,
-            )
+            ))
         except NotImplementedError:
-            print t, "is not implemented."
+            print(t, "is not implemented.")
         
     #   t = "SelectFont"
     #   try:
@@ -168,7 +169,7 @@ class DialogRunner(object):
     #   except NotImplementedError:
     #       print t, "is not implemented."
     
-    print 'No more tests.'
+    print('No more tests.')
             
     def makeTestFont(self, number):
         from robofab.objects.objectsRF import RFont as _RFont
@@ -203,13 +204,13 @@ class DialogTests(unittest.TestCase):
         
         if application is None and dialogModuleName == "dialogs_mac_vanilla":
             # in vanilla, but not in a host application, run with executeVanillaTest
-            print
-            print "I'm running these tests with executeVanillaTest"
+            print()
+            print("I'm running these tests with executeVanillaTest")
             from vanilla.test.testTools import executeVanillaTest
             executeVanillaTest(DialogRunner)
         else:
-            print
-            print "I'm running these tests natively in"
+            print()
+            print("I'm running these tests natively in")
             DialogRunner()
         
 

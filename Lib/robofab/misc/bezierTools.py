@@ -409,7 +409,7 @@ def printSegments(segments):
     segments on a single line as a tuple.
     """
     for segment in segments:
-        print _segmentrepr(segment)
+        print(_segmentrepr(segment))
 
 if __name__ == "__main__":
     import doctest

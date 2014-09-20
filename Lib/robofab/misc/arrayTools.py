@@ -19,13 +19,15 @@ def calcBounds(array):
     ys = [y for x, y in array]
     return min(xs), min(ys), max(xs), max(ys)
 
-def updateBounds(bounds, (x, y), min=min, max=max):
+def updateBounds(bounds, xxx_todo_changeme, min=min, max=max):
     """Return the bounding recangle of rectangle bounds and point (x, y)."""
+    (x, y) = xxx_todo_changeme
     xMin, yMin, xMax, yMax = bounds
     return min(xMin, x), min(yMin, y), max(xMax, x), max(yMax, y)
 
-def pointInRect((x, y), rect):
+def pointInRect(xxx_todo_changeme1, rect):
     """Return True when point (x, y) is inside rect."""
+    (x, y) = xxx_todo_changeme1
     xMin, yMin, xMax, yMax = rect
     return (xMin <= x <= xMax) and (yMin <= y <= yMax)
 
@@ -48,52 +50,62 @@ def asInt16(array):
     return [int(math.floor(i+0.5)) for i in array]
     
 
-def normRect((xMin, yMin, xMax, yMax)):
+def normRect(xxx_todo_changeme2):
     """Normalize the rectangle so that the following holds:
         xMin <= xMax and yMin <= yMax
     """
+    (xMin, yMin, xMax, yMax) = xxx_todo_changeme2
     return min(xMin, xMax), min(yMin, yMax), max(xMin, xMax), max(yMin, yMax)
 
-def scaleRect((xMin, yMin, xMax, yMax), x, y):
+def scaleRect(xxx_todo_changeme3, x, y):
     """Scale the rectangle by x, y."""
+    (xMin, yMin, xMax, yMax) = xxx_todo_changeme3
     return xMin * x, yMin * y, xMax * x, yMax * y
 
-def offsetRect((xMin, yMin, xMax, yMax), dx, dy):
+def offsetRect(xxx_todo_changeme4, dx, dy):
     """Offset the rectangle by dx, dy."""
+    (xMin, yMin, xMax, yMax) = xxx_todo_changeme4
     return xMin+dx, yMin+dy, xMax+dx, yMax+dy
 
-def insetRect((xMin, yMin, xMax, yMax), dx, dy):
+def insetRect(xxx_todo_changeme5, dx, dy):
     """Inset the rectangle by dx, dy on all sides."""
+    (xMin, yMin, xMax, yMax) = xxx_todo_changeme5
     return xMin+dx, yMin+dy, xMax-dx, yMax-dy
 
-def sectRect((xMin1, yMin1, xMax1, yMax1), (xMin2, yMin2, xMax2, yMax2)):
+def sectRect(xxx_todo_changeme6, xxx_todo_changeme7):
     """Return a boolean and a rectangle. If the input rectangles intersect, return
     True and the intersecting rectangle. Return False and (0, 0, 0, 0) if the input
     rectangles don't intersect.
     """
+    (xMin1, yMin1, xMax1, yMax1) = xxx_todo_changeme6
+    (xMin2, yMin2, xMax2, yMax2) = xxx_todo_changeme7
     xMin, yMin, xMax, yMax = (max(xMin1, xMin2), max(yMin1, yMin2),
                               min(xMax1, xMax2), min(yMax1, yMax2))
     if xMin >= xMax or yMin >= yMax:
         return 0, (0, 0, 0, 0)
     return 1, (xMin, yMin, xMax, yMax)
 
-def unionRect((xMin1, yMin1, xMax1, yMax1), (xMin2, yMin2, xMax2, yMax2)):
+def unionRect(xxx_todo_changeme8, xxx_todo_changeme9):
     """Return the smallest rectangle in which both input rectangles are fully
     enclosed. In other words, return the total bounding rectangle of both input
     rectangles.
     """
+    (xMin1, yMin1, xMax1, yMax1) = xxx_todo_changeme8
+    (xMin2, yMin2, xMax2, yMax2) = xxx_todo_changeme9
     xMin, yMin, xMax, yMax = (min(xMin1, xMin2), min(yMin1, yMin2),
                               max(xMax1, xMax2), max(yMax1, yMax2))
     return (xMin, yMin, xMax, yMax)
 
-def rectCenter((xMin, yMin, xMax, yMax)):
+def rectCenter(xxx_todo_changeme10):
     """Return the center of the rectangle as an (x, y) coordinate."""
+    (xMin, yMin, xMax, yMax) = xxx_todo_changeme10
     return (xMin+xMax)/2, (yMin+yMax)/2
 
-def intRect((xMin, yMin, xMax, yMax)):
+def intRect(xxx_todo_changeme11):
     """Return the rectangle, rounded off to integer values, but guaranteeing that
     the resulting rectangle is NOT smaller than the original.
     """
+    (xMin, yMin, xMax, yMax) = xxx_todo_changeme11
     import math
     xMin = int(math.floor(xMin))
     yMin = int(math.floor(yMin))

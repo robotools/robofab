@@ -25,7 +25,7 @@ def makeDestination(root):
 	return macPath
 
 def generateOne(f, dstDir):
-	print "generating %s"%f.info.postscriptFullName
+	print("generating %s"%f.info.postscriptFullName)
 	f.generate('mactype1',  dstDir)
 	
 
@@ -46,4 +46,4 @@ if f is not None:
 				font.close(False)
 
 
-	print 'done'
+	print('done')

@@ -17,7 +17,7 @@ from robofab.pens.adapterPens import SegmentToPointPen
 
 def getDigests(font):
 	digests = {}
-	for glyphName in font.keys():
+	for glyphName in list(font.keys()):
 		pen = DigestPointPen()
 		font[glyphName].drawPoints(pen)
 		digests[glyphName] = pen.getDigest()

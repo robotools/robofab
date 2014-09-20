@@ -16,7 +16,7 @@ f = OpenFont(None, "")
 
 for c in f:
 	if not c.properties.isEmpty():
-		print c.properties.dump()
+		print(c.properties.dump())
 	
 # This prints the available GlyphProperties objects.
 # Not very impressive at the moment, but it means

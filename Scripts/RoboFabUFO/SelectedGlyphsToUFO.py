@@ -30,15 +30,15 @@ if not os.path.exists(ufoPath):
 
 if ufoPath is not None:
 	todo = f.selection
-	print "selection", todo
+	print("selection", todo)
 	if g is not None:
 		todo.append(g.name)
 	for c in todo:
 		g = f[c]
 		path = os.path.join(os.path.dirname(ufoPath), os.path.basename(ufoPath), "glyphs")
-		print "saving glyph %s in %s"%(g.name, path)
+		print("saving glyph %s in %s"%(g.name, path))
 		gs = GlyphSet(path, glyphNameToFileNameFunc=glyphNameToShortFileName)
 		gs.writeGlyph(g.name, g, g.drawPoints)
 		gs.writeContents()
 
-print 'done'
+print('done')

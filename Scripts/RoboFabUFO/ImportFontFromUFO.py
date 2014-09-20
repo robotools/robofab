@@ -8,4 +8,4 @@ if path is not None:
 	font = NewFont()
 	font.readUFO(path, doProgress=True)
 	font.update()
-	print 'DONE!'
+	print('DONE!')

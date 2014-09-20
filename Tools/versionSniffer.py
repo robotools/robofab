@@ -11,15 +11,15 @@
 """
 
 try:
-    print "\n", "-"*40
+    print("\n", "-"*40)
     from FL import*
-    print "fontlab version", fl.version
+    print("fontlab version", fl.version)
 except ImportError:
-    print "probably not in FontLab."
+    print("probably not in FontLab.")
 
-print "\n", "-"*40
+print("\n", "-"*40)
 import sys, os
-print "python version", sys.version
+print("python version", sys.version)
 
 def findSitePackages():
     folderName = "site-packages"
@@ -29,26 +29,26 @@ def findSitePackages():
             root = os.path.join(s.split(folderName)[0], folderName)
             paths[root] = True
     safe = []
-    return paths.keys()
+    return list(paths.keys())
 
 def dumpSitePackages(root):
     for n in os.listdir(root):
         if os.path.splitext(n)[-1] == ".pth":
             linkPath = os.path.join(root, n)
-            print "\n", "-"*40
-            print "\t", n.encode('ascii')
-            print "\t", linkPath.encode('ascii')
+            print("\n", "-"*40)
+            print("\t", n.encode('ascii'))
+            print("\t", linkPath.encode('ascii'))
 
             f = open(linkPath, 'r')
             d = f.read()
             f.close()
-            print "\tcontents:"
+            print("\tcontents:")
             for l in d.split("\n"):
-                print "\t\t", l.encode("ascii")
+                print("\t\t", l.encode("ascii"))
         
 for sp in findSitePackages():
-    print "\n", "-"*40
-    print "site-packages is at", sp
+    print("\n", "-"*40)
+    print("site-packages is at", sp)
 
     dumpSitePackages(sp)
 

@@ -26,73 +26,73 @@ rect = [20, 20, 100, 100]
 ## loops
 c = 10000
 
-print "(loop %s)"%c
+print("(loop %s)"%c)
 
 
-print "with numpy:"
-print "calcQuadraticParameters\t\t",
+print("with numpy:")
+print("calcQuadraticParameters\t\t", end=' ')
 n = time.time()
 for i in range(c):
     bezierTools.calcQuadraticParameters(pt1, pt2, pt3)
-print time.time() - n
+print(time.time() - n)
 
-print "calcBounds\t\t\t",
+print("calcBounds\t\t\t", end=' ')
 n = time.time()
 for i in range(c):
     arrayTools.calcBounds([pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3])
-print time.time() - n
+print(time.time() - n)
 
-print "pointsInRect\t\t\t",
+print("pointsInRect\t\t\t", end=' ')
 n = time.time()
 for i in range(c):
     arrayTools.pointsInRect([pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3, pt4], rect)
-print time.time() - n
+print(time.time() - n)
 
-print "calcQuadraticBounds\t\t",
+print("calcQuadraticBounds\t\t", end=' ')
 n = time.time()
 for i in range(c):
     bezierTools.calcQuadraticBounds(pt1, pt2, pt3)
-print time.time() - n
+print(time.time() - n)
 
-print "calcCubicBounds\t\t\t",
+print("calcCubicBounds\t\t\t", end=' ')
 n = time.time()
 for i in range(c):
     bezierTools.calcCubicBounds(pt1, pt2, pt3, pt4)
-print time.time() - n
+print(time.time() - n)
 
-print 
+print() 
 ##############
 
-print "no-numpy"
-print "calcQuadraticParameters\t\t",
+print("no-numpy")
+print("calcQuadraticParameters\t\t", end=' ')
 n = time.time()
 for i in range(c):
     noNumpyBezierTools.calcQuadraticParameters(pt1, pt2, pt3)
-print time.time() - n
+print(time.time() - n)
 
-print "calcBounds\t\t\t",
+print("calcBounds\t\t\t", end=' ')
 n = time.time()
 for i in range(c):
     noNumpyArrayTools.calcBounds([pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3])
-print time.time() - n
+print(time.time() - n)
 
-print "pointsInRect\t\t\t",
+print("pointsInRect\t\t\t", end=' ')
 n = time.time()
 for i in range(c):
     noNumpyArrayTools.pointsInRect([pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3, pt1, pt2, pt3, pt4], rect)
-print time.time() - n
+print(time.time() - n)
 
-print "calcQuadraticBounds\t\t",
+print("calcQuadraticBounds\t\t", end=' ')
 n = time.time()
 for i in range(c):
     noNumpyBezierTools.calcQuadraticBounds(pt1, pt2, pt3)
-print time.time() - n
+print(time.time() - n)
 
-print "calcCubicBounds\t\t\t",
+print("calcCubicBounds\t\t\t", end=' ')
 n = time.time()
 for i in range(c):
     noNumpyBezierTools.calcCubicBounds(pt1, pt2, pt3, pt4)
-print time.time() - n
+print(time.time() - n)
     
 
 

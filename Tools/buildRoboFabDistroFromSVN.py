@@ -33,7 +33,7 @@ def checkoutPackage(url, stagingFolder, verbose=True):
     cmd = "svn export \"%s\" . --force"%(url)
     d = os.popen(cmd)
     if verbose:
-        print d.read()
+        print(d.read())
     else:
         d.read()
     d.close()
@@ -54,12 +54,12 @@ def buildProducts(products, buildFolder=None, deleteBuilds=False, verbose=True):
     if buildFolder is None:
         buildFolder = os.path.join(os.path.dirname(__file__), "build")
         if verbose:
-            print "\tNo build folder specified, using", buildFolder
+            print("\tNo build folder specified, using", buildFolder)
         
-    for productName, packages in products.items():
+    for productName, packages in list(products.items()):
         cwd = os.getcwd()
         if verbose:
-            print "cwd", cwd
+            print("cwd", cwd)
         stagingFolder = os.path.join(buildFolder, productName%"temp")
         for url, name in packages:
             checkoutPackage(url, os.path.join(stagingFolder, name), verbose)
@@ -68,13 +68,13 @@ def buildProducts(products, buildFolder=None, deleteBuilds=False, verbose=True):
         filenames.append(os.path.basename(finalFolder))
         d = os.popen("mv \"%s\" \"%s\""%(stagingFolder, finalFolder))
         if verbose:
-            print d.read()
+            print(d.read())
         else:
             d.read()
         os.chdir(finalFolder)
         d = os.popen("zip -r \"%s\" *"%finalFolder)
         if verbose:
-            print d.read()
+            print(d.read())
         else:
             d.read()
         cleanup.append(finalFolder)
@@ -83,10 +83,10 @@ def buildProducts(products, buildFolder=None, deleteBuilds=False, verbose=True):
     if deleteBuilds:
         for path in cleanup:
             if verbose:
-                print "cleaning", path
+                print("cleaning", path)
             d = os.popen("rm -r \"%s\""%(path))
             if verbose:
-                print d.read()
+                print(d.read())
             else:
                 d.read()
     return filenames, versions.get("RoboFab")

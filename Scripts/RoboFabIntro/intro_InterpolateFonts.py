@@ -27,4 +27,4 @@ path = GetFolder("Select a place to save this UFO")
 if path:
 	d.save(path)
 
-print 'done'
+print('done')

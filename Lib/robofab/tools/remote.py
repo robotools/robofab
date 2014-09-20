@@ -20,21 +20,21 @@ __all__ = ['initFontLabRemote', 'runFontLabRemote']
 
 def _executePython(theAppleEvent, theReply):
 	import aetools
-	import cStringIO
+	import io
 	import traceback
 	import sys
 	parms, attrs = aetools.unpackevent(theAppleEvent)
 	source = parms.get("----")
 	if source is None:
 		return
-	stdout = cStringIO.StringIO()
+	stdout = io.StringIO()
 	#print "<executing remote command>"
 	save = sys.stdout, sys.stderr
 	sys.stdout = sys.stderr = stdout
 	namespace = {}
 	try:
 		try:
-			exec source in namespace
+			exec(source, namespace)
 		except:
 			traceback.print_exc()
 	finally:
@@ -46,7 +46,7 @@ _imported = False
 
 def initFontLabRemote():
 	"""Call this in FontLab at startup of the application to switch on the remote."""
-	print "FontLabRemote is on."
+	print("FontLabRemote is on.")
 	_AE.AEInstallEventHandler("Rfab", "exec", _executePython)
 
 if world.inFontLab and world.mac is not None:
@@ -83,7 +83,7 @@ def String2Glyph(gString, penClass, font):
 		return None
 	info = pickle.loads(gString)
 	name = info['name']
-	if not name in font.keys():
+	if not name in list(font.keys()):
 		glyph = font.newGlyph(name)
 	else:
 		glyph = font[name]
@@ -111,11 +111,11 @@ def transmitGlyph(glyph):
 	from robofab.world import world
 	if world.inFontLab and world.mac is not None:
 		# we're in fontlab, on a mac
-		print Glyph2String(glyph)
+		print(Glyph2String(glyph))
 		pass
 	else:
 		remoteProgram = _makeFLGlyph%Glyph2String(glyph)
-		print "remoteProgram", remoteProgram
+		print("remoteProgram", remoteProgram)
 		return runFontLabRemote(remoteProgram)
 
 def receiveGlyph(glyphString,  font=None):
@@ -123,11 +123,11 @@ def receiveGlyph(glyphString,  font=None):
 	if world.inFontLab and world.mac is not None:
 		# we're in fontlab, on a mac
 		from robofab.pens.flPen import FLPointPen
-		print String2Glyph(glyphString, FLPointPen, font)
+		print(String2Glyph(glyphString, FLPointPen, font))
 		pass
 	else:
 		from robofab.pens.rfUFOPen import RFUFOPointPen
-		print String2Glyph(glyphString, RFUFOPointPen, font)
+		print(String2Glyph(glyphString, RFUFOPointPen, font))
 		
 
 #

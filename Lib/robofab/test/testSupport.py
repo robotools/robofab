@@ -28,7 +28,7 @@ def _gatherTestCasesFromCallerByMagic():
 
 def _gatherTestCasesFromDict(d):
 	testCases = []
-	for ob in d.values():
+	for ob in list(d.values()):
 		if isinstance(ob, type) and issubclass(ob, unittest.TestCase):
 			testCases.append(ob)
 	return testCases

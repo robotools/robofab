@@ -14,7 +14,7 @@ from robofab.pens.adapterPens import GuessSmoothPointPen
 ufoPath = getDemoFontPath()
 glyphSet = GlyphSet(os.path.join(ufoPath, "glyphs"))
 glyphSet.rebuildContents()  # ignore existing contents.plist, rebuild from dir listing
-for name in glyphSet.keys():
+for name in list(glyphSet.keys()):
 	g = glyphSet[name]
 	g.drawPoints(None)  # force all attrs to be loaded
 	def drawPoints(pen):

@@ -29,35 +29,35 @@ kerning = f.kerning
 # you call and attribute or make a change.
 
 # kerning gives you access to some bits of global data
-print "%s has %s kerning pairs"%(f.info.postscriptFullName, len(kerning))
-print "the average kerning value is %s"%kerning.getAverage()
+print("%s has %s kerning pairs"%(f.info.postscriptFullName, len(kerning)))
+print("the average kerning value is %s"%kerning.getAverage())
 min, max = kerning.getExtremes()
-print "the largest kerning value is %s"%max
-print "the smallest kerning value is %s"%min
+print("the largest kerning value is %s"%max)
+print("the smallest kerning value is %s"%min)
 # ok, kerning.getExtremes() may be a little silly, but it could have its uses.
 
 # kerning pairs are accesed as if you are working with a dict.
 # (left glyph name, right glyph name)
 kerning[('V', 'o')] = -14
-print '(V, o)', kerning[('V', 'o')]
+print('(V, o)', kerning[('V', 'o')])
 
 # if you want to go through all kerning pairs:
 for pair in kerning:
-	print pair, kerning[pair]
+	print(pair, kerning[pair])
 
 # kerning also has some useful methods.  A few examples:
 # scale all kerning!
-print 'scaling...'
+print('scaling...')
 kerning.scale(100)
-print "the average kerning value is %s"%kerning.getAverage()
+print("the average kerning value is %s"%kerning.getAverage())
 min, max = kerning.getExtremes()
-print "the largest kerning value is %s"%max
-print "the smallest kerning value is %s"%min
+print("the largest kerning value is %s"%max)
+print("the smallest kerning value is %s"%min)
 # get a count of pairs that contian certain glyphs
-print 'counting...'
+print('counting...')
 count = kerning.occurrenceCount(['A', 'B', 'C'])
-for glyphName in count.keys():
-	print "%s: found in %s pairs"%(glyphName, count[glyphName])
+for glyphName in list(count.keys()):
+	print("%s: found in %s pairs"%(glyphName, count[glyphName]))
 
 # don't forget to update the font after you have made some changes!
 f.update()

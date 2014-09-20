@@ -25,16 +25,16 @@ g = CurrentGlyph()
 f.save()
 
 todo = f.selection
-print "selection", todo
+print("selection", todo)
 if g is not None:
 	todo.append(g.name)
 		
 for f in AllFonts():
 	ufoPath = None
-	print "f.path", f, f.path
+	print("f.path", f, f.path)
 	if f.path is None:
 		# huh, in case there is a ghost font.
-		print "skipping", f
+		print("skipping", f)
 		continue
 	ufoPath = f.path.replace(".vfb", ".ufo")
 	if not os.path.exists(ufoPath):
@@ -46,13 +46,13 @@ for f in AllFonts():
 		continue
 	for c in todo:
 		if c not in f:
-			print "font is missing", c
+			print("font is missing", c)
 			continue
 		g = f[c]
 		path = os.path.join(os.path.dirname(ufoPath), os.path.basename(ufoPath), "glyphs")
-		print "saving glyph %s in %s"%(g.name, path)
+		print("saving glyph %s in %s"%(g.name, path))
 		gs = GlyphSet(path, glyphNameToFileNameFunc=glyphNameToShortFileName)
 		gs.writeGlyph(g.name, g, g.drawPoints)
 		gs.writeContents()
 
-print 'done'
+print('done')

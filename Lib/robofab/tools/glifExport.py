@@ -18,7 +18,7 @@ def exportGlyph(glyphName, flGlyph, glyphSet):
 		glyph.note = flGlyph.note
 	customdata = flGlyph.customdata
 	if customdata:
-		from cStringIO import StringIO
+		from io import StringIO
 		from robofab.plistlib import readPlist, Data
 		f = StringIO(customdata)
 		try:
@@ -48,7 +48,7 @@ def exportGlyphs(font, glyphs=None, dest=None, doProgress=True, bar=None):
 	glyphSet = GlyphSet(dest)
 	
 	if glyphs is None:
-		indices = range(len(font))
+		indices = list(range(len(font)))
 	else:
 		indices = []
 		for glyphName in glyphs:
@@ -74,7 +74,7 @@ def exportGlyphs(font, glyphs=None, dest=None, doProgress=True, bar=None):
 				continue
 			glyphName = flGlyph.name
 			if not glyphName:
-				print "can't dump glyph #%s, it has no glyph name" % i
+				print("can't dump glyph #%s, it has no glyph name" % i)
 			else:
 				if glyphName in done:
 					n = 1

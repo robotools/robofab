@@ -31,10 +31,10 @@ for c in todo:
 	file = PutFile("Save this glif as:")
 	if file is not None:
 		path = os.path.join(os.path.dirname(file), filename)
-		print "saving to", path
+		print("saving to", path)
 		f = open(path, "w")
 		f.write(data)
 		f.close()
 		
 
-print 'done'
+print('done')

@@ -55,7 +55,7 @@ class _baseWindowController(object):
         
         self.w.closeButton = vanilla.Button((-150, -30, -80, 20), "Cancel", callback=self.closeCallback, sizeStyle="small")
         self.w.closeButton.bind(".", ["command"])
-        self.w.closeButton.bind(unichr(27), [])
+        self.w.closeButton.bind(chr(27), [])
     
     def okCallback(self, sender):
         self.w.close()
@@ -144,7 +144,7 @@ def AskYesNoCancel(message, title='RoboFab', default=0, informativeText=""):
     return vanilla.dialogs.askYesNoCancel(messageText=message, informativeText=informativeText)
 
 def FindGlyph(aFont, message="Search for a glyph:", title='RoboFab'):
-    items = aFont.keys()
+    items = list(aFont.keys())
     items.sort()
     w = _listController(items, message, title, showSearch=True)
     glyphName = w.get()
@@ -204,14 +204,14 @@ def SelectFont(message="Select a font:", title='RoboFab', allFonts=None):
     for font in fonts:
         data["%s" %font] = font
     
-    items = data.keys()
+    items = list(data.keys())
     items.sort()
     w = _listController(items, message, title, showSearch=False)
     value = w.get()
     return data.get(value, None)
 
 def SelectGlyph(aFont, message="Select a glyph:", title='RoboFab'):
-    items = aFont.keys()
+    items = list(aFont.keys())
     items.sort()
     w = _listController(items, message, title, showSearch=False)
     glyphName = w.get()

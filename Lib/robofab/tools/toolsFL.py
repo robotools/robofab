@@ -33,7 +33,7 @@ from warnings import warn
 try:
 	from fl_cmd import *
 except ImportError:
-	print "The fl_cmd module is not available here. toolsFL.py"
+	print("The fl_cmd module is not available here. toolsFL.py")
 	
 import os
 
@@ -155,7 +155,7 @@ def MakeTempFont(font, dupemark=None, removeOverlap=True, decompose=True):
 	fl.Open(newpath, 1)
 	nf = fl.font
 	if nf is None:
-		print 'uh oh, sup?'
+		print('uh oh, sup?')
 		return None
 	else:
 		for g in nf.glyphs:
@@ -207,7 +207,7 @@ def NewGlyph(font, glyphName, clear=False, updateFont=True):
 	the (very slow) fl.UpdateFont function will be called.
 	"""
 	font = unwrapFont(font)
-	if isinstance(glyphName, unicode):
+	if isinstance(glyphName, str):
 		glyphName = glyphName.encode(LOCAL_ENCODING)
 	glyph = font[glyphName]
 	if glyph is None:
@@ -246,12 +246,12 @@ def AddToAlias(additions, sep='+'):
 		if len(i) == 0: continue
 		if i[0] != '%':
 			glyphs[i.split(' ')[0]] = i.split(' ')[1]
-	for glyphName, glyphConstruction in additions.items():
-		if glyphName not in glyphs.keys():
+	for glyphName, glyphConstruction in list(additions.items()):
+		if glyphName not in list(glyphs.keys()):
 			new.append(glyphName)
 			glyphs[glyphName] = string.join(glyphConstruction, sep)
 	newNames = ['%%FONTLAB ALIASES']
-	l = glyphs.keys()
+	l = list(glyphs.keys())
 	l.sort()
 	for i in l:
 		newNames.append(string.join([i, glyphs[i]], ' '))
@@ -278,7 +278,7 @@ def MakeReverseCompoMapping(font):
 	font = unwrapFont(font)
 	reverseCompoMapping = {}
 	for g in font.glyphs:
-		for i, c in zip(range(len(g.components)), g.components):
+		for i, c in zip(list(range(len(g.components))), g.components):
 			base = font[c.index].name
 			if not base in reverseCompoMapping:
 				reverseCompoMapping[base] = []
@@ -301,7 +301,7 @@ def textPrinter(text, name=None, path=None):
 	if not name:
 		import time
 		tm_year,tm_mon,tm_day,tm_hour,tm_min,tm_sec,tm_wday,tm_yday,tm_isdst = time.localtime()
-		now = '_'.join((`tm_hour`, `tm_min`, `tm_sec`))
+		now = '_'.join((repr(tm_hour), repr(tm_min), repr(tm_sec)))
 		name = 'Untitled_%s.txt'%now
 	if not path:
 		path = os.path.join(makeDataFolder(), name)

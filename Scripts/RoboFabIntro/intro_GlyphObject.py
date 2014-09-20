@@ -20,12 +20,12 @@ if f == None:
 	Message("You should open a font first, there's nothing to look at now!")
 else:
 	for g in f:
-		print "glyphname:", g.name, ", glyph width:", g.width
+		print("glyphname:", g.name, ", glyph width:", g.width)
 		# so now g is a RoboFab Glyph object
-		print "this glyph has %d contours" % len(g.contours)
-		print "this glyph has %d components" % len(g.components)
-		print "this glyph has %d anchors" % len(g.anchors)
-		print
+		print("this glyph has %d contours" % len(g.contours))
+		print("this glyph has %d components" % len(g.components))
+		print("this glyph has %d anchors" % len(g.anchors))
+		print()
 
 # easy huh?
 # There are many more attributes and methods.

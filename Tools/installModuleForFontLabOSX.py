@@ -208,15 +208,15 @@ def log(path, entry, verbose=True):
     try:
         f = open(path, 'a')
     except IOError:
-        print "Error writing to log."
-        print entry
+        print("Error writing to log.")
+        print(entry)
         return
     if type(entry) != str:
         entry = str(entry)
     f.write("\n"+entry)
     f.close()
     if verbose:
-        print entry
+        print(entry)
 
 
 # build the installer program for FontLab
@@ -247,7 +247,7 @@ fontLabNames = findFontLabCandidates()
 for appName in fontLabNames:
     problem = None
     try:
-        print
+        print()
         log(logMainPath, "------")
         appBootTimeStamp = strftime("%a, %d %b %Y %H:%M:%S", localtime())
         log(logMainPath, appBootTimeStamp)

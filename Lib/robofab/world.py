@@ -26,7 +26,7 @@ class RFWorld:
 			# if you know more about PC & win stuff, add it here!
 			self.pc = True
 		else:
-			raise RoboFabError, "We're running on an unknown platform."
+			raise RoboFabError("We're running on an unknown platform.")
 
 		# collect versions
 		self.pyVersion = sys.version[:3]
@@ -105,4 +105,4 @@ elif world.inPython:
 
 if __name__ == "__main__":
 	f = RFWorld()
-	print f
+	print(f)

@@ -77,13 +77,19 @@ def readPlist(pathOrFile):
     usually is a dictionary).
     """
     didOpen = 0
+    data = None
     if isinstance(pathOrFile, str):
-        pathOrFile = open(pathOrFile)
+        # Workaround for http://bugs.python.org/issue16726
+        with open(pathOrFile) as myfile:
+            data = myfile.read()
+#        pathOrFile = open(pathOrFile)
         didOpen = 1
     p = PlistParser()
-    rootObject = p.parse(pathOrFile)
     if didOpen:
-        pathOrFile.close()
+        rootObject = p.parseString(data)
+#        pathOrFile.close()
+    else:
+        rootObject = p.parse(pathOrFile)
     return rootObject
 
 
@@ -407,6 +413,15 @@ class PlistParser:
         parser.EndElementHandler = self.handleEndElement
         parser.CharacterDataHandler = self.handleData
         parser.ParseFile(fileobj)
+        return self.root
+
+    def parseString(self, data):
+        from xml.parsers.expat import ParserCreate
+        parser = ParserCreate()
+        parser.StartElementHandler = self.handleBeginElement
+        parser.EndElementHandler = self.handleEndElement
+        parser.CharacterDataHandler = self.handleData
+        parser.Parse(data)
         return self.root
 
     def handleBeginElement(self, element, attrs):

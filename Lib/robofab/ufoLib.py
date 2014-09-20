@@ -226,7 +226,7 @@ class UFOReader(object):
 		# raised in except here (and elsewhere)? It would be nice to
 		# provide external callers with a single exception to catch.
 		data = readPlist(path)
-		formatVersion = data["formatVersion"]
+		formatVersion = data[b"formatVersion"]
 		if formatVersion not in supportedUFOFormatVersions:
 			raise UFOLibError("Unsupported UFO format (%d) in %s." % (formatVersion, self._path))
 		self._formatVersion = formatVersion

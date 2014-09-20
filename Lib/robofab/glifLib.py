@@ -270,7 +270,7 @@ class GlyphSet:
 		#      and only do _fetchUnicodes() for those we haven't seen yet.
 		unicodes = {}
 		for glyphName, fileName in self.contents.items():
-			path = os.path.join(self.dirName, fileName)
+			path = os.path.join(self.dirName, fileName.decode("utf-8"))
 			unicodes[glyphName] = _fetchUnicodes(path)
 		return unicodes
 
@@ -541,10 +541,14 @@ def _fetchUnicodes(glyphPath):
 
 	p = ParserCreate()
 	p.StartElementHandler = _startElementHandler
-	p.returns_unicode = True
-	f = open(glyphPath)
+#	f = open(glyphPath)
+	data = None
+	# Workaround for http://bugs.python.org/issue16726
+	with open(glyphPath) as myfile:
+		data = myfile.read()
 	try:
-		p.ParseFile(f)
+#		p.ParseFile(f)
+		p.Parse(data)
 	except _DoneParsing:
 		pass
 	return unicodes

@@ -1,8 +1,5 @@
 RoboFab
 =======
-
-*Please note that this robofab repository is not (yet) the official blessed version. We're moving the stuff here, but we're new at this.*
-
 RoboFab is a Python library with objects that deal with data usually associated with fonts and type design. RoboFab has support for the [UFO font format](http://unifiedfontobject.org).
 
 

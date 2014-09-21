@@ -358,7 +358,7 @@ def CurrentGlyph():
 			break
 	xx =  currentFont[glyphName]
 	#print "objectsFL.CurrentGlyph parent for %d"% id(xx), xx.getParent()
- 	return xx
+	return xx
 	
 def OpenFont(path=None, note=None):
 	"""Open a font from a path."""

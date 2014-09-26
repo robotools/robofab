@@ -121,10 +121,10 @@ class PrintingPointPen(AbstractPointPen):
 		self.havePath = False
 	def beginPath(self):
 		self.havePath = True
-		print "pen.beginPath()"
+		print("pen.beginPath()")
 	def endPath(self):
 		self.havePath = False
-		print "pen.endPath()"
+		print("pen.endPath()")
 	def addPoint(self, pt, segmentType=None, smooth=False, name=None, **kwargs):
 		assert self.havePath
 		args = ["(%s, %s)" % (pt[0], pt[1])]
@@ -136,29 +136,29 @@ class PrintingPointPen(AbstractPointPen):
 			args.append("name=%r" % name)
 		if kwargs:
 			args.append("**%s" % kwargs)
-		print "pen.addPoint(%s)" % ", ".join(args)
+		print("pen.addPoint(%s)" % ", ".join(args))
 	def addComponent(self, baseGlyphName, transformation):
 		assert not self.havePath
-		print "pen.addComponent(%r, %s)" % (baseGlyphName, tuple(transformation))
+		print("pen.addComponent(%r, %s)" % (baseGlyphName, tuple(transformation)))
 
 
 from fontTools.pens.basePen import AbstractPen
 
 class PrintingSegmentPen(AbstractPen):
 	def moveTo(self, pt):
-		print "pen.moveTo(%s)" % (pt,)
+		print("pen.moveTo(%s)" % (pt,))
 	def lineTo(self, pt):
-		print "pen.lineTo(%s)" % (pt,)
+		print("pen.lineTo(%s)" % (pt,))
 	def curveTo(self, *pts):
-		print "pen.curveTo%s" % (pts,)
+		print("pen.curveTo%s" % (pts,))
 	def qCurveTo(self, *pts):
-		print "pen.qCurveTo%s" % (pts,)
+		print("pen.qCurveTo%s" % (pts,))
 	def closePath(self):
-		print "pen.closePath()"
+		print("pen.closePath()")
 	def endPath(self):
-		print "pen.endPath()"
+		print("pen.endPath()")
 	def addComponent(self, baseGlyphName, transformation):
-		print "pen.addComponent(%r, %s)" % (baseGlyphName, tuple(transformation))
+		print("pen.addComponent(%r, %s)" % (baseGlyphName, tuple(transformation)))
 
 
 class SegmentPrintingPointPen(BasePointToSegmentPen):

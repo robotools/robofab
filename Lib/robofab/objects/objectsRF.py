@@ -181,7 +181,7 @@ class RFont(BaseFont):
 			if splitFeatures is not None:
 				order = fontLib.get("org.robofab.opentype.featureorder")
 				if order is None:
-					order = splitFeatures.keys()
+					order = list(splitFeatures.keys())
 					order.sort()
 				else:
 					del fontLib["org.robofab.opentype.featureorder"]
@@ -245,16 +245,16 @@ class RFont(BaseFont):
 	def keys(self):
 		# the keys are the superset of self._objects.keys() and
 		# self._glyphSet.keys(), minus self._scheduledForDeletion
-		keys = self._object.keys()
+		keys = list(self._object.keys())
 		if self._glyphSet is not None:
-			keys.extend(self._glyphSet.keys())
+			keys.extend(list(self._glyphSet.keys()))
 		d = dict()
 		for glyphName in keys:
 			d[glyphName] = None
 		for glyphName in self._scheduledForDeletion:
 			if glyphName in d:
 				del d[glyphName]
-		return d.keys()
+		return list(d.keys())
 
 	def has_key(self, glyphName):
 		# XXX ditto, see above.
@@ -267,7 +267,7 @@ class RFont(BaseFont):
 	__contains__ = has_key
 	
 	def getWidth(self, glyphName):
-		if self._object.has_key(glyphName):
+		if glyphName in self._object:
 			return self._object[glyphName].width
 		raise IndexError		# or return None?
 		
@@ -309,21 +309,21 @@ class RFont(BaseFont):
 		rightNow = time.time()
 		libKey = "org.robofab.componentMapping"
 		previousMap = None
-		if self.lib.has_key(libKey):
+		if libKey in self.lib:
 			previousMap = self.lib[libKey]
 		basicMap = {}
 		reverseMap = {}
-		for glyphName in self.keys():
+		for glyphName in list(self.keys()):
 			componentsToMap = None
 			modTime = None
 			# get the previous bits of data
 			previousModTime = None
 			previousList = None
-			if previousMap is not None and previousMap.has_key(glyphName):
+			if previousMap is not None and glyphName in previousMap:
 				previousModTime, previousList = previousMap[glyphName]
 			# the glyph has been loaded.
 			# simply get the components from it.
-			if self._object.has_key(glyphName):
+			if glyphName in self._object:
 				componentsToMap = [component.baseGlyph for component in self._object[glyphName].components]
 			# the glyph has not been loaded.
 			else:
@@ -355,7 +355,7 @@ class RFont(BaseFont):
 				# reverse the map for the user
 				if componentsToMap:
 					for baseGlyphName in componentsToMap:
-						if not reverseMap.has_key(baseGlyphName):
+						if baseGlyphName not in reverseMap:
 							reverseMap[baseGlyphName] = []
 						reverseMap[baseGlyphName].append(glyphName)
 				# if a glyph has been loaded, we do not store data about it in the lib.
@@ -390,7 +390,7 @@ class RFont(BaseFont):
 		bar = None
 		if doProgress:
 			from robofab.interface.all.dialogs import ProgressBar
-			bar = ProgressBar("Exporting UFO", nonGlyphCount + len(self._object.keys()))
+			bar = ProgressBar("Exporting UFO", nonGlyphCount + len(list(self._object.keys())))
 		# write
 		writer = UFOWriter(destDir, formatVersion=formatVersion)
 		try:
@@ -451,7 +451,7 @@ class RFont(BaseFont):
 				if bar:
 					bar.label("Removing deleted glyphs...")
 				for glyphName in self._scheduledForDeletion:
-					if glyphSet.has_key(glyphName):
+					if glyphName in glyphSet:
 						glyphSet.deleteGlyph(glyphName)
 				if bar:
 					bar.tick()
@@ -459,9 +459,9 @@ class RFont(BaseFont):
 				bar.label("Saving glyphs...")
 			count = nonGlyphCount
 			if saveAs:
-				glyphNames = self.keys()
+				glyphNames = list(self.keys())
 			else:
-				glyphNames = self._object.keys()
+				glyphNames = list(self._object.keys())
 			for glyphName in glyphNames:
 				glyph = self[glyphName]
 				glyph.psHints._saveToLib(glyph.lib)
@@ -535,10 +535,10 @@ class RFont(BaseFont):
 		#
 		#we won't actually remove it, we will just store it for removal
 		# but only if the glyph does exist
-		if self.has_key(glyphName) and glyphName not in self._scheduledForDeletion:
+		if glyphName in self and glyphName not in self._scheduledForDeletion:
 			self._scheduledForDeletion.append(glyphName)
 		# now delete the object
-		if self._object.has_key(glyphName):
+		if glyphName in self._object:
 			del self._object[glyphName]
 		self._hasChanged()
 		
@@ -546,7 +546,7 @@ class RFont(BaseFont):
 		# XXX getGlyph may have to become private, to avoid duplication
 		# with __getitem__
 		n = None
-		if self._object.has_key(glyphName):
+		if glyphName in self._object:
 			# have we served this glyph before? it should be in _object
 			n = self._object[glyphName]
 		else:
@@ -555,7 +555,7 @@ class RFont(BaseFont):
 				# yes, read the .glif file from disk
 				n = self._loadGlyph(glyphName)
 		if n is None:
-			raise KeyError, glyphName
+			raise KeyError(glyphName)
 		return n
 
 
@@ -646,7 +646,7 @@ class RGlyph(BaseGlyph):
 	
 	def _set_unicodes(self, value):
 		if not isinstance(value, list):
-			raise RoboFabError, "unicodes must be a list"
+			raise RoboFabError("unicodes must be a list")
 		self._unicodes = value
 		self._hasChanged()
 			
@@ -666,7 +666,7 @@ class RGlyph(BaseGlyph):
 				uni.insert(0, uni.pop(uni.index(value)))
 				self.unicodes = uni
 		
-	unicode = property(_get_unicode, _set_unicode, doc="first unicode value for the glyph")
+	str = property(_get_unicode, _set_unicode, doc="first unicode value for the glyph")
 	
 	def getPointPen(self):
 		from robofab.pens.rfUFOPen import RFUFOPointPen
@@ -820,7 +820,7 @@ class RContour(BaseContour):
 				else:
 					bType = CORNER
 			else:
-				raise RoboFabError, "encountered unknown segment type"
+				raise RoboFabError("encountered unknown segment type")
 			b = RBPoint()
 			b.setParent(segment)
 			bPoints.append(b)
@@ -870,7 +870,7 @@ class RContour(BaseContour):
 		if segmentIndex == 0:
 			return
 		if segmentIndex > len(self.segments)-1:
-			raise IndexError, 'segment index not in segments list'
+			raise IndexError('segment index not in segments list')
 		oldStart = self.segments[0]
 		oldLast = self.segments[-1]
 		 #check to see if the contour ended with a curve on top of the move
@@ -974,7 +974,7 @@ class RSegment(BaseSegment):
 		elif pointType == QCURVE:
 			onCurve.type = pointType
 		else:
-			raise RoboFabError, 'unknown segment type'
+			raise RoboFabError('unknown segment type')
 			
 	type = property(_get_type, _set_type, doc="type of the segment")
 	
@@ -1102,8 +1102,9 @@ class RAnchor(BaseAnchor):
 	
 	position = property(_get_position, _set_position, doc="position of the anchor")
 	
-	def move(self, (x, y)):
+	def move(self, xxx_todo_changeme):
 		"""Move the anchor"""
+		(x, y) = xxx_todo_changeme
 		self.x = self.x + x
 		self.y = self.y + y
 		self._hasChanged()
@@ -1160,12 +1161,13 @@ class RComponent(BaseComponent):
 		(xx, xy, yx, yy, dx, dy) = self._transformation
 		return xx, yy
 	
-	def _set_scale(self, (xScale, yScale)):
+	def _set_scale(self, xxx_todo_changeme1):
 		""" Set the scale component of the transformation.
 			Note: setting this value effectively makes the xy and yx values meaningless.
 			We're assuming that if you're setting the xy and yx values, you will use
 			the transformation attribute rather than the scale and offset attributes.
 		"""
+		(xScale, yScale) = xxx_todo_changeme1
 		(xx, xy, yx, yy, dx, dy) = self._transformation
 		self._transformation = (xScale, xy, yx, yScale, dx, dy)
 		self._hasChanged()
@@ -1181,8 +1183,9 @@ class RComponent(BaseComponent):
 	
 	transformation = property(_get_transformation, _set_transformation, doc="the transformation matrix of the component")
 		
-	def move(self, (x, y)):
+	def move(self, xxx_todo_changeme2):
 		"""Move the component"""
+		(x, y) = xxx_todo_changeme2
 		(xx, xy, yx, yy, dx, dy) = self._transformation
 		self._transformation = (xx, xy, yx, yy, dx+x, dy+y)
 		self._hasChanged()
@@ -1198,7 +1201,7 @@ class RComponent(BaseComponent):
 			# if not, we will simply remove the component from
 			# the parent glyph thereby decomposing the component
 			# to nothing.
-			if parentFont is not None and parentFont.has_key(baseGlyphName):
+			if parentFont is not None and baseGlyphName in parentFont:
 				from robofab.pens.adapterPens import TransformPointPen
 				baseGlyph = parentFont[baseGlyphName]
 				for contour in baseGlyph.contours:

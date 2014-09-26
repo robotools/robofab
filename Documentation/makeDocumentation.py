@@ -19,7 +19,7 @@ Run this script in the Python IDE first, then run it again as a macro in FontLab
 that will give you a fairly complete set of descriptions.
 """
 
-print 'Generating RoboFab documentation, just a moment...'
+print('Generating RoboFab documentation, just a moment...')
 
 import robofab
 import fontTools
@@ -47,7 +47,7 @@ def myWritedocs(dir, pkgpath='', done=None):
 					try:
 						writedoc(modname)
 					except:
-						print 'failed to document', modname
+						print('failed to document', modname)
 
 
 robofabDir = os.path.dirname(os.path.dirname(robofab.__file__))
@@ -68,8 +68,8 @@ except OSError:
 os.chdir(htmlDir)
 
 if world.inFontLab:
-	print "- generating documentation for FontLab specific modules"
-	print "- make sure to run this script in the IDE as well!"
+	print("- generating documentation for FontLab specific modules")
+	print("- make sure to run this script in the IDE as well!")
 	
 	# this is a list of FontLab specific modules that need to be documented
 	import robofab.objects.objectsFL
@@ -84,8 +84,8 @@ if world.inFontLab:
 	for m in mods:
 		writedoc(m)
 else:
-	print "- generating documentation for generic modules"
-	print "- make sure to run this script in FontLab as well (if you want that documented)."
+	print("- generating documentation for generic modules")
+	print("- make sure to run this script in FontLab as well (if you want that documented).")
 	myWritedocs(robofabDir)
 
 os.chdir(currentDir)
@@ -102,13 +102,13 @@ os.chdir(htmlDir)
 if world.inFontLab:
 	pass
 else:
-	print "- generating documentation for generic modules"
-	print "- make sure to run this script in FontLab as well (if you want that documented)."
+	print("- generating documentation for generic modules")
+	print("- make sure to run this script in FontLab as well (if you want that documented).")
 	myWritedocs(fontToolsDir)
 
 os.chdir(currentDir)
 
-print 'done'
-print 'The documentation is in', htmlDir
+print('done')
+print('The documentation is in', htmlDir)
 	
 	

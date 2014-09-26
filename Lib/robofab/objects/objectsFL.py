@@ -14,7 +14,7 @@ from robofab.pens.flPen import FLPointPen, FLPointContourPen
 from robofab import RoboFabError
 import os
 from robofab.plistlib import Data, Dict, readPlist, writePlist
-from StringIO import StringIO
+from io import StringIO
 from robofab import ufoLib
 from warnings import warn
 import datetime
@@ -208,13 +208,13 @@ def _glyphHintsToDict(glyph):
 	# glyph.hhints and glyph.vhints returns a list of Hint objects.
 	# Hint objects have position and width attributes.
 	data['hHints'] = []
-	for index in xrange(len(glyph.hhints)):
+	for index in range(len(glyph.hhints)):
 		hint = glyph.hhints[index]
 		data['hHints'].append((hint.position, hint.width))
 	if not data['hHints']:
 		del data['hHints']
 	data['vHints'] = []
-	for index in xrange(len(glyph.vhints)):
+	for index in range(len(glyph.vhints)):
 		hint = glyph.vhints[index]
 		data['vHints'].append((hint.position, hint.width))
 	if not data['vHints']:
@@ -225,7 +225,7 @@ def _glyphHintsToDict(glyph):
 	# glyph.hlinks and glyph.vlinks returns a list of Link objects.
 	# Link objects have node1 and node2 attributes.
 	data['hLinks'] = []
-	for index in xrange(len(glyph.hlinks)):
+	for index in range(len(glyph.hlinks)):
 		link = glyph.hlinks[index]
 		d = {	'node1' : link.node1,
 			'node2' : link.node2,
@@ -234,7 +234,7 @@ def _glyphHintsToDict(glyph):
 	if not data['hLinks']:
 		del data['hLinks']
 	data['vLinks'] = []
-	for index in xrange(len(glyph.vlinks)):
+	for index in range(len(glyph.vlinks)):
 		link = glyph.vlinks[index]
 		d = {	'node1' : link.node1,
 			'node2' : link.node2,
@@ -248,7 +248,7 @@ def _glyphHintsToDict(glyph):
 	# glyph.replace_table returns a list of Replace objects.
 	# Replace objects have type and index attributes.
 	data['replaceTable'] = []
-	for index in xrange(len(glyph.replace_table)):
+	for index in range(len(glyph.replace_table)):
 		replace = glyph.replace_table[index]
 		d = {	'type' : replace.type,
 			'index' : replace.index,
@@ -273,25 +273,25 @@ def _dictHintsToGlyph(glyph, aDict):
 	##
 	## horizontal and vertical hints
 	##
-	if aDict.has_key('hHints'):
+	if 'hHints' in aDict:
 		for d in aDict['hHints']:
 			glyph.hhints.append(Hint(d[0], d[1]))
-	if aDict.has_key('vHints'):
+	if 'vHints' in aDict:
 		for d in aDict['vHints']:
 			glyph.vhints.append(Hint(d[0], d[1]))
 	##
 	## horizontal and vertical links
 	##
-	if aDict.has_key('hLinks'):
+	if 'hLinks' in aDict:
 		for d in aDict['hLinks']:
 			glyph.hlinks.append(Link(d['node1'], d['node2']))
-	if aDict.has_key('vLinks'):
+	if 'vLinks' in aDict:
 		for d in aDict['vLinks']:
 			glyph.vlinks.append(Link(d['node1'], d['node2']))
 	##
 	## replacement table
 	##
-	if aDict.has_key('replaceTable'):
+	if 'replaceTable' in aDict:
 		for d in aDict['replaceTable']:
 			glyph.replace_table.append(Replace(d['type'], d['index']))
 	
@@ -315,7 +315,7 @@ _flToRFSegmentDict = {	flMOVE		:	MOVE,
 			}
 
 _rfToFLSegmentDict = {}
-for k, v in _flToRFSegmentDict.items():
+for k, v in list(_flToRFSegmentDict.items()):
 	_rfToFLSegmentDict[v] = k
 		
 def _flToRFSegmentType(segmentType):
@@ -324,7 +324,10 @@ def _flToRFSegmentType(segmentType):
 def _rfToFLSegmentType(segmentType):
 	return _rfToFLSegmentDict[segmentType]
 		
-def _scalePointFromCenter((pointX, pointY), (scaleX, scaleY), (centerX, centerY)):
+def _scalePointFromCenter(xxx_todo_changeme6, xxx_todo_changeme7, xxx_todo_changeme8):
+	(pointX, pointY) = xxx_todo_changeme6
+	(scaleX, scaleY) = xxx_todo_changeme7
+	(centerX, centerY) = xxx_todo_changeme8
 	ogCenter = (centerX, centerY)
 	scaledCenter = (centerX * scaleX, centerY * scaleY)
 	shiftVal = (scaledCenter[0] - ogCenter[0], scaledCenter[1] - ogCenter[1])
@@ -355,7 +358,7 @@ def CurrentGlyph():
 			break
 	xx =  currentFont[glyphName]
 	#print "objectsFL.CurrentGlyph parent for %d"% id(xx), xx.getParent()
- 	return xx
+	return xx
 	
 def OpenFont(path=None, note=None):
 	"""Open a font from a path."""
@@ -385,7 +388,7 @@ def AllFonts():
 	"""Return a list of all open fonts."""
 	fontCount = len(fl)
 	all = []
-	for index in xrange(fontCount):
+	for index in range(fontCount):
 		naked = fl[index]
 		all.append(RFont(naked))
 	return all
@@ -482,11 +485,11 @@ class RFont(BaseFont):
 				while ("%s#%s" % (glyphName, n)) in keys:
 					n += 1
 				newGlyphName = "%s#%s" % (glyphName, n)
-				print "RoboFab encountered a duplicate glyph name, renaming %r to %r" % (glyphName, newGlyphName)
+				print("RoboFab encountered a duplicate glyph name, renaming %r to %r" % (glyphName, newGlyphName))
 				glyphName = newGlyphName
 				glyph.name = glyphName
 			keys[glyphName] = None
-		return keys.keys()
+		return list(keys.keys())
 
 	def has_key(self, glyphName):
 		glyph = self._object[glyphName]
@@ -581,7 +584,7 @@ class RFont(BaseFont):
 		# font with no file_name.
 		selfFileName = self._object.file_name
 		fontCount = len(fl)
-		for index in xrange(fontCount):
+		for index in range(fontCount):
 			other = fl[index]
 			if other.file_name == selfFileName:
 				return index
@@ -636,7 +639,7 @@ class RFont(BaseFont):
 		"""Save the font, path is required."""
 		if not path:
 			if not self._object.file_name:
-				raise RoboFabError, "No destination path specified."
+				raise RoboFabError("No destination path specified.")
 			else:
 				path = self._object.file_name
 		fl.Save(self.fontIndex, path)
@@ -676,7 +679,7 @@ class RFont(BaseFont):
 		if name is None:
 			name = oldGlyph.name
 		# clear the destination glyph if it exists.
-		if self.has_key(name):
+		if name in self:
 			self[name].clear()
 		# get the parent for the glyph
 		otherFont = oldGlyph.getParent()
@@ -704,7 +707,7 @@ class RFont(BaseFont):
 			# or, maybe the glyph is being replaced, in which
 			# case the native method should not be used
 			# since FL will destroy any references to the glyph
-			if self.has_key(name):
+			if name in self:
 				useNative = False
 				testingNative = False
 			# if the glyph contains components the native
@@ -746,7 +749,7 @@ class RFont(BaseFont):
 			if hintDict:
 				_dictHintsToGlyph(newGlyph.naked(), hintDict)
 			# delete any remaining hint data from the glyph lib
-			if newGlyph.lib.has_key(postScriptHintDataLibKey):
+			if postScriptHintDataLibKey in newGlyph.lib:
 				del newGlyph.lib[postScriptHintDataLibKey]
 		return newGlyph
 	
@@ -783,7 +786,7 @@ class RFont(BaseFont):
 	def setOTClasses(self, dict):
 		"""Set all OpenType classes."""
 		l = []
-		for i in dict.keys():
+		for i in list(dict.keys()):
 			l.append(''.join([i, ' = [', ' '.join(dict[i]), '];']))
 		self._object.ot_classes = '\n'.join(l)
 		
@@ -813,14 +816,14 @@ class RFont(BaseFont):
 	def setOTFeatures(self, dict):
 		"""Set all OpenType features in the font."""
 		features= {}
-		for i in dict.keys():
+		for i in list(dict.keys()):
 			f = []
 			f.append('feature %s {'%i)
 			f.append(dict[i])
 			f.append('} %s;'%i)
 			features[i] = '\n'.join(f)
 		self._object.features.clean()
-		for i in features.keys():
+		for i in list(features.keys()):
 			self._object.features.append(Feature(i, features[i]))
 			
 	def getOTFeature(self, name):
@@ -923,8 +926,8 @@ class RFont(BaseFont):
 		vfb file name with the appropriate suffix.
 		"""
 		outputType = outputType.lower()
-		if not _flGenerateTypes.has_key(outputType):
-			raise RoboFabError, "%s output type is not supported"%outputType
+		if outputType not in _flGenerateTypes:
+			raise RoboFabError("%s output type is not supported"%outputType)
 		flOutputType, suffix = _flGenerateTypes[outputType]
 		if path is None:
 			filePath, fileName = os.path.split(self.path)
@@ -936,10 +939,10 @@ class RFont(BaseFont):
 			else:
 				filePath, fileName = os.path.split(path)
 		if '.' in fileName:
-			raise RoboFabError, "filename cannot contain periods.", fileName
+			raise RoboFabError("filename cannot contain periods.").with_traceback(fileName)
 		fileName = '.'.join([fileName, suffix])
 		finalPath = os.path.join(filePath, fileName)
-		if isinstance(finalPath, unicode):
+		if isinstance(finalPath, str):
 			finalPath = finalPath.encode("utf-8")
 		# generate is (oddly) an application level method
 		# rather than a font level method. because of this,
@@ -965,7 +968,7 @@ class RFont(BaseFont):
 				path = ufoLib.makeUFOPath(self.path)
 		# get the glyphs to export
 		if glyphs is None:
-			glyphs = self.keys()
+			glyphs = list(self.keys())
 		# if the file exists, check the format version.
 		# if the format version being written is different
 		# from the format version of the existing UFO
@@ -1051,7 +1054,7 @@ class RFont(BaseFont):
 							glyph.lib[postScriptHintDataLibKey] = hintStuff
 					glyphSet.writeGlyph(glyph.name, glyph, glyph.drawPoints)
 					# remove the hint dict from the lib
-					if doHints and glyph.lib.has_key(postScriptHintDataLibKey):
+					if doHints and postScriptHintDataLibKey in glyph.lib:
 						del glyph.lib[postScriptHintDataLibKey]
 					if bar and not count % 10:
 						bar.tick(count)
@@ -1091,7 +1094,7 @@ class RFont(BaseFont):
 		glyphSet = reader.getGlyphSet()
 		# get a list of glyphs that should be imported
 		if glyphs is None:
-			glyphs = glyphSet.keys()
+			glyphs = list(glyphSet.keys())
 		# set up the progress bar
 		nonGlyphCount = [doInfo, doKerning, doGroups, doLib, doFeatures].count(True)
 		bar = None
@@ -1120,7 +1123,7 @@ class RFont(BaseFont):
 						_dictHintsToGlyph(glyph.naked(), hintData)
 					# now that the hints have been extracted from the glyph
 					# there is no reason to keep the location in the lib.
-					if glyph.lib.has_key(postScriptHintDataLibKey):
+					if postScriptHintDataLibKey in glyph.lib:
 						del glyph.lib[postScriptHintDataLibKey]
 				if bar and not count % 10:
 					bar.tick(count)
@@ -1154,7 +1157,7 @@ class RFont(BaseFont):
 				self.psHints._loadFromLib(fontLib)
 			else:
 				# remove hint data stored in the lib
-				if fontLib.has_key(postScriptHintDataLibKey):
+				if postScriptHintDataLibKey in fontLib:
 					del fontLib[postScriptHintDataLibKey]
 			# lib
 			if doLib:
@@ -1187,13 +1190,13 @@ class RFont(BaseFont):
 				if glyphName in glyphSet:
 					glyphNames.append(glyphName)
 					done[glyphName] = 1
-			allGlyphNames = glyphSet.keys()
+			allGlyphNames = list(glyphSet.keys())
 			allGlyphNames.sort()
 			for glyphName in allGlyphNames:
 				if glyphName not in done:
 					glyphNames.append(glyphName)
 		else:
-			glyphNames = glyphSet.keys()
+			glyphNames = list(glyphSet.keys())
 			glyphNames.sort()
 		return glyphNames
 	
@@ -1210,7 +1213,7 @@ class RFont(BaseFont):
 			order = fontLib.get("org.robofab.opentype.featureorder")
 			if order is None:
 				# for UFOs saved without the feature order, do the same as before.
-				order = features.keys()
+				order = list(features.keys())
 				order.sort()
 			else:
 				del fontLib["org.robofab.opentype.featureorder"]
@@ -1236,7 +1239,7 @@ class RGlyph(BaseGlyph):
 	def __init__(self, flGlyph):
 		#BaseGlyph.__init__(self)
 		if flGlyph is None:
-			raise RoboFabError, "RGlyph: there's nothing to wrap!?"
+			raise RoboFabError("RGlyph: there's nothing to wrap!?")
 		self._object = flGlyph
 		self._lib = {}
 		self._contours = None
@@ -1295,12 +1298,12 @@ class RGlyph(BaseGlyph):
 	baseName = property(_get_baseName, doc="")
 	
 	def _get_unicode(self):
-		return self._object.unicode
+		return self._object.str
 
 	def _set_unicode(self, value):
-		self._object.unicode = value
+		self._object.str = value
 
-	unicode = property(_get_unicode, _set_unicode, doc="unicode")
+	str = property(_get_unicode, _set_unicode, doc="unicode")
 	
 	def _get_unicodes(self):
 		return self._object.unicodes
@@ -1350,12 +1353,12 @@ class RGlyph(BaseGlyph):
 		s = self._object.note
 		if s is None:
 			return s
-		return unicode(s, LOCAL_ENCODING)
+		return str(s, LOCAL_ENCODING)
 
 	def _set_note(self, value):
 		if value is None:
 			value = ''
-		if type(value) == type(u""):
+		if type(value) == type(""):
 			value = value.encode(LOCAL_ENCODING)
 		self._object.note = value
 
@@ -1510,11 +1513,11 @@ class RGlyph(BaseGlyph):
 			if (i.baseGlyph, i.offset, i.scale) == pos:
 				found.append(i)
 		if len(found) > 1:
-			raise RoboFabError, 'Found more than one possible component to remove'
+			raise RoboFabError('Found more than one possible component to remove')
 		elif len(found) == 1:
 			del self._object.components[found[0].index]
 		else:
-			raise RoboFabError, 'Component does not exist'
+			raise RoboFabError('Component does not exist')
 	
 	def removeContour(self, index):
 		"""remove a specific contour  from the glyph"""
@@ -1532,11 +1535,11 @@ class RGlyph(BaseGlyph):
 			if (i.name, i.position, i.mark) == pos:
 				found.append(i)
 		if len(found) > 1:
-			raise RoboFabError, 'Found more than one possible anchor to remove'
+			raise RoboFabError('Found more than one possible anchor to remove')
 		elif len(found) == 1:
 			del self._object.anchors[found[0].index]
 		else:
-			raise RoboFabError, 'Anchor does not exist'
+			raise RoboFabError('Anchor does not exist')
 		
 	def removeHGuide(self, guide):
 		"""Remove a horizontal guide."""
@@ -1585,8 +1588,9 @@ class RGlyph(BaseGlyph):
 		"""Automatically generate type 1 hints."""
 		self._object.Autohint()
 		
-	def move(self, (x, y), contours=True, components=True, anchors=True):
+	def move(self, xxx_todo_changeme, contours=True, components=True, anchors=True):
 		"""Move a glyph's items that are flagged as True"""
+		(x, y) = xxx_todo_changeme
 		x, y = roundPt((x, y))
 		self._object.Shift(Point(x, y))
 		for c in self.getComponents():
@@ -1904,7 +1908,7 @@ class RContour(BaseContour):
 		There is no way to make this work using FontLab objects.
 		Copy is mainly used for glyphmath.
 		"""
-		raise RoboFabError, "copy() for objectsFL.RContour is not implemented."
+		raise RoboFabError("copy() for objectsFL.RContour is not implemented.")
 		
 
 
@@ -1951,14 +1955,14 @@ class RSegment(BaseSegment):
 	
 	def _set_type(self, segmentType):
 		if self._isQCurve():
-			raise RoboFabError, 'qcurve point types cannot be changed'
+			raise RoboFabError('qcurve point types cannot be changed')
 		oldNode = self._node
 		oldType = oldNode.type
 		oldPointType = _flToRFSegmentType(oldType)
 		if oldPointType == MOVE:
-			raise RoboFabError, '%s point types cannot be changed'%oldPointType
+			raise RoboFabError('%s point types cannot be changed'%oldPointType)
 		if segmentType == MOVE or segmentType == OFFCURVE:
-			raise RoboFabError, '%s point types cannot be assigned'%oldPointType
+			raise RoboFabError('%s point types cannot be assigned'%oldPointType)
 		if oldPointType == segmentType:
 			return
 		oldNode.type = _rfToFLSegmentType(segmentType)
@@ -2019,7 +2023,8 @@ class RSegment(BaseSegment):
 	
 	selected = property(_get_selected, _set_selected, doc="")
 
-	def move(self, (x, y)):
+	def move(self, xxx_todo_changeme1):
+		(x, y) = xxx_todo_changeme1
 		x, y = roundPt((x, y))
 		self._node.Shift(Point(x, y))
 		if self._isQCurve():
@@ -2032,7 +2037,7 @@ class RSegment(BaseSegment):
 		There is no way to make this work using FontLab objects.
 		Copy is mainly used for glyphmath.
 		"""
-		raise RoboFabError, "copy() for objectsFL.RSegment is not implemented."
+		raise RoboFabError("copy() for objectsFL.RSegment is not implemented.")
 
 		
 
@@ -2122,11 +2127,13 @@ class RPoint(BasePoint):
 		
 	selected = property(_get_selected, _set_selected, doc="")
 
-	def move(self, (x, y)):
+	def move(self, xxx_todo_changeme2):
+		(x, y) = xxx_todo_changeme2
 		x, y = roundPt((x, y))
 		self._point.Shift(Point(x, y))
 	
-	def scale(self, (x, y), center=(0, 0)):
+	def scale(self, xxx_todo_changeme3, center=(0, 0)):
+		(x, y) = xxx_todo_changeme3
 		centerX, centerY = roundPt(center)
 		point = self._point
 		point.x, point.y = _scalePointFromCenter((point.x, point.y), (x, y), (centerX, centerY))
@@ -2136,7 +2143,7 @@ class RPoint(BasePoint):
 		There is no way to make this work using FontLab objects.
 		Copy is mainly used for glyphmath.
 		"""
-		raise RoboFabError, "copy() for objectsFL.RPoint is not implemented."
+		raise RoboFabError("copy() for objectsFL.RPoint is not implemented.")
 		
 
 class RBPoint(BaseBPoint):
@@ -2170,7 +2177,7 @@ class RBPoint(BaseBPoint):
 		There is no way to make this work using FontLab objects.
 		Copy is mainly used for glyphmath.
 		"""
-		raise RoboFabError, "copy() for objectsFL.RBPoint is not implemented."
+		raise RoboFabError("copy() for objectsFL.RBPoint is not implemented.")
 			
 		
 class RComponent(BaseComponent):
@@ -2206,13 +2213,15 @@ class RComponent(BaseComponent):
 	def _get_scale(self):
 		return (self._object.scale.x, self._object.scale.y)
 	
-	def _set_scale(self, (x, y)):
+	def _set_scale(self, xxx_todo_changeme4):
+		(x, y) = xxx_todo_changeme4
 		self._object.scale=Point(x, y)
 		
 	scale = property(_get_scale, _set_scale, doc="the scale of the component")
 
-	def move(self, (x, y)):
+	def move(self, xxx_todo_changeme5):
 		"""Move the component"""
+		(x, y) = xxx_todo_changeme5
 		x, y = roundPt((x, y))
 		self._object.delta=Point(self._object.delta.x+x, self._object.delta.y+y)
 	
@@ -2225,7 +2234,7 @@ class RComponent(BaseComponent):
 		There is no way to make this work using FontLab objects.
 		Copy is mainly used for glyphmath.
 		"""
-		raise RoboFabError, "copy() for objectsFL.RComponent is not implemented."
+		raise RoboFabError("copy() for objectsFL.RComponent is not implemented.")
 		
 
 
@@ -2349,9 +2358,9 @@ class RGroups(BaseGroups):
 	def __setitem__(self, key, value):
 		# override baseclass so that data is stored in FL classes
 		if not isinstance(key, str):
-			raise RoboFabError, 'key must be a string'
+			raise RoboFabError('key must be a string')
 		if not isinstance(value, list):
-			raise RoboFabError, 'group must be a list'
+			raise RoboFabError('group must be a list')
 		super(RGroups, self).__setitem__(key, value)
 		self._setFLGroups()
 			
@@ -2364,7 +2373,7 @@ class RGroups(BaseGroups):
 		# set the group data into the font.
 		if self.getParent() is not None:
 			groups = []
-			for i in self.keys():
+			for i in list(self.keys()):
 				value = ' '.join(self[i])
 				groups.append(': '.join([i, value]))
 			groups.sort()
@@ -2407,10 +2416,10 @@ class RKerning(BaseKerning):
 
 	def __setitem__(self, pair, value):
 		if not isinstance(pair, tuple):
-			raise RoboFabError, 'kerning pair must be a tuple: (left, right)'
+			raise RoboFabError('kerning pair must be a tuple: (left, right)')
 		else:
 			if len(pair) != 2:
-				raise RoboFabError, 'kerning pair must be a tuple: (left, right)'
+				raise RoboFabError('kerning pair must be a tuple: (left, right)')
 			else:
 				if value == 0:
 					if self._kerning.get(pair) is not None:
@@ -2484,8 +2493,8 @@ class RKerning(BaseKerning):
 		# override base class here for speed
 		parentFont = self.getParent().naked()
 		# add existing data to the new kerning dict is not being replaced
-		for pair in self.keys():
-			if not kerningDict.has_key(pair):
+		for pair in list(self.keys()):
+			if pair not in kerningDict:
 				kerningDict[pair] = self._kerning[pair]
 		# now clear the existing kerning to make sure that
 		# all the kerning in residing in the glyphs is gone
@@ -2494,15 +2503,15 @@ class RKerning(BaseKerning):
 		kDict = {}
 		# nest the pairs into a dict keyed by the left glyph
 		# {'A':{'A':-10, 'B':20, ...}, 'B':{...}, ...}
-		for left, right in kerningDict.keys():
+		for left, right in list(kerningDict.keys()):
 			value = kerningDict[left, right]
 			if not left in kDict:
 				kDict[left] = {}
 			kDict[left][right] = value
-		for left in kDict.keys():
+		for left in list(kDict.keys()):
 			leftGlyph = parentFont[left]
 			if leftGlyph is not None:
-				for right in kDict[left].keys():
+				for right in list(kDict[left].keys()):
 					value = kDict[left][right]
 					if value != 0:
 						rightIndex = parentFont.FindGlyph(right)
@@ -2523,7 +2532,7 @@ class RKerning(BaseKerning):
 		from sets import Set
 		from robofab.objects.objectsRF import RKerning as _RKerning
 		new = _RKerning()
-		k = Set(self.keys()) | Set(other.keys())
+		k = Set(list(self.keys())) | Set(list(other.keys()))
 		for key in k:
 			new[key] = self.get(key, 0) + other.get(key, 0)
 		return new
@@ -2534,7 +2543,7 @@ class RKerning(BaseKerning):
 		from sets import Set
 		from robofab.objects.objectsRF import RKerning as _RKerning
 		new = _RKerning()
-		k = Set(self.keys()) | Set(other.keys())
+		k = Set(list(self.keys())) | Set(list(other.keys()))
 		for key in k:
 			new[key] = self.get(key, 0) - other.get(key, 0)
 		return new
@@ -2544,7 +2553,7 @@ class RKerning(BaseKerning):
 		as they need to be orphaned objects and FL can't deal with that."""
 		from robofab.objects.objectsRF import RKerning as _RKerning
 		new = _RKerning()
-		for name, value in self.items():
+		for name, value in list(self.items()):
 			new[name] = value * factor
 		return new
 	
@@ -2638,7 +2647,7 @@ def _infoMapDict(**kwargs):
 
 def _flipDict(d):
 	f = {}
-	for k, v in d.items():
+	for k, v in list(d.items()):
 		f[v] = k
 	return f
 
@@ -2820,8 +2829,8 @@ class RInfo(BaseInfo):
 			warn("The width attribute has been deprecated. Use the new openTypeOS2WidthClass attribute.", DeprecationWarning)
 			attr = "openTypeOS2WidthClass"
 		if attr == "openTypeOS2WidthClass":
-			if isinstance(value, basestring) and value not in _openTypeOS2WidthClass_toFL:
-				print "The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification. The value will be set into the FontLab file for now." % value
+			if isinstance(value, str) and value not in _openTypeOS2WidthClass_toFL:
+				print("The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification. The value will be set into the FontLab file for now." % value)
 				self._object.width = value
 			else:
 				self._object.width = _openTypeOS2WidthClass_toFL[value]
@@ -2835,7 +2844,7 @@ class RInfo(BaseInfo):
 		specialGetSet = data["specialGetSet"]
 		# warn about setting attributes not supported by FL
 		if flAttr is None:
-			print "The attribute %s is not supported by FontLab. This data will not be set." % attr
+			print("The attribute %s is not supported by FontLab. This data will not be set." % attr)
 			return
 		# make sure that the value is the proper type for FL
 		if valueType == "intList":
@@ -2889,7 +2898,7 @@ class RInfo(BaseInfo):
 		if attr == "openTypeOS2WidthClass":
 			value = self._object.width
 			if value not in _openTypeOS2WidthClass_fromFL:
-				print "The existing openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification." % value
+				print("The existing openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification." % value)
 				return
 			else:
 				return _openTypeOS2WidthClass_fromFL[value]
@@ -2902,7 +2911,7 @@ class RInfo(BaseInfo):
 		# warn about setting attributes not supported by FL
 		if flAttr is None:
 			if not _IN_UFO_EXPORT:
-				print "The attribute %s is not supported by FontLab." % attr
+				print("The attribute %s is not supported by FontLab." % attr)
 			return
 		# handle special cases
 		if specialGetSet:
@@ -2930,7 +2939,7 @@ class RInfo(BaseInfo):
 			if value is None:
 				pass
 			else:
-				value = unicode(value, LOCAL_ENCODING)
+				value = str(value, LOCAL_ENCODING)
 		elif not isinstance(value, valueType):
 			value = valueType(value)
 		return value
@@ -2997,7 +3006,7 @@ class RInfo(BaseInfo):
 	def _get_openTypeOS2Type(self):
 		value = self._object.ttinfo.os2_fs_type
 		intList = []
-		for bit, bitNumber in _openTypeOS2Type_fromFL.items():
+		for bit, bitNumber in list(_openTypeOS2Type_fromFL.items()):
 			if value & bit:
 				intList.append(bitNumber)
 		return intList
@@ -3074,7 +3083,7 @@ class RInfo(BaseInfo):
 				values = values[:8]
 				truncatedLength = 8
 		if truncatedLength is not None:
-			 print "* * * WARNING: FontLab will only accept %d %s items maximum from Python. Dropping values: %s." % (truncatedLength, attribute, str(originalValues[truncatedLength:]))
+			 print("* * * WARNING: FontLab will only accept %d %s items maximum from Python. Dropping values: %s." % (truncatedLength, attribute, str(originalValues[truncatedLength:])))
 		return values
 
 

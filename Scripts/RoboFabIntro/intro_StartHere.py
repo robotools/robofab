@@ -17,7 +17,7 @@ import robofab
 # installed the package.
 
 from robofab.world import world
-print world
+print(world)
 
 # This should print something to the "Output" window.
 # It should tell you something about the environment

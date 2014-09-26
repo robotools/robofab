@@ -39,7 +39,7 @@ class ReadUFOFormatVersion1TestCase(unittest.TestCase):
 		# info
 		infoMatches = True
 		info = self.font.info
-		for attr, expectedValue in expectedFontInfo1To2Conversion.items():
+		for attr, expectedValue in list(expectedFontInfo1To2Conversion.items()):
 			writtenValue = getattr(info, attr)
 			if expectedValue != writtenValue:
 				infoMatches = False
@@ -86,7 +86,7 @@ class ReadUFOFormatVersion1TestCase(unittest.TestCase):
 	def testInfo(self):
 		self.setUpFont()
 		info = self.font.info
-		for attr, expectedValue in expectedFontInfo1To2Conversion.items():
+		for attr, expectedValue in list(expectedFontInfo1To2Conversion.items()):
 			writtenValue = getattr(info, attr)
 			self.assertEqual((attr, expectedValue), (attr, writtenValue))
 		self.tearDownFont()
@@ -108,7 +108,7 @@ class ReadUFOFormatVersion2TestCase(unittest.TestCase):
 		# info
 		infoMatches = True
 		info = self.font.info
-		for attr, expectedValue in fontInfoVersion2.items():
+		for attr, expectedValue in list(fontInfoVersion2.items()):
 			writtenValue = getattr(info, attr)
 			if expectedValue != writtenValue:
 				infoMatches = False
@@ -145,7 +145,7 @@ class ReadUFOFormatVersion2TestCase(unittest.TestCase):
 	def testInfo(self):
 		self.setUpFont()
 		info = self.font.info
-		for attr, expectedValue in fontInfoVersion2.items():
+		for attr, expectedValue in list(fontInfoVersion2.items()):
 			writtenValue = getattr(info, attr)
 			self.assertEqual((attr, expectedValue), (attr, writtenValue))
 		self.tearDownFont()
@@ -175,7 +175,7 @@ class WriteUFOFormatVersion1TestCase(unittest.TestCase):
 		else:
 			expected = readPlist(expectedPath)
 			written = readPlist(writtenPath)
-			for attr, expectedValue in expected.items():
+			for attr, expectedValue in list(expected.items()):
 				if expectedValue != written.get(attr):
 					matches = False
 					break
@@ -252,7 +252,7 @@ class WriteUFOFormatVersion2TestCase(unittest.TestCase):
 		else:
 			expected = readPlist(expectedPath)
 			written = readPlist(writtenPath)
-			for attr, expectedValue in expected.items():
+			for attr, expectedValue in list(expected.items()):
 				if expectedValue != written[attr]:
 					matches = False
 					break

@@ -28,10 +28,10 @@ font = CurrentFont()
 uppercase = []
 lowercase = []
 for glyphName in uppercase_plain:
-	if font.has_key(glyphName):
+	if glyphName in font:
 		uppercase.append(glyphName)
 for glyphName in lowercase_plain:
-	if font.has_key(glyphName):
+	if glyphName in font:
 		lowercase.append(glyphName)
 uppercase.sort()
 lowercase.sort()
@@ -63,24 +63,24 @@ font.update()
 # groups. Wow! Exciting! Amazing! But, what if you want to
 # get these lists back? Easy:
 groups = font.groups
-print 'uppercase:'
-print groups['uppercase']
-print
-print 'lowercase:'
-print groups['lowercase']
-print
-print 'upper and lowercase:'
-print groups['uppercaseAndLowercase']
-print
-print 'selected:'
-print groups['selected']
-print
+print('uppercase:')
+print(groups['uppercase'])
+print()
+print('lowercase:')
+print(groups['lowercase'])
+print()
+print('upper and lowercase:')
+print(groups['uppercaseAndLowercase'])
+print()
+print('selected:')
+print(groups['selected'])
+print()
 
 # You can even search the groups for the names of groups
 # that contain a certain glyph name. It works like this:
 groups = font.groups
 found = groups.findGlyph('a')
-print '"a" is in these groups: %s'%str(found)
+print('"a" is in these groups: %s'%str(found))
 
 # Oh yeah, don't forget to update the font.
 font.update()

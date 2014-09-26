@@ -22,7 +22,7 @@ def importAllGlifFiles(font, dirName=None, doProgress=True, bar=None):
 		else:
 			dirName = GetFolder("Please select a folder with .glif files")
 	glyphSet = GlyphSet(dirName)
-	glyphNames = glyphSet.keys()
+	glyphNames = list(glyphSet.keys())
 	glyphNames.sort()
 	barStart = 0
 	closeBar = False
@@ -50,7 +50,7 @@ def importAllGlifFiles(font, dirName=None, doProgress=True, bar=None):
 			if hasattr(glyph, "note"):
 				flGlyph.note = glyph.note  # XXX must encode
 			if hasattr(glyph, "lib"):
-				from cStringIO import StringIO
+				from io import StringIO
 				from robofab.plistlib import writePlist
 				lib = glyph.lib
 				if lib:

@@ -60,7 +60,7 @@ class ReadFontInfoVersion1TestCase(unittest.TestCase):
 			32 : "bold",
 			33 : "bold italic"
 		}
-		for old, new in fontStyle1To2.items():
+		for old, new in list(fontStyle1To2.items()):
 			info = dict(fontInfoVersion1)
 			info["fontStyle"] = old
 			self._writeInfoToPlist(info)
@@ -81,7 +81,7 @@ class ReadFontInfoVersion1TestCase(unittest.TestCase):
 			"Extra-expanded"  : 8,
 			"Ultra-expanded"  : 9
 		}
-		for old, new in widthName1To2.items():
+		for old, new in list(widthName1To2.items()):
 			info = dict(fontInfoVersion1)
 			info["widthName"] = old
 			self._writeInfoToPlist(info)
@@ -117,7 +117,7 @@ class ReadFontInfoVersion2TestCase(unittest.TestCase):
 		reader = UFOReader(self.dstDir)
 		reader.readInfo(infoObject)
 		readData = {}
-		for attr in fontInfoVersion2.keys():
+		for attr in list(fontInfoVersion2.keys()):
 			readData[attr] = getattr(infoObject, attr)
 		self.assertEqual(originalData, readData)
 
@@ -859,7 +859,7 @@ class WriteFontInfoVersion1TestCase(unittest.TestCase):
 
 	def makeInfoObject(self):
 		infoObject = TestInfoObject()
-		for attr, value in fontInfoVersion2.items():
+		for attr, value in list(fontInfoVersion2.items()):
 			setattr(infoObject, attr, value)
 		return infoObject
 
@@ -872,7 +872,7 @@ class WriteFontInfoVersion1TestCase(unittest.TestCase):
 		writer = UFOWriter(self.dstDir, formatVersion=1)
 		writer.writeInfo(infoObject)
 		writtenData = self.readPlist()
-		for attr, originalValue in fontInfoVersion1.items():
+		for attr, originalValue in list(fontInfoVersion1.items()):
 			newValue = writtenData[attr]
 			self.assertEqual(newValue, originalValue)
 
@@ -883,7 +883,7 @@ class WriteFontInfoVersion1TestCase(unittest.TestCase):
 			32 : "bold",
 			33 : "bold italic"
 		}
-		for old, new in fontStyle1To2.items():
+		for old, new in list(fontStyle1To2.items()):
 			infoObject = self.makeInfoObject()
 			infoObject.styleMapStyleName = new
 			writer = UFOWriter(self.dstDir, formatVersion=1)
@@ -903,7 +903,7 @@ class WriteFontInfoVersion1TestCase(unittest.TestCase):
 			"Extra-expanded"  : 8,
 			"Ultra-expanded"  : 9
 		}
-		for old, new in widthName1To2.items():
+		for old, new in list(widthName1To2.items()):
 			infoObject = self.makeInfoObject()
 			infoObject.openTypeOS2WidthClass = new
 			writer = UFOWriter(self.dstDir, formatVersion=1)
@@ -923,7 +923,7 @@ class WriteFontInfoVersion2TestCase(unittest.TestCase):
 
 	def makeInfoObject(self):
 		infoObject = TestInfoObject()
-		for attr, value in fontInfoVersion2.items():
+		for attr, value in list(fontInfoVersion2.items()):
 			setattr(infoObject, attr, value)
 		return infoObject
 
@@ -936,7 +936,7 @@ class WriteFontInfoVersion2TestCase(unittest.TestCase):
 		writer = UFOWriter(self.dstDir)
 		writer.writeInfo(infoObject)
 		writtenData = self.readPlist()
-		for attr, originalValue in fontInfoVersion2.items():
+		for attr, originalValue in list(fontInfoVersion2.items()):
 			newValue = writtenData[attr]
 			self.assertEqual(newValue, originalValue)
 

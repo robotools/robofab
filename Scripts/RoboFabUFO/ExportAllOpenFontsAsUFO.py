@@ -51,7 +51,7 @@ for p in paths:
 	ufoPath = p.replace(".vfb", ".ufo")
 	if os.path.exists(ufoPath):
 		# the ufo exists, only export the glyphs and the features
-		print "There is a UFO for this font already, exporting glyphs."
+		print("There is a UFO for this font already, exporting glyphs.")
 		path = os.path.join(os.path.dirname(ufoPath), os.path.basename(ufoPath), "glyphs")
 		f = OpenFont(p)
 		
@@ -59,18 +59,18 @@ for p in paths:
 
 		gs = GlyphSet(path, glyphNameToFileNameFunc=glyphNameToShortFileName)
 		for g in f:
-			print "saving glyph %s in %s"%(g.name, path)
+			print("saving glyph %s in %s"%(g.name, path))
 			gs.writeGlyph(g.name, g, g.drawPoints)
 		gs.writeContents()
 
 		# make a new writer
 		u = UFOWriter(ufoPath)
 		# font info
-		print "exporting font info.."
+		print("exporting font info..")
 		u.writeInfo(f.info)
 		
 		# features
-		print "exporting features.."
+		print("exporting features..")
 		glyphOrder = []
 		for nakedGlyph in f.naked().glyphs:
 			glyph = RGlyph(nakedGlyph)
@@ -87,12 +87,12 @@ for p in paths:
 
 		fontLib["org.robofab.glyphOrder"] = glyphOrder
 		f._writeOpenTypeFeaturesToLib(fontLib)
-		print "fontLib", fontLib
+		print("fontLib", fontLib)
 		u.writeLib(fontLib)
 		f.close()
 
 	else:
-		print "Making a new UFO at", ufoPath
+		print("Making a new UFO at", ufoPath)
 		f = OpenFont(p)
 		f.writeUFO()
 		f.close()

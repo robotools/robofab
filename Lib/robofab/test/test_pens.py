@@ -84,12 +84,12 @@ class RoundTripTestCase(unittest.TestCase):
 
 	def testShapesFromGlyphSet(self):
 		glyphSet = GlyphSet(getDemoFontGlyphSetPath())
-		for name in glyphSet.keys():
+		for name in list(glyphSet.keys()):
 			self._doTest(glyphSet[name].drawPoints, name)
 
 	def testGuessSmoothPen(self):
 		glyphSet = GlyphSet(getDemoFontGlyphSetPath())
-		for name in glyphSet.keys():
+		for name in list(glyphSet.keys()):
 			digestPen = DigestPointPen()
 			glyphSet[name].drawPoints(digestPen)
 			digest1 = digestPen.getDigest()

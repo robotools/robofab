@@ -13,8 +13,8 @@ if src1:
 	if src2:
 		# collect a list of all compatible glyphs
 		common = []
-		for glyphName in src1.keys():
-			if src2.has_key(glyphName):
+		for glyphName in list(src1.keys()):
+			if glyphName in src2:
 				if src1[glyphName].isCompatible(src2[glyphName]):
 					common.append(glyphName)
 		common.sort()
@@ -34,7 +34,7 @@ if src1:
 			# add a new glyph and interpolate it
 			while count != 100:
 				factor = count * .01
-				newName = selName + '_' + `count`.zfill(3)
+				newName = selName + '_' + repr(count).zfill(3)
 				gD = dest.newGlyph(newName)
 				gD.interpolate(factor, g1, g2)
 				gD.update()

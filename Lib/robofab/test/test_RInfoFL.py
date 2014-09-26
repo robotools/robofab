@@ -1,5 +1,5 @@
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 import sys
 from robofab import ufoLib
 from robofab.objects.objectsFL import NewFont
@@ -11,7 +11,7 @@ class RInfoRFTestCase(unittest.TestCase):
 	def testRoundTripVersion2(self):
 		font = NewFont()
 		infoObject = font.info
-		for attr, value in fontInfoVersion2.items():
+		for attr, value in list(fontInfoVersion2.items()):
 			if attr in infoObject._ufoToFLAttrMapping and infoObject._ufoToFLAttrMapping[attr]["nakedAttribute"] is None:
 				continue
 			setattr(infoObject, attr, value)
@@ -29,7 +29,7 @@ class RInfoRFTestCase(unittest.TestCase):
 		infoObject = font.info
 		requiredWarnings = []
 		try:
-			for attr, value in fontInfoVersion2.items():
+			for attr, value in list(fontInfoVersion2.items()):
 				if attr in infoObject._ufoToFLAttrMapping and infoObject._ufoToFLAttrMapping[attr]["nakedAttribute"] is not None:
 					continue
 				setattr(infoObject, attr, value)
@@ -40,7 +40,7 @@ class RInfoRFTestCase(unittest.TestCase):
 			sys.stdout = saveStdout
 		tempStderr = tempStderr.getvalue()
 		for attr, line in requiredWarnings:
-			self.assertEquals((attr, line in tempStderr), (attr, True))
+			self.assertEqual((attr, line in tempStderr), (attr, True))
 		font.close()
 
 	def testVersion2UnsupportedGet(self):
@@ -53,7 +53,7 @@ class RInfoRFTestCase(unittest.TestCase):
 		infoObject = font.info
 		requiredWarnings = []
 		try:
-			for attr, value in fontInfoVersion2.items():
+			for attr, value in list(fontInfoVersion2.items()):
 				if attr in infoObject._ufoToFLAttrMapping and infoObject._ufoToFLAttrMapping[attr]["nakedAttribute"] is not None:
 					continue
 				getattr(infoObject, attr, value)
@@ -64,16 +64,16 @@ class RInfoRFTestCase(unittest.TestCase):
 			sys.stdout = saveStdout
 		tempStderr = tempStderr.getvalue()
 		for attr, line in requiredWarnings:
-			self.assertEquals((attr, line in tempStderr), (attr, True))
+			self.assertEqual((attr, line in tempStderr), (attr, True))
 		font.close()
 
 	def testRoundTripVersion1(self):
 		font = NewFont()
 		infoObject = font.info
-		for attr, value in fontInfoVersion1.items():
+		for attr, value in list(fontInfoVersion1.items()):
 			if attr not in ufoLib.deprecatedFontInfoAttributesVersion2:
 				setattr(infoObject, attr, value)
-		for attr, expectedValue in fontInfoVersion1.items():
+		for attr, expectedValue in list(fontInfoVersion1.items()):
 			if attr not in ufoLib.deprecatedFontInfoAttributesVersion2:
 				value = getattr(infoObject, attr)
 				self.assertEqual((attr, expectedValue), (attr, value))
@@ -89,11 +89,11 @@ class RInfoRFTestCase(unittest.TestCase):
 		infoObject = font.info
 		requiredWarnings = []
 		try:
-			for attr, value in fontInfoVersion1.items():
+			for attr, value in list(fontInfoVersion1.items()):
 				if attr in ufoLib.deprecatedFontInfoAttributesVersion2:
 					setattr(infoObject, attr, value)
 					v = getattr(infoObject, attr)
-					self.assertEquals((attr, value), (attr, v))
+					self.assertEqual((attr, value), (attr, v))
 					s = "DeprecationWarning: The %s attribute has been deprecated." % attr
 					requiredWarnings.append((attr, s))
 		finally:
@@ -101,7 +101,7 @@ class RInfoRFTestCase(unittest.TestCase):
 			sys.stdout = saveStdout
 		tempStderr = tempStderr.getvalue()
 		for attr, line in requiredWarnings:
-			self.assertEquals((attr, line in tempStderr), (attr, True))
+			self.assertEqual((attr, line in tempStderr), (attr, True))
 		font.close()
 
 

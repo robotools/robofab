@@ -92,8 +92,8 @@ class FontLabInstaller(object):
         try:
             f = open(self.logPath, 'a')
         except IOError:
-            print "Error writing to log."
-            print entry
+            print("Error writing to log.")
+            print(entry)
             return
         from time import localtime, strftime
         t = strftime("%a, %d %b %Y %H:%M:%S", localtime())
@@ -102,7 +102,7 @@ class FontLabInstaller(object):
         f.write("\n%s %s"%(t,entry))
         f.close()
         if verbose:
-            print entry
+            print(entry)
     
     def runInspectorScripts(self, run=True):
         """Build the inspector scripts for each FontLab we found. Then use NSWorkspace to run each script with each app."""
@@ -118,7 +118,7 @@ class FontLabInstaller(object):
                 except:
                     # something went wrong
                     self.log("Failed to open %s"%appName)
-            print "expectingResults", self.expectedResults
+            print("expectingResults", self.expectedResults)
         if self.expectedResults:
             self.log("We're expecting results. Starting polling.")
             self.poll()
@@ -150,18 +150,18 @@ class FontLabInstaller(object):
 
         if (time.time()-self.startWaitTime) > self.maxWaitTime:
             # time out, one or more results did not come through.
-            print "time out while waiting for", self.expectedResults
+            print("time out while waiting for", self.expectedResults)
             self.finish()
             return
 
         time.sleep(1)
-        print "tick"
+        print("tick")
         self.poll()
             
     def finish(self):
         self.log("finish!")
-        for k, v in self.foundResults.items():
-            print k, v
+        for k, v in list(self.foundResults.items()):
+            print(k, v)
         
     def _buildInspectorScript(self, appName):
         problem = None
@@ -199,7 +199,7 @@ class FontLabInstaller(object):
             }
     
         code = installerCode + installerScript%values
-        print "writing script at", flInstallerPath
+        print("writing script at", flInstallerPath)
         f = open(flInstallerPath, 'wb')
         f.write(code)
         f.close()

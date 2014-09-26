@@ -26,4 +26,4 @@ if len(selectedPoints) == 2:
 	xDiff = xList[1] - xList[0]
 	yDiff = yList[1] - yList[0]
 	ang = round(math.atan2(yDiff, xDiff)*180/math.pi, 3)
-	print "x:%s y:%s a:%s"%(xDiff, yDiff, ang)
+	print("x:%s y:%s a:%s"%(xDiff, yDiff, ang))

@@ -12,16 +12,16 @@ if __name__ == "__main__":
 	suites = []
 	for fileName in testFiles:
 		modName = "robofab.test." + fileName[:-3]
-		print "importing", fileName
+		print("importing", fileName)
 		try:
 			mod = __import__(modName, {}, {}, ["*"])
 		except ImportError:
-			print "*** skipped", fileName
+			print("*** skipped", fileName)
 			continue
 	
 		suites.append(loader.loadTestsFromModule(mod))
 	
-	print "running tests..."
+	print("running tests...")
 	testRunner = unittest.TextTestRunner(verbosity=0)
 	testSuite = unittest.TestSuite(suites)
 	testRunner.run(testSuite)

@@ -191,7 +191,7 @@ def splitAccent(accentglyph):
 		counter={}
 		for accent in accentList:
 			counter[ogbase.find(accent)] = accent
-		counterList = counter.keys()
+		counterList = list(counter.keys())
 		counterList.sort()
 		finalAccents = []
 		for i in counterList:
@@ -231,19 +231,19 @@ class _InternalCaseFunctions:
 	"""internal functions for doing gymnastics with the casedicts"""
 	
 	def expandsmallcapscasedict(self):
-		for i in casedict.values():
-			if i not in smallcapscasedict.keys():
+		for i in list(casedict.values()):
+			if i not in list(smallcapscasedict.keys()):
 				if len(i) > 1:
 					if i[:1].upper() == i[:1]:
 						smallcapscasedict[i] = i[:1] + i[1:] + '.sc'	
 							
 		for i in uppercase:
 			if i + '.sc' in smallcaps:
-				if i not in smallcapscasedict.keys():
+				if i not in list(smallcapscasedict.keys()):
 					smallcapscasedict[i] = i + '.sc'
 					
 	def flipcasedict(self):
-		for i in casedict.keys():
+		for i in list(casedict.keys()):
 			if i.find('dotless') != -1:
 				i = i.replace('dotless', '')
 			casedictflip[casedict[i]] = i
@@ -252,7 +252,7 @@ class _InternalCaseFunctions:
 		for i in lowercase_ligatures:
 			casedict[i] = i.upper()
 		for i in lowercase:
-			if i not in casedict.keys():
+			if i not in list(casedict.keys()):
 				if string.capitalize(i) in uppercase:
 					casedict[i] = string.capitalize(i)
 
@@ -274,7 +274,7 @@ def upper(glyphstring):
 		if bS is not None:
 			suffix = bS[1]
 			i = bS[0]
-		if i in casedict.keys():
+		if i in list(casedict.keys()):
 			i = casedict[i]
 		if len(suffix) != 0:
 			i = '.'.join([i, suffix])
@@ -299,7 +299,7 @@ def lower(glyphstring):
 		if breakSuffix(i) is not None:
 			suffix = bS[1]
 			i = bS[0]
-		if i in casedictflip.keys():
+		if i in list(casedictflip.keys()):
 			i = casedictflip[i]
 		if len(suffix) != 0:
 			i = '.'.join([i, suffix])	
@@ -321,9 +321,9 @@ def small(glyphstring):
 				suffix = ''
 			i = bS[0]
 		if i in lowercase:
-			if i not in smallcapscasedict.keys():
+			if i not in list(smallcapscasedict.keys()):
 				i = casedict[i]
-		if i in smallcapscasedict.keys():
+		if i in list(smallcapscasedict.keys()):
 			i = smallcapscasedict[i]
 		if i != 'S.sc/S.sc':
 			if len(suffix) != 0:
@@ -352,7 +352,7 @@ def controls(glyphname):
 	"""Send this a glyph name and get a control string
 	with all glyphs separated by slashes."""
 	controlslist =	[]
-	for value in controldict.values():
+	for value in list(controldict.values()):
 		for v in value:
 			for i in v.split('/'):
 				if len(i) > 0:
@@ -360,7 +360,7 @@ def controls(glyphname):
 						controlslist.append(i)	
 	cs = ''
 	if glyphname in controlslist:
-		for key in controldict.keys():
+		for key in list(controldict.keys()):
 			for v in controldict[key]:
 				if glyphname in v.split('/'):
 					con = controldict[key]
@@ -407,7 +407,7 @@ def sortControlList(list):
 	"""Roughly sort a list of control strings."""
 		
 	controls = []
-	for v in controldict.values():
+	for v in list(controldict.values()):
 		for w in v:
 			for x in w.split('/'):
 				if len(x) is not None:
@@ -539,8 +539,8 @@ def kernControls(leftglyphname, rightglyphname):
 
 class _testing:
 	def __init__(self):
-		print
-		print '##### testing!'
+		print()
+		print('##### testing!')
 	#	self.listtest()
 	#	self.accentbasetest()
 	#	self.controlstest()
@@ -576,24 +576,24 @@ class _testing:
 				special
 				]
 		for i in testlist:
-			print i
+			print(i)
 	
 	
 	def accentbasetest(self):
-		print findAccentBase('Adieresis')
-		print findAccentBase('Adieresis.sc')
-		print findAccentBase('Thorn.sc')
-		print findAccentBase('notaralglyphname')
+		print(findAccentBase('Adieresis'))
+		print(findAccentBase('Adieresis.sc'))
+		print(findAccentBase('Thorn.sc'))
+		print(findAccentBase('notaralglyphname'))
 		
 			
 	def controlstest(self):
-		print kernControls('A', 'a.swash')
-		print kernControls('A.sc', '1')
-		print kernControls('bracket.sc', 'germandbls')
-		print kernControls('2', 'X')
-		print kernControls('Y', 'X')
-		print kernControls('Y.alt', 'X')
-		print kernControls('Y.scalt', 'X')
+		print(kernControls('A', 'a.swash'))
+		print(kernControls('A.sc', '1'))
+		print(kernControls('bracket.sc', 'germandbls'))
+		print(kernControls('2', 'X'))
+		print(kernControls('Y', 'X'))
+		print(kernControls('Y.alt', 'X'))
+		print(kernControls('Y.scalt', 'X'))
 		#print controls('x')
 		#print controls('germandbls')
 		#print controls('L')
@@ -607,19 +607,19 @@ class _testing:
 		u = upper('/H/i/Z.sc/ampersand.sc/dotlessi/germandbls/four.superior/LL')
 		l = lower('/H/I/Z.sc/ampersand.sc/dotlessi/germandbls/four.superior/LL')
 		s = small('/H/i/Z.sc/ampersand.alt/dotlessi/germandbls/four.superior/LL')
-		print u
-		print l
-		print s
-		print lower(u)
-		print upper(l)
-		print upper(s)
-		print lower(s)
+		print(u)
+		print(l)
+		print(s)
+		print(lower(u))
+		print(upper(l))
+		print(upper(s))
+		print(lower(s))
 		
 	def stringsorttest(self):
 		sample = "/H/H/Euro/H/O/H/O/Euro/O/O /H/H/R/H/O/H/O/R/O/O /H/H/question/H/O/H/O/question/O/O /H/H/sterling/H/O/H/O/sterling/O/O /n/n/r/n/o/n/o/r/o/o"
 		list = string.split(sample, ' ')
 		x = sortControlList(list)	
-		print x
+		print(x)
 
 if __name__ == '__main__':
 	_testing()

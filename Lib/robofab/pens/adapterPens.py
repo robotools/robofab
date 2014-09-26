@@ -220,11 +220,11 @@ class GuessSmoothPointPen(AbstractPointPen):
 			return
 		if points[0][1] == "move":
 			# Open path.
-			indices = range(1, nPoints - 1)
+			indices = list(range(1, nPoints - 1))
 		elif nPoints > 1:
 			# Closed path. To avoid having to mod the contour index, we
 			# simply abuse Python's negative index feature, and start at -1
-			indices = range(-1, nPoints - 1)
+			indices = list(range(-1, nPoints - 1))
 		else:
 			# closed path containing 1 point (!), ignore.
 			indices = []

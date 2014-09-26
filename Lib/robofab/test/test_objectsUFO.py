@@ -142,15 +142,15 @@ class SaveTestCase(ContourMethodsTestCase):
 	def testSaveAs(self):
 		path = tempfile.mktemp(".ufo")
 		try:
-			keys1 = self.font.keys()
+			keys1 = list(self.font.keys())
 			self.font.save(path)
-			keys2 = self.font.keys()
+			keys2 = list(self.font.keys())
 			keys1.sort()
 			keys2.sort()
 			self.assertEqual(keys1, keys2)
 			self.assertEqual(self.font.path, path)
 			font2 = RFont(path)
-			keys3 = font2.keys()
+			keys3 = list(font2.keys())
 			keys3.sort()
 			self.assertEqual(keys1, keys3)
 		finally:
@@ -164,16 +164,16 @@ class SaveTestCase(ContourMethodsTestCase):
 #		self.assertEqual(self.font["X"].name, "X")
 		# remove a glyph
 		self.font.removeGlyph("a")
-		keys1 = self.font.keys()
+		keys1 = list(self.font.keys())
 		try:
 			self.font.save(path)
 			self.assertEqual(self.font.path, path)
-			keys2 = self.font.keys()
+			keys2 = list(self.font.keys())
 			keys1.sort()
 			keys2.sort()
 			self.assertEqual(keys1, keys2)
 			font2 = RFont(path)
-			keys3 = font2.keys()
+			keys3 = list(font2.keys())
 			keys3.sort()
 			self.assertEqual(keys1, keys3)
 		finally:

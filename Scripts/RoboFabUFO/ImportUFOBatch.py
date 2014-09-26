@@ -24,7 +24,7 @@ def globUFO(dir, filter=None):
 		p = os.path.join(dir, n)
 		if n[-4:] == ".ufo":
 			if filter is not None:
-				if dir.find(filter) <> -1:
+				if dir.find(filter) != -1:
 					ufo.append(p)
 			else:
 				ufo.append(p)
@@ -42,4 +42,4 @@ for path in ufo:
 	font.update()
 	vfbPath = path[:-4] + ".vfb"
 	font.save(vfbPath)
-print 'DONE!'
+print('DONE!')

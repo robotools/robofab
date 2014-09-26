@@ -34,9 +34,9 @@ def GetFile(message=None, title=None, directory=None, fileName=None, allowsMulti
 	try:
 		rr = Nav.NavChooseFile(args)
 		good = 1
-	except Nav.error, arg:
+	except Nav.error as arg:
 		if arg[0] != -128: # userCancelledErr
-			raise Nav.error, arg
+			raise Nav.error(arg)
 		return None
 	if not rr.validRecord or not rr.selection:
 		return None
@@ -46,9 +46,9 @@ def GetFile(message=None, title=None, directory=None, fileName=None, allowsMulti
 		return tpwanted(rr.selection[0])
 	if issubclass(tpwanted, str):
 		return tpwanted(rr.selection_fsr[0].as_pathname())
-	if issubclass(tpwanted, unicode):
+	if issubclass(tpwanted, str):
 		return tpwanted(rr.selection_fsr[0].as_pathname(), 'utf8')
-	raise TypeError, "Unknown value for argument 'wanted': %s" % repr(tpwanted)
+	raise TypeError("Unknown value for argument 'wanted': %s" % repr(tpwanted))
 
 
 def GetFileOrFolder(message=None, title=None, directory=None, fileName=None, allowsMultipleSelection=False, fileTypes=None):
@@ -63,9 +63,9 @@ def GetFileOrFolder(message=None, title=None, directory=None, fileName=None, all
 	try:
 		rr = Nav.NavChooseObject(args)
 		good = 1
-	except Nav.error, arg:
+	except Nav.error as arg:
 		if arg[0] != -128: # userCancelledErr
-			raise Nav.error, arg
+			raise Nav.error(arg)
 		return None
 	if not rr.validRecord or not rr.selection:
 		return None
@@ -75,6 +75,6 @@ def GetFileOrFolder(message=None, title=None, directory=None, fileName=None, all
 		return tpwanted(rr.selection[0])
 	if issubclass(tpwanted, str):
 		return tpwanted(rr.selection_fsr[0].as_pathname())
-	if issubclass(tpwanted, unicode):
+	if issubclass(tpwanted, str):
 		return tpwanted(rr.selection_fsr[0].as_pathname(), 'utf8')
-	raise TypeError, "Unknown value for argument 'wanted': %s" % repr(tpwanted)
+	raise TypeError("Unknown value for argument 'wanted': %s" % repr(tpwanted))

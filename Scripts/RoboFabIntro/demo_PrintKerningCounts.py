@@ -9,4 +9,4 @@ selectedGlyphs = font.selection
 kerning = font.kerning
 counts = kerning.occurrenceCount(selectedGlyphs)
 for glyphName in selectedGlyphs:
-	print "%s: %s pairs"%(glyphName, counts[glyphName])
+	print("%s: %s pairs"%(glyphName, counts[glyphName]))

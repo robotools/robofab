@@ -59,7 +59,7 @@ __all__ = [
 # Note: the Plist and Dict classes have been deprecated.
 
 import binascii
-from cStringIO import StringIO
+from io import StringIO
 import re
 try:
     from datetime import datetime
@@ -77,13 +77,19 @@ def readPlist(pathOrFile):
     usually is a dictionary).
     """
     didOpen = 0
-    if isinstance(pathOrFile, (str, unicode)):
-        pathOrFile = open(pathOrFile)
+    data = None
+    if isinstance(pathOrFile, str):
+        # Workaround for http://bugs.python.org/issue16726
+        with open(pathOrFile) as myfile:
+            data = myfile.read()
+#        pathOrFile = open(pathOrFile)
         didOpen = 1
     p = PlistParser()
-    rootObject = p.parse(pathOrFile)
     if didOpen:
-        pathOrFile.close()
+        rootObject = p.parseString(data)
+#        pathOrFile.close()
+    else:
+        rootObject = p.parse(pathOrFile)
     return rootObject
 
 
@@ -92,7 +98,7 @@ def writePlist(rootObject, pathOrFile):
     file name or a (writable) file object.
     """
     didOpen = 0
-    if isinstance(pathOrFile, (str, unicode)):
+    if isinstance(pathOrFile, str):
         pathOrFile = open(pathOrFile, "w")
         didOpen = 1
     writer = PlistWriter(pathOrFile)
@@ -238,7 +244,7 @@ class PlistWriter(DumbXMLWriter):
         DumbXMLWriter.__init__(self, file, indentLevel, indent)
 
     def writeValue(self, value):
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, str):
             self.simpleElement("string", value)
         elif isinstance(value, bool):
             # must switch for bool before int, as bool is a
@@ -247,7 +253,7 @@ class PlistWriter(DumbXMLWriter):
                 self.simpleElement("true")
             else:
                 self.simpleElement("false")
-        elif isinstance(value, (int, long)):
+        elif isinstance(value, int):
             self.simpleElement("integer", "%d" % value)
         elif isinstance(value, float):
             self.simpleElement("real", repr(value))
@@ -275,10 +281,10 @@ class PlistWriter(DumbXMLWriter):
 
     def writeDict(self, d):
         self.beginElement("dict")
-        items = d.items()
+        items = list(d.items())
         items.sort()
         for key, value in items:
-            if not isinstance(key, (str, unicode)):
+            if not isinstance(key, str):
                 raise TypeError("keys must be strings")
             self.simpleElement("key", key)
             self.writeValue(value)
@@ -301,7 +307,7 @@ class _InternalDict(dict):
         try:
             value = self[attr]
         except KeyError:
-            raise AttributeError, attr
+            raise AttributeError(attr)
         from warnings import warn
         warn("Attribute access from plist dicts is deprecated, use d[key] "
              "notation instead", PendingDeprecationWarning)
@@ -317,7 +323,7 @@ class _InternalDict(dict):
         try:
             del self[attr]
         except KeyError:
-            raise AttributeError, attr
+            raise AttributeError(attr)
         from warnings import warn
         warn("Attribute access from plist dicts is deprecated, use d[key] "
              "notation instead", PendingDeprecationWarning)
@@ -409,6 +415,15 @@ class PlistParser:
         parser.ParseFile(fileobj)
         return self.root
 
+    def parseString(self, data):
+        from xml.parsers.expat import ParserCreate
+        parser = ParserCreate()
+        parser.StartElementHandler = self.handleBeginElement
+        parser.EndElementHandler = self.handleEndElement
+        parser.CharacterDataHandler = self.handleData
+        parser.Parse(data)
+        return self.root
+
     def handleBeginElement(self, element, attrs):
         self.data = []
         handler = getattr(self, "begin_" + element, None)
@@ -475,21 +490,3 @@ class PlistParser:
         self.addObject(Data.fromBase64(self.getData()))
     def end_date(self):
         self.addObject(_dateFromString(self.getData()))
-
-
-# cruft to support booleans in Python <= 2.3
-import sys
-if sys.version_info[:2] < (2, 3):
-    # Python 2.2 and earlier: no booleans
-    # Python 2.2.x: booleans are ints
-    class bool(int):
-        """Imitation of the Python 2.3 bool object."""
-        def __new__(cls, value):
-            return int.__new__(cls, not not value)
-        def __repr__(self):
-            if self:
-                return "True"
-            else:
-                return "False"
-    True = bool(1)
-    False = bool(0)

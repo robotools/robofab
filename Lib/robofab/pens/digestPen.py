@@ -92,15 +92,15 @@ if __name__ == "__main__":
 	p.lineTo((218, 651))
 	p.closePath()
 	
-	print g, len(g)
+	print(g, len(g))
 	
 	digestPen = DigestPointPen()
 	g.drawPoints(digestPen)
 
-	print
-	print "getDigest", digestPen.getDigest()
+	print()
+	print("getDigest", digestPen.getDigest())
 	
-	print
-	print "getDigestPointsOnly", digestPen.getDigestPointsOnly()
+	print()
+	print("getDigestPointsOnly", digestPen.getDigestPointsOnly())
 	
 	

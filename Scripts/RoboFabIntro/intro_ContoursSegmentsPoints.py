@@ -25,27 +25,27 @@ glyph = CurrentGlyph()
 # Before we get into changing any of these objects,
 # let's print a little info about them.
 
-print "This glyph has %s contours"%len(glyph.contours)
+print("This glyph has %s contours"%len(glyph.contours))
 # a glyph has a list of contours
 for contour in glyph.contours:
 	# every contour has an index,
-	print "-contour index %s"%contour.index
+	print("-contour index %s"%contour.index)
 	# a direction,
-	print "--clockwise: %s"%contour.clockwise
+	print("--clockwise: %s"%contour.clockwise)
 	# and a list of segments
-	print "--%s segments"%len(contour.segments)
+	print("--%s segments"%len(contour.segments))
 	for segment in contour.segments:
 		# every segment has an index,
-		print "---segment %s"%segment.index
+		print("---segment %s"%segment.index)
 		# a type,
-		print "---type: %s"%segment.type
+		print("---type: %s"%segment.type)
 		# a list of points,
-		print "---%s points"%len(segment.points)
+		print("---%s points"%len(segment.points))
 		# which includes one on curve point,
 		onCurve = segment.onCurve
-		print "---onCurve point at: (%s, %s)"%(onCurve.x, onCurve.y)
+		print("---onCurve point at: (%s, %s)"%(onCurve.x, onCurve.y))
 		# and possibly some off curve points
-		print "---%s offCurve points"%len(segment.offCurve)
+		print("---%s offCurve points"%len(segment.offCurve))
 
 # Now, contours, segments and points all have
 # unique methods of their own, but for now let's

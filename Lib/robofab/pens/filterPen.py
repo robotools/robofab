@@ -153,7 +153,7 @@ def _estimateCubicCurveLength(pt0, pt1, pt2, pt3, precision=10):
 	points = []
 	length = 0
 	step = 1.0/precision
-	factors = range(0, precision+1)
+	factors = list(range(0, precision+1))
 	for i in factors:
 		points.append(_getCubicPoint(i*step, pt0, pt1, pt2, pt3))
 	for i in range(len(points)-1):
@@ -162,8 +162,10 @@ def _estimateCubicCurveLength(pt0, pt1, pt2, pt3, precision=10):
 		length += distance(pta, ptb)
 	return length
 
-def _mid((x0, y0), (x1, y1)):
+def _mid(xxx_todo_changeme, xxx_todo_changeme1):
 	"""(Point, Point) -> Point\nReturn the point that lies in between the two input points."""
+	(x0, y0) = xxx_todo_changeme
+	(x1, y1) = xxx_todo_changeme1
 	return 0.5 * (x0 + x1), 0.5 * (y0 + y1)
 
 def _getCubicPoint(t, pt0, pt1, pt2, pt3):
@@ -226,7 +228,7 @@ class FlattenPen(BasePen):
 			self.currentPt = pt
 			return
 		step = 1.0/maxSteps
-		factors = range(0, maxSteps+1)
+		factors = list(range(0, maxSteps+1))
 		for i in factors[1:]:
 			self.otherPen.lineTo(_interpolatePt(self.currentPt, pt, i*step))
 		self.currentPt = pt
@@ -240,7 +242,7 @@ class FlattenPen(BasePen):
 			self.currentPt = pt3
 			return
 		step = 1.0/maxSteps
-		factors = range(0, maxSteps+1)
+		factors = list(range(0, maxSteps+1))
 		for i in factors[1:]:
 			pt = _getCubicPoint(i*step, self.currentPt, pt1, pt2, pt3)
 			self.otherPen.lineTo(pt)
@@ -319,7 +321,7 @@ def halftoneGlyph(aGlyph, invert=False):
 	Measure a bunch of inside/outside points to simulate grayscale levels.
 	Slow.
 	"""
-	print 'halftoneGlyph is running...'
+	print('halftoneGlyph is running...')
 	grid = {}
 	drawing = {}
 	dataDistance = 10
@@ -329,14 +331,14 @@ def halftoneGlyph(aGlyph, invert=False):
 	overshoot = dataDistance * 2
 	(xMin, yMin, xMax, yMax) = aGlyph.box
 	for x in range(xMin-overshoot, xMax+overshoot, dataDistance):
-		print 'scanning..', x
+		print('scanning..', x)
 		for y in range(yMin-overshoot, yMax+overshoot, dataDistance):
 			if aGlyph.pointInside((x, y)):
 				grid[(x, y)] = True
 			else:
 				grid[(x, y)] = False
 			#print 'gathering data', x, y, grid[(x, y)]
-	print 'analyzing..'
+	print('analyzing..')
 	for x in range(xMin-overshoot, xMax+overshoot, cellDistance):
 		for y in range(yMin-overshoot, yMax+overshoot, cellDistance):
 			total = preload
@@ -349,8 +351,8 @@ def halftoneGlyph(aGlyph, invert=False):
 			else:
 				drawing[(x, y)] = float(total)
 	aGlyph.clear()
-	print drawing
-	for (x,y) in drawing.keys():
+	print(drawing)
+	for (x,y) in list(drawing.keys()):
 		size = drawing[(x,y)] / float(2*scan**2) * 5
 		pen = aGlyph.getPen()
 		pen.moveTo((x-size, y-size))

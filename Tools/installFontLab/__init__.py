@@ -28,7 +28,7 @@ class PathDropper(object):
         os.makedirs(self.logFolder)
         self.logPath = os.path.join(self.logFolder, 'mainLog.txt')
         self.log("Installing these modules:")
-        for name in self.moduleData.keys():
+        for name in list(self.moduleData.keys()):
             self.log("\t"+name)
     
     def scan(self):
@@ -48,8 +48,8 @@ class PathDropper(object):
     def writePaths(self, sitePackagesPath):
         """Actually write the damn thing."""
         self.log("Write in"+ sitePackagesPath)
-        for name, data in self.moduleData.items():
-            print name, data
+        for name, data in list(self.moduleData.items()):
+            print(name, data)
             if data['installType'] == "make_path":
                 # make a link to the code folder
                 self.log("\t%s wants to be linked to"%name)
@@ -60,8 +60,8 @@ class PathDropper(object):
                 f = open(filePath, 'w')
                 f.write(data['path'])
                 f.close()
-                print filePath
-                print fileName
+                print(filePath)
+                print(fileName)
             else:
                 # try to run the setup.py of the package
                 self.log("\t%s wants to be installed."%name)
@@ -71,8 +71,8 @@ class PathDropper(object):
         try:
             f = open(self.logPath, 'a')
         except IOError:
-            print "Error writing to log."
-            print entry
+            print("Error writing to log.")
+            print(entry)
             return
         from time import localtime, strftime
         t = strftime("%a, %d %b %Y %H:%M:%S", localtime())
@@ -81,7 +81,7 @@ class PathDropper(object):
         f.write("\n%s %s"%(t,entry))
         f.close()
         if verbose:
-            print entry
+            print(entry)
 
         
 

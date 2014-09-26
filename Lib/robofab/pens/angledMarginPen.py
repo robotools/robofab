@@ -68,7 +68,7 @@ class AngledMarginPen(BasePen):
 
 	def _curveToOne(self, pt1, pt2, pt3):
 		step = 1.0/self.maxSteps
-		factors = range(0, self.maxSteps+1)
+		factors = list(range(0, self.maxSteps+1))
 		for i in factors:
 			pt = _getCubicPoint(i*step, self.currentPt, pt1, pt2, pt3)
 			self._getAngled(pt)
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 	g = CurrentGlyph()
 	f = CurrentFont()
 
-	print "margins!", getAngledMargins(g, f)
+	print("margins!", getAngledMargins(g, f))
 	# set the angled margin to a value
 	m = 50
 	setAngledLeftMargin(g, f, m)

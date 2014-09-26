@@ -133,21 +133,21 @@ foundPlatformModule = False
 dialogs = {}
 
 if __verbose__:
-    print "robofab.interface.all __init__ - finding out where we were."
+    print("robofab.interface.all __init__ - finding out where we were.")
  
 # do we have a support module?
 for pl, app, py, platformApplicationModuleName in platformApplicationSupport:
     if __verbose__:
-        print "looking at", pl, app, py, platformApplicationModuleName
+        print("looking at", pl, app, py, platformApplicationModuleName)
     if pl is None or pl == platform:
         if app is None or app == application:
             if py is None or py == pyVersion:
                 break
     if __verbose__:
-        print "nope"
+        print("nope")
 
 if __verbose__:
-    print "searched for", pl, app, py, platformApplicationModuleName
+    print("searched for", pl, app, py, platformApplicationModuleName)
     
 # preload the namespace with default functions that do nothing but raise NotImplementedError
 from robofab.interface.all.dialogs_default import *
@@ -158,18 +158,18 @@ if platformApplicationModuleName == "dialogs_fontlab_legacy1":
         from robofab.interface.all.dialogs_fontlab_legacy1 import *
         foundPlatformModule = True
         if __verbose__:
-            print "loaded robofab.interface.all.dialogs_fontlab_legacy1"
+            print("loaded robofab.interface.all.dialogs_fontlab_legacy1")
         if platform == "mac":
             from robofab.interface.mac.getFileOrFolder import GetFile, GetFileOrFolder
     except ImportError:
-        print "can't import", platformApplicationModuleName
+        print("can't import", platformApplicationModuleName)
 
 elif platformApplicationModuleName == "dialogs_fontlab_legacy2":
     try:
         from robofab.interface.all.dialogs_fontlab_legacy2 import *
         foundPlatformModule = True
         if __verbose__:
-            print "loaded robofab.interface.all.dialogs_fontlab_legacy2"
+            print("loaded robofab.interface.all.dialogs_fontlab_legacy2")
         if platform == "mac":
             #   
             #
@@ -178,25 +178,25 @@ elif platformApplicationModuleName == "dialogs_fontlab_legacy2":
             #
             from robofab.interface.all.dialogs_legacy import AskString, TwoChecks, TwoFields, SelectGlyph, FindGlyph, OneList, SearchList, SelectFont, SelectGlyph
     except ImportError:
-        print "can't import", platformApplicationModuleName
+        print("can't import", platformApplicationModuleName)
 
 elif platformApplicationModuleName == "dialogs_mac_vanilla":
     try:
         from robofab.interface.all.dialogs_mac_vanilla import *
         foundPlatformModule = True
         if __verbose__:
-            print "loaded robofab.interface.all.dialogs_mac_vanilla"
+            print("loaded robofab.interface.all.dialogs_mac_vanilla")
     except ImportError:
-        print "can't import", platformApplicationModuleName
+        print("can't import", platformApplicationModuleName)
 
 elif platformApplicationModuleName == "dialogs_legacy":
    try:
        from robofab.interface.all.dialogs_legacy import *
        foundPlatformModule = True
        if __verbose__:
-           print "loaded robofab.interface.all.dialogs_legacy"
+           print("loaded robofab.interface.all.dialogs_legacy")
    except ImportError:
-       print "can't import", platformApplicationModuleName
+       print("can't import", platformApplicationModuleName)
     
 
 __all__ = [
@@ -255,23 +255,23 @@ def test():
 
     """
 
-    print
-    print "testing RoboFab Dialogs:"
-    print "\tpython version:", pyVersion
-    print "\tplatform:", platform
-    print "\tapplication:", application
-    print "\tapplicationVersion:", applicationVersion
-    print "\tplatformVersion:", platformVersion
-    print "\tlooking for module:", platformApplicationModuleName
-    print "\t\tdid we find it?", foundPlatformModule
+    print()
+    print("testing RoboFab Dialogs:")
+    print("\tpython version:", pyVersion)
+    print("\tplatform:", platform)
+    print("\tapplication:", application)
+    print("\tapplicationVersion:", applicationVersion)
+    print("\tplatformVersion:", platformVersion)
+    print("\tlooking for module:", platformApplicationModuleName)
+    print("\t\tdid we find it?", foundPlatformModule)
     
-    print
-    print "Available dialogs and source:"
+    print()
+    print("Available dialogs and source:")
     for name in __all__:
-        if name in globals().keys():
-            print "\t", name, "\t", globals()[name].__module__
+        if name in list(globals().keys()):
+            print("\t", name, "\t", globals()[name].__module__)
         else:
-            print "\t", name, "\t not loaded."
+            print("\t", name, "\t not loaded.")
 
 if __name__ == "__main__":
     test()

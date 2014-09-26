@@ -22,7 +22,7 @@ for l in names:
 		id.addGlyph(left.index)
 		id.addGlyph(right.index)
 		id.add(' ')
-	print 'finished all pairs starting with', left.name
+	print('finished all pairs starting with', left.name)
 
 from robofab.interface.all.dialogs import PutFile
 path = PutFile("Save the tagged file:", "KerningProofTags.txt")

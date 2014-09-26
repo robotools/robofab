@@ -7,8 +7,8 @@ def log(path, entry, verbose=True):
     try:
         f = open(path, 'a')
     except IOError:
-        print "Error writing to log."
-        print entry
+        print("Error writing to log.")
+        print(entry)
         return
     from time import localtime, strftime
     t = strftime("%a, %d %b %Y %H:%M:%S", localtime())
@@ -17,7 +17,7 @@ def log(path, entry, verbose=True):
     f.write("\n"+t+" "+entry)
     f.close()
     if verbose:
-        print entry
+        print(entry)
 
 def findSitePackages():
     """Try to find the site-packages folder for the current python."""
@@ -27,11 +27,11 @@ def findSitePackages():
         if s.find(folderName)!=-1:
             root = os.path.join(s.split(folderName)[0], folderName)
             paths[root] = True
-    return paths.keys()
+    return list(paths.keys())
 
 def writePathFile(pathFilePath, modulePaths):
     """Write the *.pth file to site-packages."""
-    print "writing the modulePaths path to", pathFilePath
+    print("writing the modulePaths path to", pathFilePath)
     try:
         f = open(pathFilePath, 'w')
         f.write("\n".join(modulePaths))

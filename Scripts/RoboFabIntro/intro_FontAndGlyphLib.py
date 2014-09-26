@@ -38,7 +38,7 @@ font.lib['org.robofab.keepout'] = 'this also belongs to us'
 
 # Like a dict, you can simply store a string in the dict
 font.lib['org.robofab'] = 'Hello World'
-print font.lib['org.robofab']
+print(font.lib['org.robofab'])
 
 # But that is really boring! Let's store a bunch of stuff.
 # Here we can go in two directions: we can either store a
@@ -46,19 +46,19 @@ print font.lib['org.robofab']
 font.lib['org.robofab'] = {'An Int':1, 'A Str':'Howdy!', 'A List':['X', 'Y', 'Z'], 'A Dict':{'Robo':'Fab'}}
 # Now because we have a nested dict, and we can access
 # it like any other dict let's print the stuff we just stored:
-print font.lib['org.robofab']['An Int']
-print font.lib['org.robofab']['A Str']
-print font.lib['org.robofab']['A List']
-print font.lib['org.robofab']['A Dict']
+print(font.lib['org.robofab']['An Int'])
+print(font.lib['org.robofab']['A Str'])
+print(font.lib['org.robofab']['A List'])
+print(font.lib['org.robofab']['A Dict'])
 
 # ...or we can avoid deeper nesting, and use our address as a
 # key prefix:
 font.lib['org.robofab.A'] = "A"
 font.lib['org.robofab.B'] = "B"
 font.lib['org.robofab.aList'] = [1, 2, 3]
-print font.lib['org.robofab.A']
-print font.lib['org.robofab.B']
-print font.lib['org.robofab.aList']
+print(font.lib['org.robofab.A'])
+print(font.lib['org.robofab.B'])
+print(font.lib['org.robofab.aList'])
 
 
 # It is all sooo easy!
@@ -67,7 +67,7 @@ print font.lib['org.robofab.aList']
 # and it works just like the font lib
 glyph = CurrentGlyph()
 glyph.lib['org.robofab'] = {'My glyph is totally':'Awesome'}
-print glyph.lib['org.robofab']['My glyph is totally']
+print(glyph.lib['org.robofab']['My glyph is totally'])
 
 # The type of data that can be stored in lib dictionaries is
 # limited. Dictionary keys must be strings (or unicode strings),

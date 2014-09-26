@@ -42,14 +42,14 @@ fontTypes = {	'mac'	:	['mactype1', 'macttf', 'macttdfont'],
 
 # Finally, let's generate the fonts!
 for macType in fontTypes['mac']:
-	print "generating %s..."%macType
+	print("generating %s..."%macType)
 	font.generate(macType, macPath)
 for pcType in fontTypes['pc']:
-	print "generating %s..."%pcType
+	print("generating %s..."%pcType)
 	font.generate(pcType, pcPath)
 for bothType in fontTypes['both']:
-	print "generating %s..."%bothType
+	print("generating %s..."%bothType)
 	font.generate(bothType, bothPath)
-print 'Done!'
+print('Done!')
 
 # Wow! Could it be any easier than that?

@@ -78,7 +78,7 @@ def GetAlternates(font, flavor="alt", match=0):
 	names = {}
 	for c in font.glyphs:
 		name = GlyphName(c.name)
-		if not names.has_key(name.base):
+		if name.base not in names:
 			names[name.base] = []
 		if match:
 			# only include if there is an exact match
@@ -98,7 +98,7 @@ def MakeCapsFeature(font):
 	"""Build a feature for smallcaps based on .sc glyphnames"""
 	names = GetAlternates(font, 'sc', match=1)
 	fw = FeatureWriter('smcp')
-	k = names.keys()
+	k = list(names.keys())
 	k.sort()
 	for p in k:
 		if names[p]:
@@ -113,7 +113,7 @@ def MakeAlternatesFeature(font):
 	"""Build a aalt feature based on glyphnames"""
 	names = GetAlternates(font, 'alt', match=0)
 	fw = FeatureWriter('aalt')
-	k = names.keys()
+	k = list(names.keys())
 	k.sort()
 	for p in k:
 		if names[p]:
@@ -128,7 +128,7 @@ def MakeSwashFeature(font):
 	"""Build a swash feature based on glyphnames"""
 	names = GetAlternates(font, 'swash', match=0)
 	fw = FeatureWriter('swsh')
-	k=names.keys()
+	k=list(names.keys())
 	k.sort()
 	for p in k:
 		if names[p]:
@@ -147,7 +147,7 @@ def MakeLigaturesFeature(font):
 	ligCountDict = {}
 	for glyph in font.glyphs:
 		if glyph.name in ligatures:
-			if len(glyph.name) not in ligCountDict.keys():
+			if len(glyph.name) not in list(ligCountDict.keys()):
 				ligCountDict[len(glyph.name)] = [glyph.name]
 			else:
 				ligCountDict[len(glyph.name)].append(glyph.name)
@@ -156,11 +156,11 @@ def MakeLigaturesFeature(font):
 			for i in glyph.name:
 				if i =='_':
 					usCounter=usCounter+1
-			if usCounter not in ligCountDict.keys():
+			if usCounter not in list(ligCountDict.keys()):
 				ligCountDict[usCounter] = [glyph.name]
 			else:
 				ligCountDict[usCounter].append(glyph.name)
-	ligCount=ligCountDict.keys()
+	ligCount=list(ligCountDict.keys())
 	ligCount.sort()
 	foundLigs=[]
 	for i in ligCount:
@@ -187,4 +187,4 @@ if __name__ == "__main__":
 	fw.add(['f', 'f', 'i'], ['f_f_i'])
 	fw.add('f f ', 'f_f')
 	fw.add(['f', 'i'], 'f_i')
-	print fw.write()
+	print(fw.write())

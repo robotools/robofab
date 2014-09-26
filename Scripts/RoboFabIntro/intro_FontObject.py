@@ -33,11 +33,11 @@ else:
 	Message("The current font is %s"%(f.info.postscriptFullName))
 
 	# let's have a look at some of the attributes a RoboFab Font object has
-	print "the number of glyphs:", len(f)
+	print("the number of glyphs:", len(f))
 	
 	# some of the attributes map straight to the FontLab Font class
 	# We just straightened the camelCase here and there
-	print "full name of this font:", f.info.postscriptFullName
-	print "list of glyph names:", f.keys()
-	print 'ascender:', f.info.ascender
-	print 'descender:', f.info.descender
+	print("full name of this font:", f.info.postscriptFullName)
+	print("list of glyph names:", list(f.keys()))
+	print('ascender:', f.info.ascender)
+	print('descender:', f.info.descender)

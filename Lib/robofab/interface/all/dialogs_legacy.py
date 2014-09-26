@@ -421,7 +421,7 @@ def SelectGlyph(font, message="Select a glyph:", title='RoboFab'):
 	from fontTools.misc.textTools import caselessSort
 
 	if inFontLab:
-		tl = font.keys()
+		tl = list(font.keys())
 		list = caselessSort(tl)
 		glyphname = OneList(list, message, title)
 		if glyphname is None:
@@ -438,7 +438,7 @@ def FindGlyph(font, message="Search for a glyph:", title='RoboFab'):
 	"""
 
 	if inFontLab:
-		glyphname = SearchList(font.keys(), message, title)
+		glyphname = SearchList(list(font.keys()), message, title)
 		if glyphname is None:
 			return None
 		else:
@@ -700,19 +700,19 @@ def PutFile(message=None, fileName=None):
 if __name__=='__main__':
 	import traceback
 	
-	print "dialogs hasW", hasW
-	print "dialogs hasDialogKit", hasDialogKit
-	print "dialogs MAC", MAC
-	print "dialogs PC", PC
-	print "dialogs inFontLab", inFontLab
-	print "dialogs hasEasyDialogs", hasEasyDialogs
+	print("dialogs hasW", hasW)
+	print("dialogs hasDialogKit", hasDialogKit)
+	print("dialogs MAC", MAC)
+	print("dialogs PC", PC)
+	print("dialogs inFontLab", inFontLab)
+	print("dialogs hasEasyDialogs", hasEasyDialogs)
 	
 	def tryDialog(dialogClass, args=None):
-		print
-		print "tryDialog:", dialogClass, "with args:", args
+		print()
+		print("tryDialog:", dialogClass, "with args:", args)
 		try:
 			if args is not None:
-				apply(dialogClass, args)
+				dialogClass(*args)
 			else:
 				apply(dialogClass)
 		except:

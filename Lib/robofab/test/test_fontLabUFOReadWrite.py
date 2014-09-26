@@ -54,7 +54,7 @@ class ReadUFOFormatVersion1TestCase(unittest.TestCase):
 		if doInfo:
 			infoMatches = True
 			info = self.font.info
-			for attr, expectedValue in expectedFontInfo1To2Conversion.items():
+			for attr, expectedValue in list(expectedFontInfo1To2Conversion.items()):
 				writtenValue = getattr(info, attr)
 				if expectedValue != writtenValue:
 					infoMatches = False
@@ -102,7 +102,7 @@ class ReadUFOFormatVersion1TestCase(unittest.TestCase):
 		self.assertEqual(otherResults["features"], False)
 		self.assertEqual(otherResults["lib"], False)
 		info = self.font.info
-		for attr, expectedValue in expectedFontInfo1To2Conversion.items():
+		for attr, expectedValue in list(expectedFontInfo1To2Conversion.items()):
 			writtenValue = getattr(info, attr)
 			self.assertEqual((attr, expectedValue), (attr, writtenValue))
 		self.tearDownFont()
@@ -166,7 +166,7 @@ class ReadUFOFormatVersion2TestCase(unittest.TestCase):
 		if doInfo:
 			infoMatches = True
 			info = self.font.info
-			for attr, expectedValue in fontInfoVersion2.items():
+			for attr, expectedValue in list(fontInfoVersion2.items()):
 				# cheat by skipping attrs that aren't supported
 				if info._ufoToFLAttrMapping[attr]["nakedAttribute"] is None:
 					continue
@@ -211,7 +211,7 @@ class ReadUFOFormatVersion2TestCase(unittest.TestCase):
 		self.assertEqual(otherResults["features"], False)
 		self.assertEqual(otherResults["lib"], False)
 		info = self.font.info
-		for attr, expectedValue in fontInfoVersion2.items():
+		for attr, expectedValue in list(fontInfoVersion2.items()):
 			# cheat by skipping attrs that aren't supported
 			if info._ufoToFLAttrMapping[attr]["nakedAttribute"] is None:
 				continue
@@ -285,7 +285,7 @@ class WriteUFOFormatVersion1TestCase(unittest.TestCase):
 			else:
 				expected = readPlist(expectedPath)
 				written = readPlist(writtenPath)
-				for attr, expectedValue in expected.items():
+				for attr, expectedValue in list(expected.items()):
 					if expectedValue != written[attr]:
 						matches = False
 						break
@@ -361,7 +361,7 @@ class WriteUFOFormatVersion1TestCase(unittest.TestCase):
 		writtenPath = os.path.join(self.dstDir, "fontinfo.plist")
 		expected = readPlist(expectedPath)
 		written = readPlist(writtenPath)
-		for attr, expectedValue in expected.items():
+		for attr, expectedValue in list(expected.items()):
 			self.assertEqual((attr, expectedValue), (attr, written[attr]))
 		self.tearDownFont()
 
@@ -429,7 +429,7 @@ class WriteUFOFormatVersion2TestCase(unittest.TestCase):
 				dummyFont.close()
 				expected = readPlist(expectedPath)
 				written = readPlist(writtenPath)
-				for attr, expectedValue in expected.items():
+				for attr, expectedValue in list(expected.items()):
 					# cheat by skipping attrs that aren't supported
 					if _ufoToFLAttrMapping[attr]["nakedAttribute"] is None:
 						continue
@@ -512,7 +512,7 @@ class WriteUFOFormatVersion2TestCase(unittest.TestCase):
 		dummyFont = NewFont()
 		_ufoToFLAttrMapping = dict(dummyFont.info._ufoToFLAttrMapping)
 		dummyFont.close()
-		for attr, expectedValue in expected.items():
+		for attr, expectedValue in list(expected.items()):
 			# cheat by skipping attrs that aren't supported
 			if _ufoToFLAttrMapping[attr]["nakedAttribute"] is None:
 				continue

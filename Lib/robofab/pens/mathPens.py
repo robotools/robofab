@@ -124,7 +124,7 @@ class CurveSegmentFilterPointPen(AbstractPointPen):
 					# gather preceding off curves
 					testOffCurves = []
 					lastPoint = None
-					for i in xrange(len(points)):
+					for i in range(len(points)):
 						i = -i - 1
 						testPoint = points[i]
 						testSegmentType = testPoint[1]

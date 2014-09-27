@@ -1848,7 +1848,7 @@ class RContour(BaseContour):
 				x, y = points[pointIndex]
 				newNode.points[1 + pointIndex].Assign(Point(x, y))
 			if smooth:
-				node.alignment = flSMOOTH
+				newNode.alignment = flSMOOTH
 			self._nakedParent.Insert(newNode, self._startNodeIndex + index)
 		self._buildSegments()
 		return self.segments[index]

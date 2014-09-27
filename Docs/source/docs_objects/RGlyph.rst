@@ -6,30 +6,7 @@ RGlyph
 Usage
 -----
 
-.. code::
-
-    # robofab manual
-    # Glyph object
-    # Usage examples
-
-    # start using the current font
-    from robofab.world import CurrentGlyph
-    g = CurrentGlyph()
-
-    # suppose you've done the right imports
-    # different ways of creating glyphs
-    # a new empty glyph object
-    g = robofab.world.RGlyph()
-
-    # a new empty fontlab glyph object
-    g = robofab.objects.objectsFL.RGlyph()
-
-    # a new empty robofab glyph object
-    g = robofab.objects.objectsRF.RGlyph()
-
-    # the easiest way to get a new glyph
-    # is to ask a font to make you one:
-    g = aFontObject[glyphName]
+.. showcode:: ../../Examples/objects/RGlyph_00.py
 
 -----------
 Description
@@ -109,37 +86,10 @@ A :doc:`PostScriptGlyphHintValues <psHintsGlyph>` object with all glyph level Po
 Attribute examples
 ------------------
 
+.. showcode:: ../../Examples/objects/RGlyph_01.py
+
 .. code::
 
-    >>> # robofab manual
-    >>> # Glyph object
-    >>> # attribute examples
-
-    >>> from robofab.world import CurrentFont, CurrentGlyph
-    >>> f = CurrentFont()
-
-    >>> # create a glyph object by asking the font
-    >>> g = f["Adieresis"]
-
-    >>> # alternatively, create a glyph object for the current glyph
-    >>> g = CurrentGlyph()
-
-    >>> # get the width
-    >>> print g.width
-
-    >>> # get the name
-    >>> print g.name
-
-    >>> # a  list of unicode values for this glyph. Can be more than 1!
-    >>> print g.unicodes
-
-    >>> # set the width
-    >>> g.width = 1000
-    >>> print g.width
-
-    >>> # get the number of contours in a glyph
-    >>> # by getting  its length
-    >>> print len(g)
     230
     Adieresis
     [123, 345]
@@ -260,20 +210,7 @@ Slice the glyph into a grid based on the cell size. It returns a list of lists c
 Method examples
 ---------------
 
-.. code::
-
-    # robofab manual
-    # Glyph object
-    # method examples
-
-    # get a glyph object from a font
-    f = CurrentFont()
-    g = f["A"]
-    print g
-
-    # move the glyph 10 units to the right, and 200 units up:
-    g = f["a"]
-    g.move((10, 200))
+.. showcode:: ../../Examples/objects/RGlyph_02.py
 
 -------
 FontLab
@@ -325,26 +262,5 @@ Remove horizontal guides from this ``RGlyph``.
 Useful
 ------
 
-.. code:: python
-
-    # robofab manual
-    # Glyph object
-    # method examples
-
-    # In FontLab the baseglyph of a component can't be changed easily.
-    # This assumes that there will only be
-    # one component that needs to be remapped.
-
-    def remapComponent(glyph, oldBaseGlyph, newBaseGlyph):
-        foundComponent = None
-        for component in glyph.components:
-            if component.baseGlyph = oldBaseGlyph:
-                foundComponent = component
-                break
-        if foundComponent is None:
-            return
-        offset = foundComponent.offset
-        scale = foundComponent.scale
-        glyph.removeComponent(component)
-        glyph.appendComponent(newBaseGlyph, offset=offset, scale=scale)
+.. showcode:: ../../Examples/objects/RGlyph_03.py
 

@@ -6,13 +6,11 @@ bPoint
 Usage
 -----
 
->>> # robofab manual
->>> #    bPoint object
->>> #    Usage examples
->>> g = CurrentGlyph()
->>> for aPt in g[0].bPoints:
->>>     print aPt
-< RbPoint for Special-Bold.A[0][0] >
+.. showcode:: ../../Examples/objects/bPoint_00.py
+
+.. code::
+
+    < RbPoint for Special-Bold.A[0][0] >
 
 -----------
 Description
@@ -50,14 +48,10 @@ The type of the ``bPoint``. Either ``corner`` or ``curve``.
 Attribute examples
 ------------------
 
+.. showcode:: ../../Examples/objects/bPoint_01.py
+
 .. code::
 
-    >>> # robofab manual
-    >>> #    bPoint object
-    >>> #    Attribute examples
-    >>> g = CurrentGlyph()
-    >>> for aPt in g[0].bPoints:
-    >>>     print aPt.bcpIn, aPt.bcpOut, aPt.anchor
     (0, -175) (611, 337) (0, 175)
     (0, 0) (223, 641) (0, 0)
     etc..

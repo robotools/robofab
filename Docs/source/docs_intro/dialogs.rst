@@ -21,7 +21,7 @@ A simple message dialog with just one OK button. It does not return any values:
 
 Available on FontLab, Macintosh.
 
-*[img]*
+.. image:: ../../images/message_mac.jpg
 
 .. py:function:: AskString(prompt, value='', title='RoboFab')
 
@@ -35,7 +35,7 @@ Asks for a string and return it. Returns ``None`` if the user cancelled.
 
 Available on FontLab, Macintosh.
 
-*[img]*
+.. image:: ../../images/askstring_mac.jpg
 
 .. py:function:: AskYesNoCancel(prompt, title='RoboFab', default=0)
 
@@ -50,7 +50,7 @@ Returns ``1`` for 'Yes', ``0`` for 'No' and ``-1`` for 'Cancel'. ``default`` arg
 
 Available on FontLab, Macintosh.
 
-*[img]*
+.. image:: ../../images/askyesnocancel_mac.jpg
 
 .. py:function:: GetFile(message=None)
 
@@ -100,7 +100,7 @@ Returns font instance if there is one, otherwise it returns ``None``.
 
 Available on FontLab.
 
-*[img]*
+.. image:: ../../images/selectfont_fl.jpg
 
 .. py:function:: SelectGlyph(font, message="Select a glyph:", title='RoboFab')
 
@@ -117,7 +117,7 @@ Returns glyph instance from font if a glyph is selected. Otherwise it returns ``
 
 Available on FontLab.
 
-*[img]*
+.. image:: ../../images/selectglyph_fl.jpg
 
 .. py:function:: FindGlyph(aFont, message="Search for a glyph:", title='RoboFab')
 
@@ -134,7 +134,7 @@ The ``FindGlyph`` dialog offers a list of the glyphs present in a font. A name o
 
 Available on FontLab.
 
-*[img]*
+.. image:: ../../images/findglyph_fl.jpg
 
 .. py:function:: GetFolder(message=None)
 

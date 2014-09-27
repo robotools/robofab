@@ -76,9 +76,9 @@ Sequences can be written between brackets. You've seen one earlier. Lists are po
     >>> aList = [4, "a", 2, 1] 
     >>> aListInAList = [ [1, 2], [3, 4] ]
     >>> print len(aList)
+    4
     >>> sort(aList)
     >>> print aList
-    4
     [1, 2, 4, 'a']
 
 ------------
@@ -90,12 +90,12 @@ These are similar to lists, but rather than just store a sequence, a dictionary 
     >>> # examples of dicts
     >>> aDict = {"key": "value", 100: 200}
     >>> print aDict.keys()
-    >>> print aDict.values()
-    >>> print aDict.items()
-    >>> print len(aDict)
     [100, 'key']
+    >>> print aDict.values()
     [200, 'value']
+    >>> print aDict.items()
     [(100, 200), ('key', 'value')]
+    >>> print len(aDict)
     2
 
 ------

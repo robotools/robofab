@@ -2,6 +2,8 @@
 Kerning and building Glyphs
 ===========================
 
+.. image:: ../../images/RKerning.gif
+
 ------------------
 The Kerning object
 ------------------
@@ -108,6 +110,10 @@ This script prints all kerns with ``acircumflex`` as first glyph.
 ---------------
 Building glyphs
 ---------------
+
+.. image:: ../../images/RAnchor.gif
+
+.. image:: ../../images/RComponent.gif
 
 A particularly interesting topic of scripting is building glyphs out of component parts. If a font already has all the parts, a script can, in many cases, assemble the accented versions. An overview of :doc:`glyph building options is in the how-to section of the Robofab docs <../docs_howtos/building_accents>`. The first example takes a look at all necessary ingredients: making a new glyph, adding parts and finishing it. Then we'll look at more efficient ways::
 

@@ -94,14 +94,8 @@ Add a sub glyph.
 Need a pen?
 -----------
 
-If you need a pen to do some drawing in a ``Glyph`` object, you can ask the glyph to get you one. Depending on the environment you're in RoboFab will get you the right kind of pen object to do the drawing::
+If you need a pen to do some drawing in a ``Glyph`` object, you can ask the glyph to get you one. Depending on the environment you're in RoboFab will get you the right kind of pen object to do the drawing:
 
-    # robofab manual
-    # Pen object
-    # usage examples
-    from robofab.world import CurrentGlyph
-    newGlyph = CurrentGlyph()
-    pen = newGlyph.getPen()
-    # do stuff with the pen to draw in this glyph
+.. showcode:: ../../Examples/objects/pen_00.py
  
 See also a more in depth look at pens :doc:`here <../docs_howtos/use_pens>`.

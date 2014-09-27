@@ -82,7 +82,7 @@ exclude_patterns = ['build']
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'tango'
+pygments_style = 'default'
 
 # from pygments.styles import get_all_styles
 # print list(get_all_styles())
@@ -98,7 +98,7 @@ pygments_style = 'tango'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'roboFabTheme'
+html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -259,3 +259,44 @@ autodoc_member_order = 'bysource'
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
+
+## -- Custom functions : copied from the DrawBot Docs --------------------------
+
+import posixpath
+
+# import inspect
+
+from sphinx import addnodes
+from sphinx.directives.code import LiteralInclude
+from sphinx.writers.html import HTMLTranslator
+
+def visit_download_reference(self, node):
+    if node.hasattr('filename'):
+        data = dict(
+            urlPath=posixpath.join(self.builder.dlpath, node['filename']),
+            fileName=node['filename']
+            )
+        self.body.append('<div class="downloadlink"><a class="reference internal" href="%(urlPath)s">open or download this file: %(fileName)s</a></div>' % data)
+        node.clear()
+
+def depart_download_reference(self, node):
+    pass
+
+HTMLTranslator.visit_download_reference = visit_download_reference
+HTMLTranslator.depart_download_reference = depart_download_reference
+
+class ShowCode(LiteralInclude):
+    
+    has_content = False
+    required_arguments = 1
+    final_argument_whitespace = True
+
+    def run(self):
+        nodes = super(ShowCode, self).run()
+        node = addnodes.download_reference()
+        node['reftarget'] = self.arguments[0]
+        nodes.append(node)
+        return nodes
+
+def setup(app):
+    app.add_directive('showcode', ShowCode)

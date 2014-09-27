@@ -10,13 +10,13 @@ These are chapters about scripting in Python, where and how to make your code an
 
    editors.rst
    python_basics.rst
-   font_info.rst
-   glyph_contour_pen.rst
-   kerning_building_glyphs.rst
+   session1.rst
+   session2.rst
+   session3.rst
    interpolation.rst
-   production.rst
-   nonelab.rst
-   DialogKit.rst
+   session6.rst
+   session4.rst
+   dialogkit.rst
 
 --------
 Sections
@@ -24,13 +24,13 @@ Sections
 
 - :doc:`01: Editors <editors>`: Where to use RoboFab, where to edit.
 - :doc:`02: Basic Python <python_basics>`: Some rules, syntax.
-- :doc:`03: Font object, Info object <font_info>`: Introduction to Font and Info objects, with examples.
-- :doc:`04: Glyph object and Pen object <glyph_contour_pen>`: Introduction to Glyph and Pen objects.
-- :doc:`05: Kerning object and glyph building <kerning_building_glyphs>`: Introduction to the Kerning object, and a closer look at building glyphs from parts.
+- :doc:`03: Font object, Info object <session1>`: Introduction to Font and Info objects, with examples.
+- :doc:`04: Glyph object and Pen object <session2>`: Introduction to Glyph and Pen objects.
+- :doc:`05: Kerning object and glyph building <session3>`: Introduction to the Kerning object, and a closer look at building glyphs from parts.
 - :doc:`06: Interpolation <interpolation>`: Scripting for interpolation.
-- :doc:`07: Production <production>`: Scripting for production.
-- :doc:`08: NoneLab <nonelab>`: Adventures in NoneLab, scripting outside the box.
-- :doc:`09: Dialog Kit <DialogKit>`: Interface toolkit for FontLab.
+- :doc:`07: Production <session6>`: Scripting for production.
+- :doc:`08: NoneLab <session4>`: Adventures in NoneLab, scripting outside the box.
+- :doc:`09: Dialog Kit <dialogkit>`: Interface toolkit for FontLab.
 
 --------------------
 Additional resources

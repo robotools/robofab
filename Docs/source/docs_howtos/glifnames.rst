@@ -21,29 +21,12 @@ Features a guaranteed maximum filename (default 31 characters) for really long g
 - The hash is generated from the whole glyphname.
 - Finally, the candidate glyphname is checked against the ``contents.plist`` and a incrementing number is added at the end if there is a glyph with that name already.
 
-``glyphNameToShortFileName`` is the **default naming scheme** for exporting UFOs from FontLab. For most everyday use, this callback does all the work and there is no need to tweak it. Below are some examples to give you an idea of what the callback does::
+``glyphNameToShortFileName`` is the **default naming scheme** for exporting UFOs from FontLab. For most everyday use, this callback does all the work and there is no need to tweak it. Below are some examples to give you an idea of what the callback does:
 
-    >>> # robofab manual
-    >>> # Glifnames howto
-    >>> # glyphNameToShortFileName examples
-    >>> 
-    >>> # examples of glyphname to glif name transformations
-    >>> from robofab.tools.glyphNameSchemes import glyphNameToShortFileName
-    >>>  
-    >>> # a short name
-    >>> print glyphNameToShortFileName("accent", None)
-    >>>  
-    >>> # a short name, starting with capital letter
-    >>> print glyphNameToShortFileName("Accent", None)
-    >>>  
-    >>> # a really long name - note the hexadecimal hash at the end
-    >>> print glyphNameToShortFileName("this_is_a_very_long_glyph_name.altswash2", None)
-    >>>  
-    >>> # a name with a period in it, 1
-    >>> print glyphNameToShortFileName("a.alt", None)
-    >>>  
-    >>> # a name with a period in it, 2
-    >>> print glyphNameToShortFileName(".notdef", None)
+.. showcode:: ../../Examples/howtos/glifNames_00.py
+
+.. code::
+
     "accent.glif"
     "A_ccent.glif"
     "this_is_a_very_lon340a8fa5.glif"

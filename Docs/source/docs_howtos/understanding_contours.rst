@@ -12,14 +12,16 @@ Contours
 
 A glyph can contain one or more contours. Depending on what you want to do, there are different ways of looking at the data of the contour, the points, the line segments. The ``RContour`` object is way to the outlines.
 
-*[img]*
+.. figure:: ../../images/contours.jpg
+   :width: 300 px
+   :align: center
+
+   a contour
+
+.. showcode:: ../../Examples/howtos/understandingContours_00.py
 
 .. code::
 
-    >>> # take a glyph (one with outlines obviously)
-    >>> c = CurrentGlyph()
-    >>> # get to contours by index:
-    >>> print c[0]
     < RContour for Mailer-Regular.a[0] >
     15
     # 15? 15 of what?
@@ -34,7 +36,11 @@ Segments
 
 This circle consists of a couple of segments, each a piece of of the contour. A contour is a sequence of segments, you can iterate through a contour to get segments. A contour also has methods for adding and deleting segments.
 
-*[img]*
+.. figure:: ../../images/contours_segments.jpg
+   :width: 300 px
+   :align: center
+
+   a contour's segments
 
 .. code::
 
@@ -42,7 +48,11 @@ This circle consists of a couple of segments, each a piece of of the contour. A 
 
 In turn, a segment is made up of a sequence of points. Any number of off-curve points followed by an on-curve point. For the PostScript-centric designers: in TrueType outlines it is allowed to have any number of off-curve points before an on-curve. These points know whether they need to be rendered as bezier of quadratic curves.
 
-*[img]*
+.. figure:: ../../images/contours_segments_points.jpg
+   :width: 300 px
+   :align: center
+
+   segments with on-curve and off-curve points
 
 .. seealso::
 
@@ -54,15 +64,16 @@ Points
 
 Another way to look at a contour is as a sequence of on-curve and off-curve points. This is the approach taken by ``glyph.drawPoints()`` and ``PointPen``. 
 
-*[img]*
+.. figure:: ../../images/contours_points.jpg
+   :width: 300 px
+   :align: center
+
+   points (on-curve and off-curve)
+
+.. showcode:: ../../Examples/howtos/understandingContours_02.py
 
 .. code::
 
-    >>> # get straight to the points in a contour
-    >>> # through the points attribute
-    >>> g = CurrentGlyph()
-    >>> for aPt in g[0].points:
-    >>>     print aPt
     < RPoint for Special-Bold.A[0][0] >
     < RPoint for Special-Bold[1][1] >
     etc..
@@ -79,18 +90,16 @@ This is another way to look at contours and its parts: ``bPoints`` behave very m
 
     If the contour contains series of off-curve points, ``bPoints`` won't help you.
 
-*[img]*
+.. figure:: ../../images/contours_bpoints.jpg
+   :width: 300 px
+   :align: center
+
+   bPoints with incoming and outcoming BCPs
+
+.. showcode:: ../../Examples/howtos/understandingContours_03.py
 
 .. code::
 
-    >>> # bpoints
-    >>> c = CurrentGlyph()
-    >>> for aPt in c[0].bPoints:
-    >>>     print aPt.anchor
-    >>>     print aPt.bcpIn
-    >>>     print aPt.bcpOut
-    >>>     print aPt.type
     ...
-    etc..
 
 .. seealso:: A description of the :doc:`bPoint <../docs_objects/bPoint>` object.

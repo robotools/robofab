@@ -6,6 +6,8 @@ Overview
 Model
 -----
 
+.. image:: ../../images/logo.gif
+
 Here is a :doc:`handy map <model>` of the RoboFab objects.
 
 ----------------------------

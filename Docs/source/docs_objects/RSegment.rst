@@ -6,16 +6,10 @@ RSegment
 Usage
 -----
 
+.. showcode:: ../../Examples/objects/RSegment_00.py
+
 .. code::
 
-    >>> # robofab manual
-    >>> # Segment object
-    >>> # usage examples
-    >>> f = OpenFont()
-    >>> for c  in f:
-    >>>     for contour in c:
-    >>>         for segment in contour:
-    >>>             print segment
     < RSegment for RoboFab Demo Font.R[0][0] >
     < RSegment for RoboFab Demo Font.R[0][1] >
     < RSegment for RoboFab Demo Font.R[0][2] >
@@ -66,22 +60,7 @@ Returns a list of offcurve points associated with the segment.
 Attribute examples
 ------------------
 
-.. code::
-
-    # robofab manual
-    # Segment object
-    # attribute examples
-    f = OpenFont()
-    for c  in f:
-        for contour in c:
-            for segment in contour:
-                print len(segment)
-                print segment.type
-                print segment.smooth
-                print segment.points
-                print segment.onCurve
-                print segment.offCurve
-                print segment.selected
+.. showcode:: ../../Examples/objects/RSegment_01.py
 
 -------
 Methods
@@ -109,12 +88,4 @@ Transform this point. Use a Transform matrix object to mess with the point.
 Method examples
 ---------------
 
->>> # robofab manual
->>> # Segment object
->>> # method examples
->>> f = OpenFont()
->>> for c  in f:
->>>     for contour in c:
->>>         for segment in contour:
->>>             segment.move((50, 25))
-
+.. showcode:: ../../Examples/objects/RSegment_02.py

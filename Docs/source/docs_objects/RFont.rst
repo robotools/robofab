@@ -6,25 +6,7 @@ RFont
 Usage
 -----
 
-.. code::
-
-    # robofab manual
-    # Font object
-    # Usage examples
-
-    # start using the current font
-    from robofab.world import CurrentFont
-    f = CurrentFont()
-
-    # get a clean, empty new font object,
-    # appropriate for the current environment
-    f = robofab.world.RFont()
-
-    # get an open dialog and start a new font
-    f = OpenFont()
-
-    # open the font at path
-    f = OpenFont(path)
+.. showcode:: ../../Examples/objects/RFont_00.py
 
 -----------
 Description
@@ -40,19 +22,7 @@ Iterating
 
 One of the most important uses of the ``RFont`` object is that it makes it really easy to iterate ("step through") the glyphs in the font.
 
-.. code::
-
-    >>> # robofab manual
-    >>> # Font object
-    >>> # Iterate through the font object
-    >>> # to get to the glyphs.
-    >>> f = CurrentFont()
-    >>> for glyph in f:
-    >>>     print glyph.name
-    a
-    b
-    c
-    ..etc..
+.. showcode:: ../../Examples/objects/RFont_01.py
 
 This makes the code clear and simple.
 
@@ -72,13 +42,9 @@ The path to the font. (read only)
 
 .. py:attribute:: kerning
 
-The :doc:`RKerning` object. Cache the ``font.kerning`` object to optimise your script for speed::
+The :doc:`RKerning` object. Cache the ``font.kerning`` object to optimise your script for speed:
 
-    # cache the kerning object for speed
-    from robofab.world import CurrentFont
-    f = CurrentFont()
-    cachedKerning = f.kerning
-    # continue to use cachedKerning, not f.kerning.
+.. showcode:: ../../Examples/objects/RFont_02.py
 
 .. py:attribute:: info
 
@@ -100,25 +66,7 @@ A :doc:`PostScriptFontHintValues <psHints>` object with all font level PostScrip
 Attribute examples
 ------------------
 
-.. code::
-
-    >>> # robofab manual
-    >>> # Font object
-    >>> # attribute examples
-    >>> # Most useful attributes of RFont are
-    >>> # actually stored in <a href="objects/info.html">RFont.info</a>
-    >>> f = CurrentFont()
-    >>> print f.info.unitsPerEm
-    >>> # kerning data is available in the kerning object:
-    >>> print f.kerning
-    >>> # len() gives you the "length" of the font, i.e. the number of glyphs
-    >>> print "glyphs in this font:", len(f)
-    >>> # treat a font object as a dictionary to get to the glyphs
-    >>> print f["A"]
-    2048
-    <RKerning for MyFont>
-    glyphs in this font: 1120
-    <Glyph for MyFont.A>
+.. showcode:: ../../Examples/objects/RFont_03.py
 
 ------------------------------------------
 RFont Methods available in FontLab and UFO
@@ -220,18 +168,7 @@ Returns a dict of unicode values to glyph names.
 Method examples
 ---------------
 
-.. code::
-
-    >>> # robofab manual
-    >>> # Font object
-    >>> # method examples
-    >>> from robofab.world import CurrentFont
-    >>> f = CurrentFont()
-    >>> # the keys() method returns a list of glyphnames:
-    >>> print f.keys()
-    >>> # find unicodes for each glyph by using the postscript name:
-    >>> f.autoUnicodes()
-    ['A', 'B', 'space', 'adieresis.alt1']
+.. showcode:: ../../Examples/objects/RFont_04.py
 
 -------
 FontLab
@@ -295,15 +232,4 @@ A list of selected glyph names in the font window.
 Attribute examples
 ^^^^^^^^^^^^^^^^^^
 
-.. code::
-
-    >>> # robofab manual
-    >>> # Font object
-    >>> # method examples, available in FontLab
-    >>> from robofab.world import CurrentFont
-    >>> f = CurrentFont()
-    >>> # the keys() method returns a list of glyphnames:
-    >>> print f.selection
-    >>> # generate font binaries
-    >>> f.generate('otfcff')
-    ['A', 'B']
+.. showcode:: ../../Examples/objects/RFont_05.py

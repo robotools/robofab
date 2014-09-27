@@ -2,6 +2,8 @@
 Font & Info objects
 ===================
 
+.. image:: ../../images/RFont.gif
+
 -----
 Code!
 -----

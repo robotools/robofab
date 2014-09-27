@@ -2,18 +2,9 @@
 Building accents
 ================
 
-Making accented glyphs is a job where scripting can help save some time. When you have prepared all the parts, the base glyphs and the accents, a script can help to assemble the combinations. There are various ways of doing it, let's start with a simple one::
+Making accented glyphs is a job where scripting can help save some time. When you have prepared all the parts, the base glyphs and the accents, a script can help to assemble the combinations. There are various ways of doing it, let's start with a simple one:
 
-    # robofab manual
-    # Buildingaccents howto
-    # usage examples
-    from robofab.world import CurrentFont 
-    f = CurrentFont()
-    f.newGlyph("aacute")
-    f["aacute"].appendComponent("a")
-    f["aacute"].appendComponent("acute", (200, 0))
-    f["aacute"].width = f["a"].width
-    f.update()
+.. showcode:: ../../Examples/howtos/buildingAccents_00.py
 
 In this example the script creates a new glyph, ``aacute``, then proceeds to add components, references to other glyphs rather than the glyphs themselves. The glyph method ``appendComponent`` is used to do this. See how the acute component has an extra argument, ``(200, 0)`` -- this the offset for the accent. Finally the new glyph is given the width of the base ``a``.
 
@@ -75,100 +66,14 @@ Compile a glyph with specified components. If you want to assemble accents that 
 AccentBuilder
 -------------
 
-RoboFab comes with a versatile accent building tool, ``AccentBuilder``. Have a look at :py:mod:`robofab.tools.accentbuilder`. ``AccentBuilder`` deals with components, anchorpoints.::
+RoboFab comes with a versatile accent building tool, ``AccentBuilder``. Have a look at :py:mod:`robofab.tools.accentbuilder`. ``AccentBuilder`` deals with components, anchorpoints:
 
-    # robofab manual
-    # Buildingaccents howto
-    # AccentBuilder examples
-     
-    from robofab.world import CurrentFont
-    from robofab.accentBuilder import AccentTools, buildRelatedAccentList
-     
-    font = CurrentFont()
-     
-    # a list of accented glyphs that you want to build
-    myList = ['Aacute', 'aacute']
-     
-    # search for glyphs related to glyphs in myList and add them to myList
-    myList = buildRelatedAccentList(font, myList)+myList
-     
-    # start the class
-    at = AccentTools(font, myList)
-     
-    # clear away any anchors that exist (this is optional)
-    at.clearAnchors()
-     
-    # add necessary anchors if you want to
-    at.buildAnchors(ucXOffset=20, ucYOffset=40, lcXOffset=15, lcYOffset=30)
-     
-    # print a report of any errors that occured
-    at.printAnchorErrors()
-     
-    # build the accented glyphs if you want to
-    at.buildAccents()
-     
-    # print a report of any errors that occured
-    at.printAccentErrors()
+.. showcode:: ../../Examples/howtos/buildingAccents_01.py
 
 --------------------------------
 Building your own accentbuilders
 --------------------------------
 
-For typeface production it is a good idea to build a set of standardised tools with which you finalise the font data. Here's an example of a script which adds a standardised list of accents to a font. It does not do automatic anchor placement because the scripter wanted to do this manually. But the rest is done automatically. The script also deals correctly with smallcap glyphnames with ``.sc``.::
+For typeface production it is a good idea to build a set of standardised tools with which you finalise the font data. Here's an example of a script which adds a standardised list of accents to a font. It does not do automatic anchor placement because the scripter wanted to do this manually. But the rest is done automatically. The script also deals correctly with smallcap glyphnames with ``.sc``:
 
-    # robofab manual
-    # Buildingaccents howto
-    # attribute examples
-    
-    # a script to generate all necessary accented characters.
-    # this assumes all anchor points are set correctly.
-    # including doublelayer accents. so, add anchorpoints 
-    # on the accents too!
-    # (c) evb
-     
-    from robofab.world import CurrentFont
-    from robofab.tools.toolsAll import readGlyphConstructions
-     
-    f = CurrentFont()
-     
-    import string
-     
-    theList = [
-        # caps
-        'AEacute',
-        'AEmacron',
-        'Aacute',
-        'Abreve',
-        # add all the accents you want in this list
-    ]
-    
-    con = readGlyphConstructions()
-    theList.sort()
-     
-    def accentify(f, preflight=False):
-        print 'start accentification', f.info.fullName
-        slots = con.keys()
-        slots.sort()
-        for k in theList:
-            if k[-3:] in [".sc"]:
-                isSpecial = True
-                tag = k[-3:]
-                name = k[:-3]
-            else:
-                isSpecial = False
-                tag = ""
-                name = k
-            parts = con.get(name, None)
-            if parts is None:
-                print k, "not defined?"
-                continue
-            base = parts[0]
-            accents = parts[1:]
-            f.generateGlyph(k, preflight=preflight)
-            f[k].mark = 100 + randint(-20, 20)
-            f[k].autoUnicodes()
-            f[k].update()
-        f.update()
-     
-    accentify(f)
-    print 'done'
+.. showcode:: ../../Examples/howtos/buildingAccents_02.py

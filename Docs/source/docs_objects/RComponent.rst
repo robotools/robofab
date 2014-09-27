@@ -6,15 +6,10 @@ RComponent
 Usage
 -----
 
+.. showcode:: ../../Examples/objects/RComponent_00.py
+
 .. code::
 
-	>>> # the easiest way to get to a component
-	>>> # is to get one from a glyph
-	>>> from robofab.world import CurrentFont
-	>>> f = CurrentFont()
-	>>> g = f['adieresis']
-	>>> for c in g.components:
-	>>>     print c
 	< RComponent for Excellent-Regular.adieresis.components[0] >
 	< RComponent for Excellent-Regular.adieresis.components[1] >
 
@@ -54,17 +49,10 @@ The bounding box for the component. (read only)
 Attribute examples
 ------------------
 
+.. showcode:: ../../Examples/objects/RComponent_01.py
+
 .. code::
 
-	>>> # robofab manual
-	>>> # Component object
-	>>> # attribute examples
-	>>> print f['adieresis'].components[0].baseGlyph
-	>>> print f['adieresis'].components[1].baseGlyph
-	>>> # move the component in the base glyph
-	>>> f['adieresis'].components[1].offset = (100,100)
-	>>> # scale the component in the base glyph
-	>>> f['adieresis'].components[0].scale = (.5, .25)
 	a
 	dieresis
 

@@ -6,15 +6,10 @@ RAnchor
 Usage
 -----
 
+.. showcode:: ../../Examples/objects/RAnchor_00.py
+
 .. code::
 
-    >>> # robofab manual
-    >>> # Anchor object
-    >>> # usage examples 
-    >>> f = CurrentFont()
-    >>> for g in f:
-    >>>     if len(g.anchors) > 0:
-    >>>         print g, g.anchors
     < RGlyph for RoboFab Demo Font.A >
     [< RAnchor for RoboFab Demo Font.A.anchors[0] >]
 
@@ -52,15 +47,7 @@ The name of the anchor.
 Attribute examples
 ------------------
 
-.. code::
-
-    # robofab manual
-    # Anchor object
-    # attribute examples
-    g = CurrentGlyph()
-    if len(g.anchors) > 0:
-        for a in g.anchors:
-            print a.position
+.. showcode:: ../../Examples/objects/RAnchor_01.py
 
 -------
 Methods

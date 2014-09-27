@@ -2,6 +2,8 @@
 Glyph, Contour & Pen
 ====================
 
+.. image:: ../../images/RGlyph.gif
+
 Working with :doc:`Glyph <../docs_objects/RGlyph>`, :doc:`Contour <../docs_objects/RContour>`, :doc:`Pen <../docs_objects/pens>` objects. Deep in the font live the glyphs. Inside the glyphs are contours, components. Inside a contour are segments and points!
 
 ---------------------

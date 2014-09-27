@@ -14,32 +14,27 @@ RFont.generate(outputType, path=None)
 
 Generate the font. ``outputType`` is the type of font to output. An overview of available output types in FontLab:
 
-pctype1
-    PC Type 1 font (binary/PFB)
-
-pcmm
-    PC MultipleMaster font (PFB).
-
-pctype1ascii
-    PC Type 1 font (ASCII/PFA).
-
-pcmmascii
-    PC MultipleMaster font (ASCII/PFA).
-
-mactype1
-    Mac Type 1 font (generates suitcase and LWFN file).
-
-otfcff
-    PS OpenType (CFF-based) font (OTF).
-
-otfttf
-    PC TrueType/TT OpenType font (TTF).
-
-macttf
-    Mac TrueType font (generates suitcase).
-
-macttdfont
-    Mac TrueType font (generates suitcase with resources in data fork).
++---------------+----------------------------------------------------------------------+
+| output type   | description                                                          |
++===============+======================================================================+
+| pctype1       | PC Type 1 font (binary/PFB)                                          |
++---------------+----------------------------------------------------------------------+
+| pcmm          | PC MultipleMaster font (PFB).                                        |
++---------------+----------------------------------------------------------------------+
+| pctype1ascii  | PC Type 1 font (ASCII/PFA).                                          |
++---------------+----------------------------------------------------------------------+
+| pcmmascii     | PC MultipleMaster font (ASCII/PFA).                                  |
++---------------+----------------------------------------------------------------------+
+| mactype1      | Mac Type 1 font (generates suitcase and LWFN file).                  |
++---------------+----------------------------------------------------------------------+
+| otfcff        | PS OpenType (CFF-based) font (OTF).                                  |
++---------------+----------------------------------------------------------------------+
+| otfttf        | PC TrueType/TT OpenType font (TTF).                                  |
++---------------+----------------------------------------------------------------------+
+| macttf        | Mac TrueType font (generates suitcase).                              |
++---------------+----------------------------------------------------------------------+
+| macttdfont    | Mac TrueType font (generates suitcase with resources in data fork).  |
++---------------+----------------------------------------------------------------------+
 
 Docs adapted from the `Unofficial FontLab/Python API Reference <http://e-font.de/flpydoc/>`_.
 
@@ -57,15 +52,6 @@ Docs adapted from the `Unofficial FontLab/Python API Reference <http://e-font.de
 Examples
 --------
 
-FontLab can generate many different formats for different platforms. Please refer to the FontLab manual for specifics. Some formats generate several files, others only one. Some formats are not available in all versions of FontLab::
+FontLab can generate many different formats for different platforms. Please refer to the FontLab manual for specifics. Some formats generate several files, others only one. Some formats are not available in all versions of FontLab:
 
-    # robofab manual
-    # Generatefonts howto
-    # usage examples
-    import os.path
-    from robofab.world import CurrentFont
-    font = CurrentFont()
-    path = font.path
-    dir, fileName = os.path.split(path)
-    path = os.sep.join([dir, font.info.fullName])
-    font.generate('mactype1', path)
+.. showcode:: ../../Examples/howtos/generatingFonts_00.py

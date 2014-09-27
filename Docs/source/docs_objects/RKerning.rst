@@ -2,21 +2,16 @@
 RKerning
 ========
 
+.. image:: ../../images/RKerning.gif
+
 -----
 Usage
 -----
 
+.. showcode:: ../../Examples/objects/RKerning_00.py
+
 .. code::
 
-	>>> # robofab manual
-	>>> # Kerning object
-	>>> # usage examples
-	>>> f = CurrentFont()
-	>>> print f.kerning
-	>>> # getting a value from the kerning dictionary
-	>>> print f.kerning[('V', 'A')]
-	>>> print f.kerning[('T', 'X')]
-	>>> print f.kerning.keys()
 	< RKerning for Mailer-Regular >
 	 -123
 	 None

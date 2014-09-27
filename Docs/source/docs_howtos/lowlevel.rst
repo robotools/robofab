@@ -8,13 +8,11 @@ If you're using RoboFab in FontLab, it can happen that you need to access a meth
 Get Naked
 ---------
 
-RoboFab ``Glyph`` and ``Font`` objects have a special method, ``naked()`` which returns the actual, low level FontLab object. This object can then be used with the documented FontLab methods and attributes. The methods and attributes of these FontLab objects are very different from RoboFab::
+RoboFab ``Glyph`` and ``Font`` objects have a special method, ``naked()`` which returns the actual, low level FontLab object. This object can then be used with the documented FontLab methods and attributes. The methods and attributes of these FontLab objects are very different from RoboFab:
 
-    >>> from robofab.world import CurrentFont
-    >>> f = CurrentFont()
-    >>> print f
-    >>> # this is the high level RoboFab object
+.. showcode:: ../../Examples/howtos/lowLevel_00.py
+
+.. code::
+
     < RFont font for TemplatefontPro Rg Regular >
-    >>> print f.naked()
-    >>> # this is the low level FontLab object, not a part of RoboFab
     < Font 'TemplatefontPro Rg Regular' >

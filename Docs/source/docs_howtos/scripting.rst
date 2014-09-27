@@ -62,37 +62,30 @@ You've seen that a lot of the examples in this manual start by importing some ob
 Open a font from any file
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. showcode:: ../../Examples/howtos/scripting_00.py
+
 .. code::
 
-    >>> from robofab.world import OpenFont
-    >>> f = OpenFont()
-    >>> # hey look! an open font dialog!
-    >>> print f
     None # or a font object, depending on what you select
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Open a font from a specific file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. showcode:: ../../Examples/howtos/scripting_01.py
+
 .. code::
 
-    >>> from robofab.world import OpenFont
-    >>> path = "MyDrive/Folder1/Work/somefile"
-    >>> f = OpenFont(path)
-    >>> # hey look! it opens the file without asking..
-    >>> print f
     # a font object
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Do something with the font that's open
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. showcode:: ../../Examples/howtos/scripting_02.py
+
 .. code::
 
-    >>> # in Fontlab:
-    >>> from robofab.world import CurrentFont
-    >>> f = CurrentFont()
-    >>> print f
     # a font object for the font that's on top.
 
 ---------------

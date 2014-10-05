@@ -36,11 +36,11 @@ class XMLParser:
 
 	def _expatParseFile(self, pathOrFile):
 		data = None
-		parser = ParserCreate()
+		parser = ParserCreate("UTF-8")
 		parser.StartElementHandler = self.startElementHandler
 		parser.EndElementHandler = self.endElementHandler
 		parser.CharacterDataHandler = self.characterDataHandler
-		if isinstance(pathOrFile, str):
+		if isinstance(pathOrFile, (str, bytes)):
 			# Workaround for http://bugs.python.org/issue16726
 			with open(pathOrFile) as myfile:
 				data = myfile.read()
@@ -65,7 +65,7 @@ class XMLParser:
 		proc.app.handle_start_tag = self.startElementHandler
 		proc.app.handle_end_tag = self.endElementHandler
 		proc.app.handle_data = self._xmlprocDataHandler
-		if isinstance(pathOrFile, str):
+		if isinstance(pathOrFile, (str, bytes)):
 			f = open(pathOrFile)
 			didOpen = 1
 		else:

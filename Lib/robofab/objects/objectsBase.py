@@ -1338,9 +1338,9 @@ class BaseGlyph(RBaseObject):
 		mp = DigestPointPen()
 		self.drawPoints(mp)
 		if pointsOnly:
-			return "%s|%d|%s"%(mp.getDigestPointsOnly(), self.width, self.str)
+			return "%s|%d|%s"%(mp.getDigestPointsOnly(), self.width, self.unicode)
 		else:
-			return "%s|%d|%s"%(mp.getDigest(), self.width, self.str)
+			return "%s|%d|%s"%(mp.getDigest(), self.width, self.unicode)
 	
 	def _getStructure(self):
 		"""Calculate a digest of points, things in this glyph, but NOT coordinates."""
@@ -1541,7 +1541,7 @@ class BaseGlyph(RBaseObject):
 		"""Using fontTools.agl, assign Unicode list to the glyph"""
 		from fontTools.agl import AGL2UV
 		if self.name in AGL2UV:
-			self.str = AGL2UV[self.name]
+			self.unicode = AGL2UV[self.name]
 			self._hasChanged()
 			
 	def pointInside(self, xxx_todo_changeme, evenOdd=0):
@@ -2999,7 +2999,7 @@ class BaseFeatures(RBaseObject):
 		return self._text
 
 	def _set_text(self, value):
-		assert isinstance(value, str)
+		assert isinstance(value, (str, bytes))
 		self._text = value
 
 	text = property(_get_text, _set_text, doc="raw feature text.")

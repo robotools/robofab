@@ -666,7 +666,7 @@ class RGlyph(BaseGlyph):
 				uni.insert(0, uni.pop(uni.index(value)))
 				self.unicodes = uni
 		
-	str = property(_get_unicode, _set_unicode, doc="first unicode value for the glyph")
+	unicode = property(_get_unicode, _set_unicode, doc="first unicode value for the glyph")
 	
 	def getPointPen(self):
 		from robofab.pens.rfUFOPen import RFUFOPointPen

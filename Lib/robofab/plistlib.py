@@ -78,7 +78,7 @@ def readPlist(pathOrFile):
     """
     didOpen = 0
     data = None
-    if isinstance(pathOrFile, str):
+    if isinstance(pathOrFile, (str, bytes)):
         # Workaround for http://bugs.python.org/issue16726
         with open(pathOrFile) as myfile:
             data = myfile.read()
@@ -98,7 +98,7 @@ def writePlist(rootObject, pathOrFile):
     file name or a (writable) file object.
     """
     didOpen = 0
-    if isinstance(pathOrFile, str):
+    if isinstance(pathOrFile, (str, bytes)):
         pathOrFile = open(pathOrFile, "w")
         didOpen = 1
     writer = PlistWriter(pathOrFile)
@@ -244,7 +244,7 @@ class PlistWriter(DumbXMLWriter):
         DumbXMLWriter.__init__(self, file, indentLevel, indent)
 
     def writeValue(self, value):
-        if isinstance(value, str):
+        if isinstance(value, (str, bytes)):
             self.simpleElement("string", value)
         elif isinstance(value, bool):
             # must switch for bool before int, as bool is a
@@ -253,7 +253,7 @@ class PlistWriter(DumbXMLWriter):
                 self.simpleElement("true")
             else:
                 self.simpleElement("false")
-        elif isinstance(value, int):
+        elif isinstance(value, (int, long)):
             self.simpleElement("integer", "%d" % value)
         elif isinstance(value, float):
             self.simpleElement("real", repr(value))
@@ -284,7 +284,7 @@ class PlistWriter(DumbXMLWriter):
         items = list(d.items())
         items.sort()
         for key, value in items:
-            if not isinstance(key, str):
+            if not isinstance(key, (str, bytes)):
                 raise TypeError("keys must be strings")
             self.simpleElement("key", key)
             self.writeValue(value)
@@ -408,7 +408,7 @@ class PlistParser:
 
     def parse(self, fileobj):
         from xml.parsers.expat import ParserCreate
-        parser = ParserCreate()
+        parser = ParserCreate("UTF-8")
         parser.StartElementHandler = self.handleBeginElement
         parser.EndElementHandler = self.handleEndElement
         parser.CharacterDataHandler = self.handleData
@@ -417,7 +417,7 @@ class PlistParser:
 
     def parseString(self, data):
         from xml.parsers.expat import ParserCreate
-        parser = ParserCreate()
+        parser = ParserCreate("UTF-8")
         parser.StartElementHandler = self.handleBeginElement
         parser.EndElementHandler = self.handleEndElement
         parser.CharacterDataHandler = self.handleData

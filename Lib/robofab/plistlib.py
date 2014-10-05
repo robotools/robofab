@@ -450,10 +450,6 @@ class PlistParser:
 
     def getData(self):
         data = "".join(self.data)
-        try:
-            data = data.encode("ascii")
-        except UnicodeError:
-            pass
         self.data = []
         return data
 

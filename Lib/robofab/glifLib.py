@@ -219,7 +219,7 @@ class GlyphSet:
 			self.contents[glyphName] = fileName
 			if self._reverseContents is not None:
 				self._reverseContents[fileName.lower()] = glyphName
-		path = os.path.join(self.dirName, fileName.decode("utf-8"))
+		path = os.path.join(self.dirName, fileName)
 		if os.path.exists(path):
 			f = open(path, READ_MODE)
 			oldData = f.read()
@@ -235,7 +235,7 @@ class GlyphSet:
 		raise KeyError if the glyph is not present in the glyph set.
 		"""
 		fileName = self.contents[glyphName]
-		os.remove(os.path.join(self.dirName, fileName.decode("utf-8")))
+		os.remove(os.path.join(self.dirName, fileName))
 		if self._reverseContents is not None:
 			del self._reverseContents[self.contents[glyphName].lower()]
 		del self.contents[glyphName]
@@ -270,7 +270,7 @@ class GlyphSet:
 		#      and only do _fetchUnicodes() for those we haven't seen yet.
 		unicodes = {}
 		for glyphName, fileName in self.contents.items():
-			path = os.path.join(self.dirName, fileName.decode("utf-8"))
+			path = os.path.join(self.dirName, fileName)
 			unicodes[glyphName] = _fetchUnicodes(path)
 		return unicodes
 
@@ -292,7 +292,7 @@ class GlyphSet:
 
 	def _getXMLTree(self, glyphName):
 		fileName = self.contents[glyphName]
-		path = os.path.join(self.dirName, fileName.decode("utf-8"))
+		path = os.path.join(self.dirName, fileName)
 		if not os.path.exists(path):
 			raise KeyError(glyphName)
 		return _glifTreeFromFile(path)

@@ -678,7 +678,7 @@ def _fontInfoVersion2OpenTypeHeadCreatedValidator(value):
 		return False
 	if month < 1 or month > 12:
 		return False
-	monthMaxDay = calendar.monthrange(year, month)
+	monthMaxDay = calendar.monthrange(year, month)[1]
 	if month > monthMaxDay:
 		return False
 	# time

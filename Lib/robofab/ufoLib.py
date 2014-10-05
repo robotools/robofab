@@ -226,7 +226,7 @@ class UFOReader(object):
 		# raised in except here (and elsewhere)? It would be nice to
 		# provide external callers with a single exception to catch.
 		data = readPlist(path)
-		formatVersion = data[b"formatVersion"]
+		formatVersion = data["formatVersion"]
 		if formatVersion not in supportedUFOFormatVersions:
 			raise UFOLibError("Unsupported UFO format (%d) in %s." % (formatVersion, self._path))
 		self._formatVersion = formatVersion
@@ -650,7 +650,7 @@ def _fontInfoVersion2StyleMapStyleNameValidator(value):
 
 def _fontInfoVersion2OpenTypeHeadCreatedValidator(value):
 	# format: 0000/00/00 00:00:00
-	if not isinstance(value, str):
+	if not isinstance(value, (str, bytes)):
 		return False
 	# basic formatting
 	if not len(value) == 19:
@@ -798,23 +798,23 @@ _fontInfoVersion2OpenTypeOS2CodePageRangesOptions = list(range(0, 64))
 _fontInfoVersion2OpenTypeOS2TypeOptions = [0, 1, 2, 3, 8, 9]
 
 _fontInfoAttributesVersion2ValueData = {
-	"familyName"							: dict(type=(str, str)),
-	"styleName"								: dict(type=(str, str)),
-	"styleMapFamilyName"					: dict(type=(str, str)),
-	"styleMapStyleName"						: dict(type=(str, str), valueValidator=_fontInfoVersion2StyleMapStyleNameValidator),
+	"familyName"							: dict(type=(str, bytes)),
+	"styleName"								: dict(type=(str, bytes)),
+	"styleMapFamilyName"					: dict(type=(str, bytes)),
+	"styleMapStyleName"						: dict(type=(str, bytes), valueValidator=_fontInfoVersion2StyleMapStyleNameValidator),
 	"versionMajor"							: dict(type=int),
 	"versionMinor"							: dict(type=int),
 	"year"									: dict(type=int),
-	"copyright"								: dict(type=(str, str)),
-	"trademark"								: dict(type=(str, str)),
+	"copyright"								: dict(type=(str, bytes)),
+	"trademark"								: dict(type=(str, bytes)),
 	"unitsPerEm"							: dict(type=(int, float)),
 	"descender"								: dict(type=(int, float)),
 	"xHeight"								: dict(type=(int, float)),
 	"capHeight"								: dict(type=(int, float)),
 	"ascender"								: dict(type=(int, float)),
 	"italicAngle"							: dict(type=(float, int)),
-	"note"									: dict(type=(str, str)),
-	"openTypeHeadCreated"					: dict(type=(str, str), valueValidator=_fontInfoVersion2OpenTypeHeadCreatedValidator),
+	"note"									: dict(type=(str, bytes)),
+	"openTypeHeadCreated"					: dict(type=(str, bytes), valueValidator=_fontInfoVersion2OpenTypeHeadCreatedValidator),
 	"openTypeHeadLowestRecPPEM"				: dict(type=(int, float)),
 	"openTypeHeadFlags"						: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeHeadFlagsOptions),
 	"openTypeHheaAscender"					: dict(type=(int, float)),
@@ -823,25 +823,25 @@ _fontInfoAttributesVersion2ValueData = {
 	"openTypeHheaCaretSlopeRise"			: dict(type=int),
 	"openTypeHheaCaretSlopeRun"				: dict(type=int),
 	"openTypeHheaCaretOffset"				: dict(type=(int, float)),
-	"openTypeNameDesigner"					: dict(type=(str, str)),
-	"openTypeNameDesignerURL"				: dict(type=(str, str)),
-	"openTypeNameManufacturer"				: dict(type=(str, str)),
-	"openTypeNameManufacturerURL"			: dict(type=(str, str)),
-	"openTypeNameLicense"					: dict(type=(str, str)),
-	"openTypeNameLicenseURL"				: dict(type=(str, str)),
-	"openTypeNameVersion"					: dict(type=(str, str)),
-	"openTypeNameUniqueID"					: dict(type=(str, str)),
-	"openTypeNameDescription"				: dict(type=(str, str)),
-	"openTypeNamePreferredFamilyName"		: dict(type=(str, str)),
-	"openTypeNamePreferredSubfamilyName"	: dict(type=(str, str)),
-	"openTypeNameCompatibleFullName"		: dict(type=(str, str)),
-	"openTypeNameSampleText"				: dict(type=(str, str)),
-	"openTypeNameWWSFamilyName"				: dict(type=(str, str)),
-	"openTypeNameWWSSubfamilyName"			: dict(type=(str, str)),
+	"openTypeNameDesigner"					: dict(type=(str, bytes)),
+	"openTypeNameDesignerURL"				: dict(type=(str, bytes)),
+	"openTypeNameManufacturer"				: dict(type=(str, bytes)),
+	"openTypeNameManufacturerURL"			: dict(type=(str, bytes)),
+	"openTypeNameLicense"					: dict(type=(str, bytes)),
+	"openTypeNameLicenseURL"				: dict(type=(str, bytes)),
+	"openTypeNameVersion"					: dict(type=(str, bytes)),
+	"openTypeNameUniqueID"					: dict(type=(str, bytes)),
+	"openTypeNameDescription"				: dict(type=(str, bytes)),
+	"openTypeNamePreferredFamilyName"		: dict(type=(str, bytes)),
+	"openTypeNamePreferredSubfamilyName"	: dict(type=(str, bytes)),
+	"openTypeNameCompatibleFullName"		: dict(type=(str, bytes)),
+	"openTypeNameSampleText"				: dict(type=(str, bytes)),
+	"openTypeNameWWSFamilyName"				: dict(type=(str, bytes)),
+	"openTypeNameWWSSubfamilyName"			: dict(type=(str, bytes)),
 	"openTypeOS2WidthClass"					: dict(type=int, valueValidator=_fontInfoVersion2OpenTypeOS2WidthClassValidator),
 	"openTypeOS2WeightClass"				: dict(type=int, valueValidator=_fontInfoVersion2OpenTypeOS2WeightClassValidator),
 	"openTypeOS2Selection"					: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2SelectionOptions),
-	"openTypeOS2VendorID"					: dict(type=(str, str)),
+	"openTypeOS2VendorID"					: dict(type=(str, bytes)),
 	"openTypeOS2Panose"						: dict(type="integerList", valueValidator=_fontInfoVersion2OpenTypeOS2PanoseValidator),
 	"openTypeOS2FamilyClass"				: dict(type="integerList", valueValidator=_fontInfoVersion2OpenTypeOS2FamilyClassValidator),
 	"openTypeOS2UnicodeRanges"				: dict(type="integerList", valueValidator=_fontInfoVersion2IntListValidator, valueOptions=_fontInfoVersion2OpenTypeOS2UnicodeRangesOptions),
@@ -868,8 +868,8 @@ _fontInfoAttributesVersion2ValueData = {
 	"openTypeVheaCaretSlopeRise"			: dict(type=int),
 	"openTypeVheaCaretSlopeRun"				: dict(type=int),
 	"openTypeVheaCaretOffset"				: dict(type=(int, float)),
-	"postscriptFontName"					: dict(type=(str, str)),
-	"postscriptFullName"					: dict(type=(str, str)),
+	"postscriptFontName"					: dict(type=(str, bytes)),
+	"postscriptFullName"					: dict(type=(str, bytes)),
 	"postscriptSlantAngle"					: dict(type=(float, int)),
 	"postscriptUniqueID"					: dict(type=int),
 	"postscriptUnderlineThickness"			: dict(type=(int, float)),
@@ -887,11 +887,11 @@ _fontInfoAttributesVersion2ValueData = {
 	"postscriptForceBold"					: dict(type=bool),
 	"postscriptDefaultWidthX"				: dict(type=(int, float)),
 	"postscriptNominalWidthX"				: dict(type=(int, float)),
-	"postscriptWeightName"					: dict(type=(str, str)),
-	"postscriptDefaultCharacter"			: dict(type=(str, str)),
+	"postscriptWeightName"					: dict(type=(str, bytes)),
+	"postscriptDefaultCharacter"			: dict(type=(str, bytes)),
 	"postscriptWindowsCharacterSet"			: dict(type=int, valueValidator=_fontInfoVersion2PostscriptWindowsCharacterSetValidator),
 	"macintoshFONDFamilyID"					: dict(type=int),
-	"macintoshFONDName"						: dict(type=(str, str)),
+	"macintoshFONDName"						: dict(type=(str, bytes)),
 }
 fontInfoAttributesVersion2 = set(_fontInfoAttributesVersion2ValueData.keys())
 

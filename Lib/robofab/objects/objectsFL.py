@@ -2829,7 +2829,7 @@ class RInfo(BaseInfo):
 			warn("The width attribute has been deprecated. Use the new openTypeOS2WidthClass attribute.", DeprecationWarning)
 			attr = "openTypeOS2WidthClass"
 		if attr == "openTypeOS2WidthClass":
-			if isinstance(value, str) and value not in _openTypeOS2WidthClass_toFL:
+			if isinstance(value, (str, bytes)) and value not in _openTypeOS2WidthClass_toFL:
 				print("The openTypeOS2WidthClass value \"%s\" cannot be found in the OpenType OS/2 usWidthClass specification. The value will be set into the FontLab file for now." % value)
 				self._object.width = value
 			else:

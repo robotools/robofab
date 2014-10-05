@@ -408,8 +408,8 @@ def writeGlyphToString(glyphName, glyphObject=None, drawPointsFunc=None, writer=
 
 	note = getattr(glyphObject, "note", None)
 	if note is not None:
-		if not isinstance(note, str):
-			raise GlifLibError("note attribute must be str or unicode")
+		if not isinstance(note, (bytes, str)):
+			raise GlifLibError("note attribute must be bytes or str")
 		note = note.encode('utf-8')
 		writer.begintag("note")
 		writer.newline()
@@ -539,7 +539,7 @@ def _fetchGlyphName(glyphPath):
 	# from the XML data.
 	from xml.parsers.expat import ParserCreate
 
-	p = ParserCreate()
+	p = ParserCreate("UTF-8")
 	p.StartElementHandler = _startElementHandler
 	p.returns_unicode = True
 	f = open(glyphPath)
@@ -566,8 +566,7 @@ class _FetchUnicodesParser(object):
 		from xml.parsers.expat import ParserCreate
 		self.unicodes = []
 		self._elementStack = []
-		parser = ParserCreate()
-		parser.returns_unicode = 0  # XXX, Don't remember why. It sucks, though.
+		parser = ParserCreate("UTF-8")
 		parser.StartElementHandler = self.startElementHandler
 		parser.EndElementHandler = self.endElementHandler
 		parser.Parse(text)

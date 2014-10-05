@@ -576,17 +576,17 @@ class RGlyph(BaseGlyph):
     rightMargin = property(_get_rightMargin, _set_rightMargin, doc="rightMargin")
     
     def _get_unicodes(self):
-        return [self._object.str]
+        return [self._object.unicode]
     def _set_unicodes(self, unicodes):
         assert len(unicodes)==1
-        self._object.str = unicodes[0]
+        self._object.unicode = unicodes[0]
     unicodes = property(_get_unicodes, _set_unicodes, doc="unicodes")
 
     def _get_unicode(self):
-        return self._object.str
-    def _set_unicode(self, str):
-        self._object.str = str
-    str = property(_get_unicode, _set_unicode, doc="unicode")
+        return self._object.unicode
+    def _set_unicode(self, unicode):
+        self._object.unicode = unicode
+    unicode = property(_get_unicode, _set_unicode, doc="unicode")
     
     def _get_box(self):
         bounds = self._object.boundingBox()

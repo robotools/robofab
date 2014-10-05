@@ -219,7 +219,7 @@ class GlyphSet:
 			self.contents[glyphName] = fileName
 			if self._reverseContents is not None:
 				self._reverseContents[fileName.lower()] = glyphName
-		path = os.path.join(self.dirName, fileName.decode("utf-8"))
+		path = os.path.join(self.dirName, fileName)
 		if os.path.exists(path):
 			f = open(path, READ_MODE)
 			oldData = f.read()
@@ -235,7 +235,7 @@ class GlyphSet:
 		raise KeyError if the glyph is not present in the glyph set.
 		"""
 		fileName = self.contents[glyphName]
-		os.remove(os.path.join(self.dirName, fileName.decode("utf-8")))
+		os.remove(os.path.join(self.dirName, fileName))
 		if self._reverseContents is not None:
 			del self._reverseContents[self.contents[glyphName].lower()]
 		del self.contents[glyphName]
@@ -270,7 +270,7 @@ class GlyphSet:
 		#      and only do _fetchUnicodes() for those we haven't seen yet.
 		unicodes = {}
 		for glyphName, fileName in self.contents.items():
-			path = os.path.join(self.dirName, fileName.decode("utf-8"))
+			path = os.path.join(self.dirName, fileName)
 			unicodes[glyphName] = _fetchUnicodes(path)
 		return unicodes
 
@@ -292,7 +292,7 @@ class GlyphSet:
 
 	def _getXMLTree(self, glyphName):
 		fileName = self.contents[glyphName]
-		path = os.path.join(self.dirName, fileName.decode("utf-8"))
+		path = os.path.join(self.dirName, fileName)
 		if not os.path.exists(path):
 			raise KeyError(glyphName)
 		return _glifTreeFromFile(path)
@@ -376,8 +376,8 @@ def writeGlyphToString(glyphName, glyphObject=None, drawPointsFunc=None, writer=
 
 	note = getattr(glyphObject, "note", None)
 	if note is not None:
-		if not isinstance(note, str):
-			raise GlifLibError("note attribute must be str or unicode")
+		if not isinstance(note, (str, bytes)):
+			raise GlifLibError("note attribute must be str or bytes")
 		note = note.encode('utf-8')
 		writer.begintag("note")
 		writer.newline()
@@ -507,7 +507,7 @@ def _fetchGlyphName(glyphPath):
 	# from the XML data.
 	from xml.parsers.expat import ParserCreate
 
-	p = ParserCreate()
+	p = ParserCreate("UTF-8")
 	p.StartElementHandler = _startElementHandler
 	p.returns_unicode = True
 	f = open(glyphPath)
@@ -539,7 +539,7 @@ def _fetchUnicodes(glyphPath):
 		elif tagName not in ("glyph", "advance"):
 			raise _DoneParsing()
 
-	p = ParserCreate()
+	p = ParserCreate("UTF-8")
 	p.StartElementHandler = _startElementHandler
 #	f = open(glyphPath)
 	data = None

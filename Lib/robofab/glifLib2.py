@@ -378,7 +378,11 @@ def writeGlyphToString(glyphName, glyphObject=None, drawPointsFunc=None, writer=
 	proper PointPen methods to transfer the outline to the .glif file.
 	"""
 	if writer is None:
-		from xmlWriter import XMLWriter
+		try:
+			from xmlWriter import XMLWriter
+		except ImportError:
+			# try the other location
+			from fontTools.misc.xmlWriter import XMLWriter
 		aFile = StringIO()
 		writer = XMLWriter(aFile, encoding="UTF-8")
 	else:

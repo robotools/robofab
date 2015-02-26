@@ -66,7 +66,7 @@ def extractTTFFontInfo(font):
 	attrs = [
 			('copyright', 0),
 			('familyName', 1),
-			('fontStyle', 1),
+			('styleMapStyleName', 2),
 			('postscriptFullName', 4),
 			('trademark', 7),
 			('openTypeNameDesigner', 9),
@@ -79,12 +79,15 @@ def extractTTFFontInfo(font):
 	info.descender = font['hhea'].descent
 	info.unitsPerEm = font['head'].unitsPerEm
 	for name, index in attrs:
-		entry = font["name"].getName(index, 3, 1)
+		entry = font["name"].getName(index, 3, 1, 0x409)
 		if entry is not None:
 			try:
-				setattr(info, name, unicode(entry.string, "utf16"))
-			except:
-				print "Error importing value %s: %s"%(str(name), str(info))
+				value = unicode(entry.string, "utf_16_be")
+				if name == "styleMapStyleName":
+					value = value.lower()
+				setattr(info, name, value)
+			except Exception, e:
+				print "Error importing value %s: %s: %s"%(str(name), value, e.message)
 	return info
 
 def extractT1FontInfo(font):

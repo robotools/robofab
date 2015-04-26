@@ -228,7 +228,7 @@ def _escapeAndEncode(text):
     text = text.replace("&", "&amp;")       # escape '&'
     text = text.replace("<", "&lt;")        # escape '<'
     text = text.replace(">", "&gt;")        # escape '>'
-    return text.encode("utf-8")             # encode as UTF-8
+    return text
 
 
 PLISTHEADER = """\

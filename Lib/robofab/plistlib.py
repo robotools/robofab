@@ -77,19 +77,13 @@ def readPlist(pathOrFile):
     usually is a dictionary).
     """
     didOpen = 0
-    data = None
     if isinstance(pathOrFile, (str, bytes)):
-        # Workaround for http://bugs.python.org/issue16726
-        with open(pathOrFile) as myfile:
-            data = myfile.read()
-#        pathOrFile = open(pathOrFile)
+        pathOrFile = open(pathOrFile, 'rb')
         didOpen = 1
     p = PlistParser()
+    rootObject = p.parse(pathOrFile)
     if didOpen:
-        rootObject = p.parseString(data)
-#        pathOrFile.close()
-    else:
-        rootObject = p.parse(pathOrFile)
+        pathOrFile.close()
     return rootObject
 
 

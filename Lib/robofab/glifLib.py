@@ -514,7 +514,7 @@ def _fetchGlyphName(glyphPath):
 	p = ParserCreate("UTF-8")
 	p.StartElementHandler = _startElementHandler
 	p.returns_unicode = True
-	f = open(glyphPath)
+	f = open(glyphPath, "rb")
 	try:
 		p.ParseFile(f)
 	except _DoneParsing as why:
@@ -545,14 +545,9 @@ def _fetchUnicodes(glyphPath):
 
 	p = ParserCreate("UTF-8")
 	p.StartElementHandler = _startElementHandler
-#	f = open(glyphPath)
-	data = None
-	# Workaround for http://bugs.python.org/issue16726
-	with open(glyphPath) as myfile:
-		data = myfile.read()
+	f = open(glyphPath, "rb")
 	try:
-#		p.ParseFile(f)
-		p.Parse(data)
+		p.ParseFile(f)
 	except _DoneParsing:
 		pass
 	return unicodes

@@ -1701,12 +1701,15 @@ class BaseGlyph(RBaseObject):
 	def move(self, (x, y), contours=True, components=True, anchors=True):
 		"""Move a glyph's items that are flagged as True"""
 		x, y = roundPt((x, y))
-		for contour in self.contours:
-			contour.move((x, y))
-		for component in self.components:
-			component.move((x, y))
-		for anchor in self.anchors:
-			anchor.move((x, y))
+		if contours:
+			for contour in self.contours:
+				contour.move((x, y))
+		if components:
+			for component in self.components:
+				component.move((x, y))
+		if anchors:
+			for anchor in self.anchors:
+				anchor.move((x, y))
 			
 	def scale(self, (x, y), center=(0, 0)):
 		"""scale the glyph"""

@@ -93,7 +93,7 @@ def writePlist(rootObject, pathOrFile):
     """
     didOpen = 0
     if isinstance(pathOrFile, (str, bytes)):
-        pathOrFile = open(pathOrFile, "w")
+        pathOrFile = open(pathOrFile, "wb")
         didOpen = 1
     writer = PlistWriter(pathOrFile)
     writer.writeln("<plist version=\"1.0\">")

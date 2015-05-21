@@ -528,7 +528,7 @@ def writeFileAtomically(text, path):
 	If so, the file is not rewritten so that the modification date
 	is preserved."""
 	if os.path.exists(path):
-		f = open(path, READ_MODE)
+		f = open(path, READ_MODE, encoding='utf-8')
 		oldText = f.read()
 		f.close()
 		if text == oldText:
@@ -537,7 +537,7 @@ def writeFileAtomically(text, path):
 		if not text:
 			os.remove(path)
 	if text:
-		f = open(path, WRITE_MODE)
+		f = open(path, WRITE_MODE, encoding='utf-8')
 		f.write(text)
 		f.close()
 

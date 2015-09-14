@@ -432,11 +432,16 @@ def _stripGlyphXMLTree(nodes):
 
 
 def _glifTreeFromFile(aFile):
-	tree = buildTree(aFile, stripData=False)
-	stripCharacterData(tree[2], recursive=False)
-	assert tree[0] == "glyph"
-	_stripGlyphXMLTree(tree[2])
-	return tree
+	try:
+		tree = buildTree(aFile, stripData=False)
+		stripCharacterData(tree[2], recursive=False)
+		assert tree[0] == "glyph"
+		_stripGlyphXMLTree(tree[2])
+		return tree
+	except:
+		print "Problem with glif file", aFile
+		raise
+	return None
 
 
 def _relaxedSetattr(object, attr, value):

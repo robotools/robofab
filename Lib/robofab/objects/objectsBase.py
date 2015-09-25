@@ -1322,6 +1322,9 @@ class BaseGlyph(RBaseObject):
 		if isinstance(other, BaseGlyph):
 			return self._getDigest() == other._getDigest()
 		return False
+	
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 	def _getDigest(self, pointsOnly=False):
 		"""Calculate a digest of coordinates, points, things in this glyph.

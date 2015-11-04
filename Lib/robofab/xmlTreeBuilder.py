@@ -35,26 +35,19 @@ class XMLParser:
 			nodes.append(data)
 
 	def _expatParseFile(self, pathOrFile):
-		data = None
 		parser = ParserCreate("UTF-8")
 		parser.StartElementHandler = self.startElementHandler
 		parser.EndElementHandler = self.endElementHandler
 		parser.CharacterDataHandler = self.characterDataHandler
 		if isinstance(pathOrFile, (str, bytes)):
-			# Workaround for http://bugs.python.org/issue16726
-			with open(pathOrFile) as myfile:
-				data = myfile.read()
-#			f = open(pathOrFile)
+			f = open(pathOrFile, "rb")
 			didOpen = 1
 		else:
 			didOpen = 0
 			f = pathOrFile
-
+		parser.ParseFile(f)
 		if didOpen:
-			parser.Parse(data)
-#			f.close()
-		else:
-			parser.ParseFile(f)
+			f.close()
 		return self.getRoot()
 
 	def _xmlprocDataHandler(self, data, begin, end):

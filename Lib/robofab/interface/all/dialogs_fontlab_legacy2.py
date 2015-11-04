@@ -19,7 +19,7 @@
 from FL import *
 
 from Foundation import NSObject
-from AppKit import *
+from AppKit import NSApplication, NSInformationalAlertStyle, objc, NSAlert, NSAlertFirstButtonReturn, NSAlertSecondButtonReturn, NSAlertThirdButtonReturn, NSSavePanel, NSOKButton, NSOpenPanel
 
 NSApplication.sharedApplication()
 

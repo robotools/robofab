@@ -77,19 +77,13 @@ def readPlist(pathOrFile):
     usually is a dictionary).
     """
     didOpen = 0
-    data = None
     if isinstance(pathOrFile, (str, bytes)):
-        # Workaround for http://bugs.python.org/issue16726
-        with open(pathOrFile) as myfile:
-            data = myfile.read()
-#        pathOrFile = open(pathOrFile)
+        pathOrFile = open(pathOrFile, 'rb')
         didOpen = 1
     p = PlistParser()
+    rootObject = p.parse(pathOrFile)
     if didOpen:
-        rootObject = p.parseString(data)
-#        pathOrFile.close()
-    else:
-        rootObject = p.parse(pathOrFile)
+        pathOrFile.close()
     return rootObject
 
 
@@ -99,7 +93,7 @@ def writePlist(rootObject, pathOrFile):
     """
     didOpen = 0
     if isinstance(pathOrFile, (str, bytes)):
-        pathOrFile = open(pathOrFile, "w")
+        pathOrFile = open(pathOrFile, "wb")
         didOpen = 1
     writer = PlistWriter(pathOrFile)
     writer.writeln("<plist version=\"1.0\">")
@@ -228,7 +222,7 @@ def _escapeAndEncode(text):
     text = text.replace("&", "&amp;")       # escape '&'
     text = text.replace("<", "&lt;")        # escape '<'
     text = text.replace(">", "&gt;")        # escape '>'
-    return text.encode("utf-8")             # encode as UTF-8
+    return text
 
 
 PLISTHEADER = """\
@@ -253,7 +247,7 @@ class PlistWriter(DumbXMLWriter):
                 self.simpleElement("true")
             else:
                 self.simpleElement("false")
-        elif isinstance(value, (int, long)):
+        elif isinstance(value, int):
             self.simpleElement("integer", "%d" % value)
         elif isinstance(value, float):
             self.simpleElement("real", repr(value))

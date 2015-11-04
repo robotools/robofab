@@ -1,0 +1,287 @@
+/* RoboFab Documents */
+/* ---------- object map ---------- */
+#map {
+  width: 36em;
+  padding-left: 28em;
+  margin-top: 130px; }
+
+#tree {
+  position: absolute;
+  left: 150px;
+  top: 120px; }
+
+#lib1 {
+  position: absolute;
+  left: 386px;
+  top: 120px;
+  width: 114px;
+  height: 66px; }
+
+#info {
+  position: absolute;
+  left: 570px;
+  top: 145px;
+  width: 114px;
+  height: 66px; }
+
+#font {
+  position: absolute;
+  left: 386px;
+  top: 190px;
+  width: 140px;
+  height: 96px; }
+
+#kerning {
+  position: absolute;
+  left: 538px;
+  top: 245px;
+  width: 114px;
+  height: 66px; }
+
+#lib2 {
+  position: absolute;
+  left: 150px;
+  top: 261px;
+  width: 114px;
+  height: 66px; }
+
+#glyph {
+  position: absolute;
+  left: 281px;
+  top: 306px;
+  width: 140px;
+  height: 96px; }
+
+#anchor {
+  position: absolute;
+  left: 150px;
+  top: 327px;
+  width: 114px;
+  height: 66px; }
+
+#point {
+  position: absolute;
+  left: 555px;
+  top: 375px;
+  width: 114px;
+  height: 66px; }
+
+#component {
+  position: absolute;
+  left: 150px;
+  top: 414px;
+  width: 114px;
+  height: 66px; }
+
+#bpoint {
+  position: absolute;
+  left: 555px;
+  top: 449px;
+  width: 114px;
+  height: 66px; }
+
+#contour {
+  position: absolute;
+  left: 390px;
+  top: 455px;
+  width: 114px;
+  height: 66px; }
+
+#segment {
+  position: absolute;
+  left: 233px;
+  top: 506px;
+  width: 114px;
+  height: 66px; }
+
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+/* --- variables --- */
+.shiftlink a:hover, #content a:hover, .row a:hover, .navbar a:hover, .footer a:hover, .column a:hover, .sphinxsidebar a:hover, #tocsidebar a:hover {
+  position: relative;
+  top: 1px;
+  left: 1px; }
+
+.debug, #content, .row, .navbar, .footer, .column, .sphinxsidebar, #tocsidebar {
+  background-color: none; }
+
+/* --- html --- */
+body {
+  width: 66em;
+  padding: 0;
+  margin: 0;
+  font-family: Lucida Grande, Geneva, Arial, Verdana, sans-serif;
+  font-size: 0.9em;
+  line-height: 1.3em; }
+
+p {
+  margin-top: 0;
+  padding: 0; }
+
+hr {
+  color: none;
+  background-color: none;
+  border: none;
+  border-top: 1px dotted #bbbbbb;
+  height: 1px;
+  margin: 2em 0; }
+
+pre, code, tt {
+  font-family: "Menlo", "Andale Mono", "Monaco", "Consolas", "Courier";
+  font-size: 0.97em;
+  font-style: normal;
+  font-weight: normal; }
+
+::selection {
+  color: #ff3300;
+  background-color: none; }
+
+a, a:active {
+  text-decoration: none;
+  color: #333399; }
+
+/* ---------- content ---------- */
+#content {
+  font-size: 0.9em;
+  padding: 0 2em;
+  margin: 0 0 5em 0;
+  width: 42em;
+  float: left; }
+  #content h1 {
+    color: #666666;
+    font-size: 1.4em;
+    margin-top: 0;
+    margin-bottom: 1em; }
+  #content h2, #content h3 {
+    font-family: "Menlo", "Andale Mono", "Monaco", "Consolas", "Courier"; }
+  #content h2 {
+    color: #666666;
+    border-top: 1px dotted #bbbbbb;
+    margin-top: 2em;
+    padding-top: 0.5em;
+    font-size: 1.1em;
+    white-space: pre-wrap; }
+  #content h3 {
+    color: #888888;
+    padding: 0;
+    font-size: 1em; }
+  #content ul, #content ol {
+    margin-left: 1.35em;
+    padding-left: 0; }
+  #content ul {
+    list-style: square; }
+  #content code {
+    padding: 0.2em 0.4em 0.2em 0;
+    border-radius: 10px;
+    white-space: pre-line; }
+  #content pre {
+    border-radius: 10px;
+    background-color: #eeeeee;
+    padding: 1em;
+    white-space: pre-wrap; }
+  #content tt.docutils.literal {
+    color: #333333;
+    background-color: #eeeeee;
+    padding: 0.05em 0.3em; }
+  #content .highlight {
+    background-color: None; }
+  #content p > em, #content li > em {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 1.1em; }
+  #content a.headerlink,
+  #content a.headerlink:visited {
+    visibility: hidden; }
+  #content dt {
+    font-weight: bold; }
+  #content dd {
+    margin: 0 0 1em 1em; }
+  #content h1:hover > a.headerlink,
+  #content h2:hover > a.headerlink,
+  #content h3:hover > a.headerlink,
+  #content h4:hover > a.headerlink,
+  #content h5:hover > a.headerlink,
+  #content h6:hover > a.headerlink {
+    visibility: visible; }
+  #content .note {
+    padding: 0.6em 1em 0.8em;
+    background-color: #eeeeee; }
+    #content .note p {
+      margin: 0; }
+    #content .note .admonition-title {
+      font-weight: bold;
+      color: #666666;
+      margin-bottom: 0.4em; }
+
+/* ---------- header ---------- */
+#header {
+  background-image: url("_img/drawmodel_header.jpg");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  font-size: 1em;
+  height: 8em;
+  padding: 1em 1.4em;
+  margin: 0;
+  width: 100%; }
+  #header #map-link {
+    position: absolute;
+    top: 2em;
+    left: 42em; }
+
+/* ---------- horizontal nav ---------- */
+.row, .navbar, .footer {
+  font-size: 0.8em;
+  clear: both;
+  width: 100%;
+  padding-left: 2em; }
+
+.navbar {
+  border-bottom: 1px dotted #bbbbbb;
+  padding: 0.1em 1.45em 1em;
+  margin: 0 0 2em 0; }
+  .navbar ul {
+    margin: 0;
+    padding: 0 1.6em 0 0;
+    float: left; }
+  .navbar li {
+    display: inline;
+    padding: 0 0.5em; }
+
+.footer {
+  border-top: 1px dotted #bbbbbb;
+  padding-top: 1em;
+  padding-bottom: 1em; }
+  .footer p {
+    margin-bottom: 0; }
+
+/* ---------- vertical nav ---------- */
+.column, .sphinxsidebar, #tocsidebar {
+  margin: 0 0 5em 0;
+  padding: 0 2em;
+  float: left;
+  width: 12em;
+  font-size: 0.8em;
+  line-height: 1.3em; }
+  .column a:hover, .sphinxsidebar a:hover, #tocsidebar a:hover {
+    background-color: #eeeeee; }
+  .column code, .sphinxsidebar code, #tocsidebar code {
+    font-family: Lucida Grande, Geneva, Arial, Verdana, sans-serif; }
+  .column ul, .sphinxsidebar ul, #tocsidebar ul {
+    padding: 0;
+    margin: 0 0 1em 0;
+    list-style: none; }
+  .column li, .sphinxsidebar li, #tocsidebar li {
+    height: 1.5em; }
+  .column h3, .sphinxsidebar h3, #tocsidebar h3, .column h4, .sphinxsidebar h4, #tocsidebar h4 {
+    margin: 0.6em 0 0.4em;
+    padding: 0;
+    font-size: 1em;
+    text-transform: lowercase; }
+  .column ul + h3, .sphinxsidebar ul + h3, #tocsidebar ul + h3 {
+    margin-top: 1em; }
+  .column hr, .sphinxsidebar hr, #tocsidebar hr {
+    margin: 0.6em;
+    border-top: 1px dotted #bbbbbb; }

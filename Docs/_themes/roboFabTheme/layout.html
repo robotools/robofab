@@ -1,0 +1,100 @@
+
+{%- extends "basic/layout.html" %}
+
+{%- macro navBar() %}
+<div class="navbar">
+
+<ul>
+<li><a href="{{ pathto(master_doc) }}">home</a> </li>
+<!--
+<li><a href="{{ pathto('content/quickReference.html', 1) }}">reference</a></li>
+-->
+<li><a href="{{ pathto('docs_intro/download.html', 1) }}">download</a></li>
+<li><a href="{{ pathto('genindex.html', 1) }}">index</a></li>
+</ul>
+
+{%- include "searchbox.html" %}
+
+</div>
+{%- endmacro %}
+
+{%- block extrahead %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+{% endblock %}
+
+{%- block header %}
+<div id='header'>
+<!--<h1><a href="{{ pathto(master_doc) }}">RoboFab</a></h1>-->
+<a href='#'>
+    <img id='map-link' src="{{ pathto('_static/_img/logo.gif', 1) }}" />
+</a>
+</div>
+
+<!-- horizontal -->
+
+{{ navBar() }}
+{% endblock %}
+
+{%- block relbar1 %}
+{% endblock %}
+
+<!-- vertical : left -->
+
+{%- block sidebar1 %}
+{{ sidebar() }}
+{% endblock %}
+
+<!-- vertical : right -->
+
+{%- block sidebar2 %}{% endblock %}
+
+{% block sidebartoc %}
+{{ toctree(includehidden=True) }}
+{% endblock %}
+
+{% block document %}
+<div class="documentwrapper">
+{%- if render_sidebar %}
+<div class="bodywrapper">
+{%- endif %}
+<div class="body" id="content">
+{% block body %}{% endblock %}
+</div>
+{%- if render_sidebar %}
+    </div>
+{%- endif %}
+</div>
+{% endblock %}
+
+{%- block relbar2 %}
+<div id='tocsidebar'>
+<h3>links</h3>
+<ul>
+<li><a href='https://github.com/robofab-developers/robofab'>robofab source</a></li>
+<li><a href='http://groups.google.com/group/robofab'>mailing list</a></li>
+</ul>
+<h3>more links</h3>
+<ul>
+<li><a href='http://sourceforge.net/projects/fonttools/'>FontTools/TTX</a></li>
+<li><a href='http://tools.typesupply.com/'>TypeSupply</a></li>
+<li><a href='http://superpolator.com/'>Superpolator</a></li>
+<li><a href='http://letterror.com/'>LettError</a></li>
+</ul>
+</div>
+{% endblock %}
+
+{%- block footer %}
+<div class="footer">
+<p>&copy; Copyright <script>document.write(new Date().getFullYear())</script>
+    <a href="http://letterror.com/">Just van Rossum</a>, <a href="http://letterror.com/">Erik van Blokland</a>, <a href="http://typesupply.com/">Tal Leming</a>.</p>
+<p>
+{%- if last_updated %}
+{% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}. {% endtrans %}
+{%- endif %}
+{%- if show_sphinx %}
+{% trans sphinx_version=sphinx_version|e %}Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> {{ sphinx_version }}.{% endtrans %}
+</p>
+{%- endif %}
+</div>
+{%- endblock %}

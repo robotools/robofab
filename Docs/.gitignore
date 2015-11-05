@@ -1,2 +1,4 @@
-build/
-*.roboFontExt
+.DS_Store
+.roboFontExt
+*.pyc
+_build/

@@ -1,7 +1,16 @@
+# open a help window with RoboFab docs
+
 import os
 from mojo.UI import HelpWindow
 
-lib_path = os.path.dirname(__file__)
-extension_html = os.path.join(os.path.dirname(lib_path), "Docs/build/html/index.html")
-print extension_html, os.path.exists
-# HelpWindow(extension_html, title="RoboFab Docs", developer=None, developerURL=None)
+dirLib   = os.path.dirname(__file__)
+dirBuild = os.path.join(dirLib, "_build")
+dirHtml  = os.path.join(dirBuild, "html")
+htmlPath = os.path.join(dirHtml, "index.html")
+
+if os.path.exists(htmlPath):
+    HelpWindow(htmlPath,
+        title="RoboFab Docs",
+        developer="RoboFab Developers",
+        developerURL="http://robofab.org/"
+    )

@@ -5,8 +5,8 @@ API Docs
 .. toctree::
    :maxdepth: 1
 
-   gliflib.rst
-   gliflib2.rst
+   glifLib.rst
+   glifLib2.rst
    gString.rst
    world.rst
    plistFromTree.rst

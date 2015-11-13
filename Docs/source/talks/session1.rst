@@ -26,7 +26,7 @@ Python can do a lot of different things. Some of its functionality is always ava
     from someModule import oneSpecificThing
     from someModule.subModule import oneSpecificThing
     from someModule import anotherSpecificThing, andAnotherThing
-     
+    
     # and these:
     import someModule
     import someModule.subModule

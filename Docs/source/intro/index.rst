@@ -10,7 +10,7 @@ Introduction
    install.rst
    gettingstarted.rst
    history.rst
-   limitation.rst
+   limitations.rst
    links.rst
    tools.rst
    dialogs.rst

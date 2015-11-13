@@ -99,7 +99,7 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
-/* --- variables --- */
+/* ---------- variables ---------- */
 .shiftlink a:hover, #content a:hover, .row a:hover, .navbar a:hover, .footer a:hover, .column a:hover, .sphinxsidebar a:hover, #tocsidebar a:hover {
   position: relative;
   top: 1px;
@@ -108,7 +108,7 @@
 .debug, #content, .row, .navbar, .footer, .column, .sphinxsidebar, #tocsidebar {
   background-color: none; }
 
-/* --- html --- */
+/* ---------- html ---------- */
 body {
   width: 66em;
   padding: 0;
@@ -125,7 +125,7 @@ hr {
   color: none;
   background-color: none;
   border: none;
-  border-top: 1px dotted #bbbbbb;
+  border-top: 1px dotted #aaaaaa;
   height: 1px;
   margin: 2em 0; }
 
@@ -141,7 +141,8 @@ pre, code, tt {
 
 a, a:active {
   text-decoration: none;
-  color: #333399; }
+  color: #333399;
+  font-style: normal; }
 
 /* ---------- content ---------- */
 #content {
@@ -150,24 +151,22 @@ a, a:active {
   margin: 0 0 5em 0;
   width: 42em;
   float: left; }
+  #content h1, #content h2, #content h3 {
+    font-family: Lucida Grande, Geneva, Arial, Verdana, sans-serif;
+    color: #666666; }
   #content h1 {
-    color: #666666;
     font-size: 1.4em;
     margin-top: 0;
     margin-bottom: 1em; }
-  #content h2, #content h3 {
-    font-family: "Menlo", "Andale Mono", "Monaco", "Consolas", "Courier"; }
   #content h2 {
-    color: #666666;
-    border-top: 1px dotted #bbbbbb;
+    border-top: 1px dotted #aaaaaa;
     margin-top: 2em;
     padding-top: 0.5em;
-    font-size: 1.1em;
+    font-size: 1.24em;
     white-space: pre-wrap; }
   #content h3 {
-    color: #888888;
     padding: 0;
-    font-size: 1em; }
+    font-size: 1.1em; }
   #content ul, #content ol {
     margin-left: 1.35em;
     padding-left: 0; }
@@ -175,30 +174,33 @@ a, a:active {
     list-style: square; }
   #content code {
     padding: 0.2em 0.4em 0.2em 0;
-    border-radius: 10px;
     white-space: pre-line; }
   #content pre {
-    border-radius: 10px;
-    background-color: #eeeeee;
+    background-color: #dddddd;
     padding: 1em;
     white-space: pre-wrap; }
   #content tt.docutils.literal {
     color: #333333;
-    background-color: #eeeeee;
+    background-color: #dddddd;
     padding: 0.05em 0.3em; }
-  #content .highlight {
-    background-color: None; }
-  #content p > em, #content li > em {
+  #content .descname {
+    font-weight: bold; }
+  #content p > em, #content li > em, #content dt > em, #content .reference {
     font-family: Georgia, serif;
     font-style: italic;
     font-size: 1.1em; }
+  #content .highlight {
+    background-color: None; }
+  #content .downloadlink {
+    margin-top: 0;
+    margin-bottom: 1em; }
   #content a.headerlink,
   #content a.headerlink:visited {
     visibility: hidden; }
   #content dt {
     font-weight: bold; }
   #content dd {
-    margin: 0 0 1em 1em; }
+    margin: 0 0 1em 2em; }
   #content h1:hover > a.headerlink,
   #content h2:hover > a.headerlink,
   #content h3:hover > a.headerlink,
@@ -208,7 +210,7 @@ a, a:active {
     visibility: visible; }
   #content .note {
     padding: 0.6em 1em 0.8em;
-    background-color: #eeeeee; }
+    border: 1px dotted #aaaaaa; }
     #content .note p {
       margin: 0; }
     #content .note .admonition-title {
@@ -239,7 +241,7 @@ a, a:active {
   padding-left: 2em; }
 
 .navbar {
-  border-bottom: 1px dotted #bbbbbb;
+  border-bottom: 1px dotted #aaaaaa;
   padding: 0.1em 1.45em 1em;
   margin: 0 0 2em 0; }
   .navbar ul {
@@ -251,7 +253,7 @@ a, a:active {
     padding: 0 0.5em; }
 
 .footer {
-  border-top: 1px dotted #bbbbbb;
+  border-top: 1px dotted #aaaaaa;
   padding-top: 1em;
   padding-bottom: 1em; }
   .footer p {
@@ -266,7 +268,7 @@ a, a:active {
   font-size: 0.8em;
   line-height: 1.3em; }
   .column a:hover, .sphinxsidebar a:hover, #tocsidebar a:hover {
-    background-color: #eeeeee; }
+    background-color: #dddddd; }
   .column code, .sphinxsidebar code, #tocsidebar code {
     font-family: Lucida Grande, Geneva, Arial, Verdana, sans-serif; }
   .column ul, .sphinxsidebar ul, #tocsidebar ul {
@@ -284,4 +286,4 @@ a, a:active {
     margin-top: 1em; }
   .column hr, .sphinxsidebar hr, #tocsidebar hr {
     margin: 0.6em;
-    border-top: 1px dotted #bbbbbb; }
+    border-top: 1px dotted #aaaaaa; }

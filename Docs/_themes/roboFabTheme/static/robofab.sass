@@ -7,13 +7,13 @@
 	-webkit-box-sizing: border-box
 	box-sizing: border-box
 
-/* --- variables --- */
+/* ---------- variables ---------- */
 
 $monofont: 'Menlo', 'Andale Mono', 'Monaco', 'Consolas', 'Courier'
 $sansfont: Lucida Grande, Geneva, Arial, Verdana, sans-serif
 $italicfont: Georgia, serif
-$border: 1px dotted #BBB
-$bgcode: #EEE
+$border: 1px dotted #AAA
+$bgcode: #DDD
 $small: 0.8em
 $bgdebug: none
 $grid: 6em
@@ -31,7 +31,7 @@ $radius: 10px
 .debug
 	background-color: $bgdebug
 
-/* --- html --- */
+/* ---------- html ---------- */
 
 body
 	width: ($wcol * 2) + $wcontent
@@ -69,6 +69,7 @@ pre, code, tt
 a, a:active
 	text-decoration: none
 	color: #339
+	font-style: normal
 
 /* ---------- content ---------- */
 
@@ -79,24 +80,22 @@ a, a:active
 	margin: 0 0 5em 0
 	width: $wcontent
 	float: left
-	h1
+	h1, h2, h3
+		font-family: $sansfont
 		color: #666
+	h1
 		font-size: 1.4em
 		margin-top: 0
 		margin-bottom: 1em
-	h2, h3
-		font-family: $monofont
 	h2
-		color: #666
 		border-top: $border
 		margin-top: 2em
 		padding-top: 0.5em
-		font-size: 1.1em
+		font-size: 1.24em
 		white-space: pre-wrap
 	h3
-		color: #888
 		padding: 0
-		font-size: 1em
+		font-size: 1.1em
 	ul, ol
 		margin-left: 1.35em
 		padding-left: 0
@@ -104,10 +103,10 @@ a, a:active
 		list-style: square
 	code
 		padding: 0.2em 0.4em 0.2em 0
-		border-radius: $radius
+		// border-radius: $radius
 		white-space: pre-line
 	pre
-		border-radius: $radius
+		// border-radius: $radius
 		background-color: $bgcode
 		padding: 1em
 		white-space: pre-wrap
@@ -116,21 +115,24 @@ a, a:active
 		// font-weight: bold
 		background-color: $bgcode
 		padding: 0.05em 0.3em
-	.highlight
-		background-color: None
-	p > em, li > em
+	.descname
+		font-weight: bold
+	p > em, li > em, dt > em, .reference
 		font-family: $italicfont
 		font-style: italic
 		font-size: 1.1em
-	// p > code, p > tt, li > code, li > tt,
-	// 	color: #333
+	.highlight
+		background-color: None
+	.downloadlink
+		margin-top: 0
+		margin-bottom: 1em
 	a.headerlink,
 	a.headerlink:visited
 		visibility: hidden
 	dt
 		font-weight: bold
 	dd
-		margin: 0 0 1em 1em
+		margin: 0 0 1em 2em
 	h1:hover > a.headerlink,
 	h2:hover > a.headerlink,
 	h3:hover > a.headerlink,
@@ -140,7 +142,8 @@ a, a:active
 		visibility: visible
 	.note
 		padding: 0.6em 1em 0.8em
-		background-color: #EEE
+		border: $border
+		// background-color: #EEE
 		p
 			margin: 0
 		.admonition-title

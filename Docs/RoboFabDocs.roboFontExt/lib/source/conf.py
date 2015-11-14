@@ -128,7 +128,7 @@ html_theme_path = ['../_themes']
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -191,8 +191,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'RoboFab.tex', u'RoboFab',
-   u'Erik van Blokland, Tal Leming, Just van Rossum', 'manual'),
+	('index', 'RoboFab.tex', u'RoboFab',
+	 u'Erik van Blokland, Tal Leming, Just van Rossum', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -221,8 +221,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'RoboFab', u'Documentation',
-     [u'Erik van Blokland, Tal Leming, Just van Rossum'], 1)
+		('index', 'RoboFab', u'Documentation',
+		 [u'Erik van Blokland, Tal Leming, Just van Rossum'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -235,10 +235,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'RoboFab', u'RoboFab',
-   u'Erik van Blokland, Tal Leming, Just van Rossum', 'RoboFab',
-   'A Python library for dealing with data usually associated with fonts and type design.',
-   'Font production tools'),
+	('index', 'RoboFab', u'RoboFab',
+	 u'Erik van Blokland, Tal Leming, Just van Rossum', 'RoboFab',
+	 'A Python library for dealing with data usually associated with fonts and type design.',
+	 'Font production tools'),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -254,8 +254,9 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # auto doc
-add_module_names = False
+add_module_names = True
 autodoc_member_order = 'bysource'
+autodoc_mock_imports = ['FL', 'fontforge'] # mock modules (Sphinx +1.3)
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
@@ -264,39 +265,37 @@ intersphinx_mapping = {'http://docs.python.org/': None}
 
 import posixpath
 
-# import inspect
-
 from sphinx import addnodes
 from sphinx.directives.code import LiteralInclude
 from sphinx.writers.html import HTMLTranslator
 
 def visit_download_reference(self, node):
-    if node.hasattr('filename'):
-        data = dict(
-            urlPath=posixpath.join(self.builder.dlpath, node['filename']),
-            fileName=node['filename']
-            )
-        self.body.append('<div class="downloadlink"><a class="reference internal" href="%(urlPath)s">open or download this file: %(fileName)s</a></div>' % data)
-        node.clear()
+		if node.hasattr('filename'):
+				data = dict(
+						urlPath=posixpath.join(self.builder.dlpath, node['filename']),
+						fileName=node['filename']
+					)
+				self.body.append('<div class="downloadlink"><a class="reference internal" href="%(urlPath)s">open or download this file: %(fileName)s</a></div>' % data)
+				node.clear()
 
 def depart_download_reference(self, node):
-    pass
+		pass
 
 HTMLTranslator.visit_download_reference = visit_download_reference
 HTMLTranslator.depart_download_reference = depart_download_reference
 
 class ShowCode(LiteralInclude):
-    
-    has_content = False
-    required_arguments = 1
-    final_argument_whitespace = True
 
-    def run(self):
-        nodes = super(ShowCode, self).run()
-        node = addnodes.download_reference()
-        node['reftarget'] = self.arguments[0]
-        nodes.append(node)
-        return nodes
+		has_content = False
+		required_arguments = 1
+		final_argument_whitespace = True
+
+		def run(self):
+				nodes = super(ShowCode, self).run()
+				node = addnodes.download_reference()
+				node['reftarget'] = self.arguments[0]
+				nodes.append(node)
+				return nodes
 
 def setup(app):
-    app.add_directive('showcode', ShowCode)
+		app.add_directive('showcode', ShowCode)

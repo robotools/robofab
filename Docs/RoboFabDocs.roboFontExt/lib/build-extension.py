@@ -5,7 +5,6 @@ import shutil
 from mojo.extensions import ExtensionBundle
 
 libPath = os.path.dirname(__file__)
-# extensionFolder = os.path.join(libPath, 'extension')
 extensionFile = "RoboFabDocs.roboFontExt"
 extensionPath = os.path.join(libPath, extensionFile)
 extensionHtml = os.path.join(libPath, "_build/html/")
@@ -26,7 +25,11 @@ B.developerURL = "http://robofab.org/"
 B.version = "0.1"
 B.mainScript = ""
 B.launchAtStartUp = 0
-B.addToMenu = [{"path" : "docs.py", "preferredName" : "RoboFab Docs", "shortKey" : ""}]
+B.addToMenu = [{
+    "path" : "docs.py",
+    "preferredName" : "RoboFab Docs",
+    "shortKey" : "",
+}]
 B.requiresVersionMajor = "1"
 B.requiresVersionMinor = "5"
 B.infoDictionary["html"] = 0

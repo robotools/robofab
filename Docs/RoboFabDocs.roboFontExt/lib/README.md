@@ -15,7 +15,7 @@ Building the documentation
 
 To build the documentation, you will need to have [Sphinx](http://sphinx-doc.org/) installed.
 
-In Terminal, `cd` to the `roboFabDocs` folder, and type:
+In Terminal, `cd` to the `Docs` folder, and type:
 
 	make html
 

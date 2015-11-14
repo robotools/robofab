@@ -176,14 +176,14 @@ a, a:active {
     padding: 0.2em 0.4em 0.2em 0;
     white-space: pre-line; }
   #content pre {
-    background-color: #eeeeee;
+    background-color: #dddddd;
     padding: 1em;
     white-space: pre-wrap; }
   #content tt.docutils.literal {
     color: #333333;
-    background-color: #eeeeee;
+    background-color: #dddddd;
     padding: 0.05em 0.3em; }
-  #content tt.descname {
+  #content .descname {
     font-weight: bold; }
   #content p > em, #content li > em, #content dt > em, #content .reference {
     font-family: Georgia, serif;
@@ -268,7 +268,7 @@ a, a:active {
   font-size: 0.8em;
   line-height: 1.3em; }
   .column a:hover, .sphinxsidebar a:hover, #tocsidebar a:hover {
-    background-color: #eeeeee; }
+    background-color: #dddddd; }
   .column code, .sphinxsidebar code, #tocsidebar code {
     font-family: Lucida Grande, Geneva, Arial, Verdana, sans-serif; }
   .column ul, .sphinxsidebar ul, #tocsidebar ul {

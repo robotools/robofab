@@ -1,99 +1,4 @@
 /* RoboFab Documents */
-/* ---------- object map ---------- */
-#map {
-  width: 36em;
-  padding-left: 28em;
-  margin-top: 130px; }
-
-#tree {
-  position: absolute;
-  left: 150px;
-  top: 120px; }
-
-#lib1 {
-  position: absolute;
-  left: 386px;
-  top: 120px;
-  width: 114px;
-  height: 66px; }
-
-#info {
-  position: absolute;
-  left: 570px;
-  top: 145px;
-  width: 114px;
-  height: 66px; }
-
-#font {
-  position: absolute;
-  left: 386px;
-  top: 190px;
-  width: 140px;
-  height: 96px; }
-
-#kerning {
-  position: absolute;
-  left: 538px;
-  top: 245px;
-  width: 114px;
-  height: 66px; }
-
-#lib2 {
-  position: absolute;
-  left: 150px;
-  top: 261px;
-  width: 114px;
-  height: 66px; }
-
-#glyph {
-  position: absolute;
-  left: 281px;
-  top: 306px;
-  width: 140px;
-  height: 96px; }
-
-#anchor {
-  position: absolute;
-  left: 150px;
-  top: 327px;
-  width: 114px;
-  height: 66px; }
-
-#point {
-  position: absolute;
-  left: 555px;
-  top: 375px;
-  width: 114px;
-  height: 66px; }
-
-#component {
-  position: absolute;
-  left: 150px;
-  top: 414px;
-  width: 114px;
-  height: 66px; }
-
-#bpoint {
-  position: absolute;
-  left: 555px;
-  top: 449px;
-  width: 114px;
-  height: 66px; }
-
-#contour {
-  position: absolute;
-  left: 390px;
-  top: 455px;
-  width: 114px;
-  height: 66px; }
-
-#segment {
-  position: absolute;
-  left: 233px;
-  top: 506px;
-  width: 114px;
-  height: 66px; }
-
 *, *:before, *:after {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -173,7 +78,7 @@ a, a:active {
   #content ul {
     list-style: square; }
   #content code {
-    padding: 0.2em 0.4em 0.2em 0;
+    padding: 0 0.05em;
     white-space: pre-line; }
   #content pre {
     background-color: #dddddd;
@@ -181,10 +86,7 @@ a, a:active {
     white-space: pre-wrap; }
   #content tt.docutils.literal {
     color: #333333;
-    background-color: #dddddd;
-    padding: 0.05em 0.3em; }
-  #content .descname {
-    font-weight: bold; }
+    background-color: #dddddd; }
   #content p > em, #content li > em, #content dt > em, #content .reference {
     font-family: Georgia, serif;
     font-style: italic;
@@ -194,6 +96,9 @@ a, a:active {
   #content .downloadlink {
     margin-top: 0;
     margin-bottom: 1em; }
+  #content .descname {
+    padding: 0;
+    font-weight: bold; }
   #content a.headerlink,
   #content a.headerlink:visited {
     visibility: hidden; }

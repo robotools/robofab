@@ -254,7 +254,7 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # auto doc
-add_module_names = True
+add_module_names = False
 autodoc_member_order = 'bysource'
 autodoc_mock_imports = ['FL', 'fontforge'] # mock modules (Sphinx +1.3)
 

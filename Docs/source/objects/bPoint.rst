@@ -10,7 +10,7 @@ Usage
 
 .. code::
 
-    < RbPoint for Special-Bold.A[0][0] >
+    <RbPoint for Special-Bold.A[0][0]>
 
 Description
 -----------

@@ -10,7 +10,7 @@ Usage
 
 .. code::
 
-    < RPoint for AFont.A[0][0] >
+    <RPoint for AFont.A[0][0]>
 
 Description
 -----------

@@ -34,7 +34,7 @@ RFont Attributes
 
 .. py:attribute:: path
 
-The path to the font. (read only)
+The path to the font (read only).
 
 .. py:attribute:: kerning
 
@@ -96,7 +96,7 @@ Inserts ``aGlyph`` in the font, the new glyph object is returned. If the font al
 
 .. py:function:: compileGlyph(glyphName, baseName, accentNames, adjustWidth=False, preflight=False, printErrors=True)
 
-Compile components into a new glyph using components and anchorpoints. 
+Compile components into a new glyph using components and anchorpoints.
 
 ``glyphName``
     The name of the glyph where it all needs to go.

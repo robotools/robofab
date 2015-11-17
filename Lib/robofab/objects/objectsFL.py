@@ -2357,7 +2357,7 @@ class RGroups(BaseGroups):
 			
 	def __delitem__(self, key):
 		# override baseclass so that data is stored in FL classes
-		super(RGroups, self).__delitem__(key, value)
+		super(RGroups, self).__delitem__(key)
 		self._setFLGroups()
 		
 	def _setFLGroups(self):

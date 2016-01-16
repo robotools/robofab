@@ -56,11 +56,14 @@ class _baseWindowController(object):
         self.w.closeButton = vanilla.Button((-150, -30, -80, 20), "Cancel", callback=self.closeCallback, sizeStyle="small")
         self.w.closeButton.bind(".", ["command"])
         self.w.closeButton.bind(unichr(27), [])
+        
+        self.cancelled = False
     
     def okCallback(self, sender):
         self.w.close()
     
     def closeCallback(self, sender):
+        self.cancelled = True
         self.w.close()
     
     def get(self):
@@ -80,6 +83,8 @@ class _AskStringController(_baseWindowController):
         self.w.open()
     
     def get(self):
+        if self.cancelled:
+            return None
         return self.w.input.get()
     
 

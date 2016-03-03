@@ -46,23 +46,23 @@ class RFWorld:
 			self.applicationName = bundle.infoDictionary()["CFBundleName"]
 			self.inGlyphs = True
 			self.glyphsVersion = bundle.infoDictionary()["CFBundleVersion"]
-		except ImportError: pass
-		# are we in RoboFont
-		try:
-			import mojo
-			from AppKit import NSBundle
-			bundle = NSBundle.mainBundle()
-			self.applicationName = bundle.infoDictionary()["CFBundleName"]
-			self.inRoboFont = True
-			self.roboFontVersion = bundle.infoDictionary()["CFBundleVersion"]
-		except ImportError: pass
-		# are we in FontLab?
-		try:
-			from FL import fl
-			self.applicationName = fl.filename
-			self.inFontLab = True
-			self.flVersion = fl.version
-		except ImportError: pass
+		except ImportError:
+			# are we in RoboFont
+			try:
+				import mojo
+				from AppKit import NSBundle
+				bundle = NSBundle.mainBundle()
+				self.applicationName = bundle.infoDictionary()["CFBundleName"]
+				self.inRoboFont = True
+				self.roboFontVersion = bundle.infoDictionary()["CFBundleVersion"]
+			except ImportError:
+				# are we in FontLab?
+				try:
+					from FL import fl
+					self.applicationName = fl.filename
+					self.inFontLab = True
+					self.flVersion = fl.version
+				except ImportError: pass
 		# we are in NoneLab
 		if not self.inFontLab:
 			self.inPython = True

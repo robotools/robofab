@@ -38,13 +38,6 @@ class RFWorld:
 		self.inRoboFont = False
 		self.roboFontVersion = None
 
-		# are we in FontLab?
-		try:
-			from FL import fl
-			self.applicationName = fl.filename
-			self.inFontLab = True
-			self.flVersion = fl.version
-		except ImportError: pass
 		# are we in Glyphs?
 		try:
 			import objectsGS
@@ -62,6 +55,13 @@ class RFWorld:
 			self.applicationName = bundle.infoDictionary()["CFBundleName"]
 			self.inRoboFont = True
 			self.roboFontVersion = bundle.infoDictionary()["CFBundleVersion"]
+		except ImportError: pass
+		# are we in FontLab?
+		try:
+			from FL import fl
+			self.applicationName = fl.filename
+			self.inFontLab = True
+			self.flVersion = fl.version
 		except ImportError: pass
 		# we are in NoneLab
 		if not self.inFontLab:

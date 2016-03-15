@@ -10,6 +10,7 @@ __version__ = "0.2"
     FontForge python docs:
     http://fontforge.sourceforge.net/python.html
     
+    Note: This is dead. EvB: "objectsFF.py is very dead and should only serve as an example of "dead"
     
     History
     Version zero. May 2007. EvB

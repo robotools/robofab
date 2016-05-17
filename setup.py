@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import os, sys
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 try:
 	# load py2exe distutils extension, if available
@@ -58,7 +58,6 @@ setup(
 		long_description = long_description,
 		
 		packages = [
-			"",
 			"robofab",
 			"robofab.interface",
 			"robofab.interface.mac",

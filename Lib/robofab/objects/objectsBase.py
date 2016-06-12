@@ -26,6 +26,7 @@ from robofab import ufoLib
 from robofab import RoboFabError
 from robofab.misc.arrayTools import updateBounds, pointInRect, unionRect, sectRect
 from fontTools.pens.basePen import AbstractPen
+from fontTools.pens.areaPen import AreaPen
 
 try:
 	set
@@ -1846,38 +1847,11 @@ class BaseContour(RBaseObject):
 			self.reverseContour()
 			
 	def _get_clockwise(self):
-		anchors = []
-		lastOn = None
-		for segment in self.segments:
-			anchor = segment.onCurve
-			anchor = (anchor.x, anchor.y)
-			# overlapping points can give false results, so filter them out
-			if anchor == lastOn:
-				continue
-			anchors.append(anchor)
-			lastOn = anchor
-		#overlapping moves can give false results, so filter them out
-		first = anchors[0]
-		last = anchors[-1]
-		if first == last:
-			del anchors[-1]
-		nPoints = len(anchors)
-		angles = []
-		for i1 in range(nPoints):
-			i2 = (i1 + 1) % nPoints
-			x1, y1 = anchors[i1]
-			x2, y2 = anchors[i2]
-			angles.append(math.atan2(y2-y1, x2-x1))
-		total = 0
-		pi = math.pi
-		pi2 = pi * 2
-		for i1 in range(nPoints):
-			i2 = (i1 + 1) % nPoints
-			d = ((angles[i2] - angles[i1] + pi) % pi2) - pi
-			total += d
-		return total < 0
+		pen = AreaPen(self)
+		self.draw(pen)
+		return pen.value < 0
 
-	clockwise = property(_get_clockwise, _set_clockwise, doc="direction of contour: 1=clockwise 0=counterclockwise")
+	clockwise = property(_get_clockwise, _set_clockwise, doc="direction of contour: positive=counterclockwise negative=clockwise")
 
 	def copy(self, aParent=None):
 		"""Duplicate this contour"""

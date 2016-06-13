@@ -362,7 +362,7 @@ def writeGlyphToString(glyphName, glyphObject=None, drawPointsFunc=None, writer=
 	if width is not None:
 		if not isinstance(width, (int, float)):
 			raise GlifLibError, "width attribute must be int or float"
-		writer.simpletag("advance", width=str(width))
+		writer.simpletag("advance", width=repr(width))
 		writer.newline()
 
 	unicodes = getattr(glyphObject, "unicodes", None)
@@ -666,8 +666,8 @@ class GLIFPointPen(AbstractPointPen):
 			for coord in pt:
 				if not isinstance(coord, (int, float)):
 					raise GlifLibError, "coordinates must be int or float"
-			attrs.append(("x", str(pt[0])))
-			attrs.append(("y", str(pt[1])))
+			attrs.append(("x", repr(pt[0])))
+			attrs.append(("y", repr(pt[1])))
 		if segmentType is not None:
 			attrs.append(("type", segmentType))
 		if smooth:
@@ -683,7 +683,7 @@ class GLIFPointPen(AbstractPointPen):
 			if not isinstance(value, (int, float)):
 				raise GlifLibError, "transformation values must be int or float"
 			if value != default:
-				attrs.append((attr, str(value)))
+				attrs.append((attr, repr(value)))
 		self.writer.simpletag("component", attrs)
 		self.writer.newline()
 

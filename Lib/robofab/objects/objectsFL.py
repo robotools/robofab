@@ -1483,7 +1483,11 @@ class RGlyph(BaseGlyph):
 		position = int(round(position))
 		g = Guide(position, angle)
 		self._object.vguides.append(g)
-		
+
+	def clearContours(self):
+		self._object.Clear()
+		self._invalidateContours()
+
 	def clearComponents(self):
 		"""Clear all components."""
 		self._object.components.clean()

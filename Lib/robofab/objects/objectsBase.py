@@ -1851,7 +1851,7 @@ class BaseContour(RBaseObject):
 		self.draw(pen)
 		return pen.value < 0
 
-	clockwise = property(_get_clockwise, _set_clockwise, doc="direction of contour: positive=counterclockwise negative=clockwise")
+	clockwise = property(_get_clockwise, _set_clockwise, doc="direction of contour: True=clockwise False=counterclockwise")
 
 	def copy(self, aParent=None):
 		"""Duplicate this contour"""

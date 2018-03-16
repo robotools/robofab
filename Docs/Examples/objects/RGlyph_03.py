@@ -9,7 +9,7 @@
 def remapComponent(glyph, oldBaseGlyph, newBaseGlyph):
     foundComponent = None
     for component in glyph.components:
-        if component.baseGlyph = oldBaseGlyph:
+        if component.baseGlyph == oldBaseGlyph:
             foundComponent = component
             break
     if foundComponent is None:
